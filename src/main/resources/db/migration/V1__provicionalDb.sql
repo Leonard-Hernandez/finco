@@ -4,8 +4,7 @@ CREATE TABLE Users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    other_details TEXT
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table for Accounts
@@ -18,6 +17,7 @@ CREATE TABLE Accounts (
     currency VARCHAR(3) NOT NULL DEFAULT 'USD',
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     description TEXT,
+    isDefault BOOLEAN,
     FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
@@ -30,7 +30,7 @@ CREATE TABLE Goals (
     deadline DATE,
     description TEXT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    current_saved_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00
+    saved_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00
 );
 
 -- Table for Transactions
