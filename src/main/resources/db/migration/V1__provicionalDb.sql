@@ -58,6 +58,7 @@ CREATE TABLE Assets (
     name VARCHAR(255) NOT NULL,
     estimated_value DECIMAL(10, 2) NOT NULL,
     acquisition_date DATE,
+    interest_rate DECIMAL(5, 2),
     description TEXT,
     FOREIGN KEY (user_id) REFERENCES Users(id)
 );
@@ -87,4 +88,19 @@ CREATE TABLE Goal_Allocations (
     FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (goal_id) REFERENCES Goals(id),
     FOREIGN KEY (source_account_id) REFERENCES Accounts(id)
+);
+
+-- Table for Roles
+CREATE TABLE Roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE -- e.g., 'ROLE_USER', 'ROLE_ADMIN'
+);
+
+-- Table for Users_Roles (Join Table)
+CREATE TABLE Users_Roles (
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
+    PRIMARY KEY (user_id, role_id), -- Composite primary key
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (role_id) REFERENCES Roles(id)
 );

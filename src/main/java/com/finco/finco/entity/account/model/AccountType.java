@@ -1,6 +1,6 @@
 package com.finco.finco.entity.account.model;
 
-public enum TypeAccount {
+public enum AccountType {
     SAVING,
     CHECKING,
     CREDIT,

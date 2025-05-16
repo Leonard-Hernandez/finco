@@ -7,7 +7,7 @@ public class Account {
     private Long id;
     private Long userId;
     private String name;
-    private TypeAccount type;
+    private AccountType type;
     private Long balance;
     private CurrencyEnum currency;
     private LocalDateTime creationDate;
@@ -17,7 +17,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(Long id, Long userId, String name, TypeAccount type, Long balance, CurrencyEnum currency,
+    public Account(Long id, Long userId, String name, AccountType type, Long balance, CurrencyEnum currency,
             LocalDateTime creationDate, String description, boolean isDefault) {
         this.id = id;
         this.userId = userId;
@@ -54,11 +54,11 @@ public class Account {
         this.name = name;
     }
 
-    public TypeAccount getType() {
+    public AccountType getType() {
         return type;
     }
 
-    public void setType(TypeAccount type) {
+    public void setType(AccountType type) {
         this.type = type;
     }
 
