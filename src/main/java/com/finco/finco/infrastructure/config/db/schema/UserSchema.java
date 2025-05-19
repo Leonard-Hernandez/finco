@@ -1,12 +1,14 @@
 package com.finco.finco.infrastructure.config.db.schema;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,6 +30,9 @@ public class UserSchema {
 
     @Column(name = "registration_Date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime registrationDate;
+
+    @OneToMany(mappedBy = "user")
+    private List<AccountSchema> accounts; 
 
 
 }
