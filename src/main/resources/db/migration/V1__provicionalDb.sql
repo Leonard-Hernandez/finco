@@ -30,7 +30,8 @@ CREATE TABLE Goals (
     deadline DATE,
     description TEXT,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    saved_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00
+    saved_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
 -- Table for Transactions
@@ -74,20 +75,6 @@ CREATE TABLE Liabilities (
     end_date DATE,
     description TEXT,
     FOREIGN KEY (user_id) REFERENCES Users(id)
-);
-
--- Table for Goal Allocations
-CREATE TABLE Goal_Allocations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    goal_id INT NOT NULL,
-    source_account_id INT NOT NULL,
-    allocated_amount DECIMAL(10, 2) NOT NULL,
-    allocation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description TEXT,
-    FOREIGN KEY (user_id) REFERENCES Users(id),
-    FOREIGN KEY (goal_id) REFERENCES Goals(id),
-    FOREIGN KEY (source_account_id) REFERENCES Accounts(id)
 );
 
 -- Table for Roles

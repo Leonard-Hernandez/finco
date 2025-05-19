@@ -10,7 +10,7 @@ public class Transaction {
     private TransactionType type;
     private Long amount;
     private LocalDateTime date;
-    private String Description;
+    private String description;
     private String category;
     private Long goalId;
     private Long transferAccountId;
@@ -27,7 +27,7 @@ public class Transaction {
         this.type = type;
         this.amount = amount;
         this.date = date;
-        Description = description;
+        this.description = description;
         this.category = category;
         this.goalId = goalId;
         this.transferAccountId = transferAccountId;
@@ -82,11 +82,11 @@ public class Transaction {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public String getCategory() {

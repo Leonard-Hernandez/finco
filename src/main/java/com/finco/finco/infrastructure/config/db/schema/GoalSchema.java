@@ -1,15 +1,11 @@
 package com.finco.finco.infrastructure.config.db.schema;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.finco.finco.entity.account.model.AccountType;
-import com.finco.finco.entity.account.model.CurrencyEnum;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,50 +22,45 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "Accounts")
+@Table(name = "Goals")
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountSchema {
+public class GoalSchema {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserSchema user;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private AccountType type;
+    @Column(name = "target_amount", precision = 10, scale = 2, nullable = false)
+    private Long targetAmount;
 
-    @Column(name = "balance", columnDefinition = "DEFAULT 0.00")
-    private Long balance;
+    @Column(name = "deadline")
+    private LocalDate deadLine;
 
-    @Column(name = "currency", 
-                    columnDefinition = "Default 'COP'", 
-                    length = 3)
-    private CurrencyEnum currency;
-
-    @Column(name = "creation_date", 
-                    columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime creationDate;
-
+    @Column(name = "description")
     private String description;
 
-    private boolean isDefault;
+    @Column(name = "creation_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime creationDate;
 
-    @OneToMany(mappedBy = "account")
-     private List<TransactionSchema> transactions;
+    @Column(name = "saved_amount", 
+            precision = 10, scale = 2, 
+            columnDefinition = "DEFAULT 0.00", 
+            nullable = false)
+    private Long savedAmount;
 
-    @OneToMany(mappedBy = "account")
-    private List<TransactionSchema> transferTransactions;
+    @OneToMany(mappedBy = "goal")
+    private List<TransactionSchema> transactions;
 
 }
