@@ -1,2 +1,3 @@
 Actual schema
-![image](https://github.com/user-attachments/assets/68916b77-1248-4a68-bd9f-93c2b8a44ea5)
+![image](https://github.com/user-attachments/assets/c4ab39c3-2cc6-4062-b69c-95451b7dc06f)
+
