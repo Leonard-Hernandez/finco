@@ -2,6 +2,7 @@ package com.finco.finco.infrastructure.config.db.schema;
 
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.transaction.model.TransactionType;
 
 import jakarta.persistence.Column;
@@ -65,6 +66,23 @@ public class TransactionSchema {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transfer_account_id")
-    private AccountSchema transferAccountId;
+    private AccountSchema transferAccount;
+
+    public Transaction toTransaction() {
+        Transaction transaction = new Transaction(
+            this.getId(),
+            this.getUser().getId(),
+            this.getAccount().getId(),
+            this.getType(),
+            this.getAmount(),
+            this.getDate(),
+            this.getDescription(),
+            this.getCategory(),
+            this.getGoal().getId(),
+            this.getTransferAccount().getId()
+        );
+
+        return transaction;
+    }
 
 }

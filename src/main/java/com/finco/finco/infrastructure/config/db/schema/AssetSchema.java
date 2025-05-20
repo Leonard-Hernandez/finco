@@ -2,6 +2,8 @@ package com.finco.finco.infrastructure.config.db.schema;
 
 import java.time.LocalDate;
 
+import com.finco.finco.entity.asset.model.Asset;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -51,5 +53,19 @@ public class AssetSchema {
     private Long interestRate;
 
     private String description;
+
+    public Asset toAsset() {
+        Asset asset = new Asset(
+            this.getId(),
+            this.getUser().getId(),
+            this.getName(),
+            this.getEstimatedValue(),
+            this.getAcquisitionDate(),
+            this.getInterestRate(),
+            this.getDescription()
+        );
+
+        return asset;
+    }
 
 }

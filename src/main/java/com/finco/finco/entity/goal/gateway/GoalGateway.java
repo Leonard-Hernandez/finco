@@ -15,6 +15,6 @@ public interface GoalGateway {
 
     List<Goal> findByUserId(Long id);
 
-    List<Goal> findByUserAndIdNameLike(Long userId, String search);
+    List<Goal> findByUserIdAndNameLike(Long userId, String search);
 
 }

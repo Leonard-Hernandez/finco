@@ -3,6 +3,7 @@ package com.finco.finco.infrastructure.config.db.schema;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.account.model.CurrencyEnum;
 
@@ -71,5 +72,20 @@ public class AccountSchema {
 
     @OneToMany(mappedBy = "account")
     private List<TransactionSchema> transferTransactions;
+
+    public Account toAccount() {
+        Account account = new Account(
+            this.getId(),
+            this.getUser().getId(),
+            this.getName(),
+            this.getType(),
+            this.getBalance(),
+            this.getCurrency(),
+            this.getCreationDate(),
+            this.getDescription(),
+            this.isDefault()
+        );
+        return account;
+    }
 
 }

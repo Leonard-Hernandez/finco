@@ -2,6 +2,8 @@ package com.finco.finco.infrastructure.config.db.schema;
 
 import java.util.List;
 
+import com.finco.finco.entity.role.model.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,4 +38,12 @@ public class RoleSchema {
     @ManyToMany(mappedBy = "roles")
     List<UserSchema> users;
 
+    public Role toRole() {
+        Role role = new Role(
+            this.getId(),
+            this.getName()
+        );
+
+        return role;
+    }
 }

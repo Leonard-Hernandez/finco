@@ -8,6 +8,7 @@ import com.finco.finco.entity.asset.model.Asset;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
 import com.finco.finco.entity.role.model.Role;
+import com.finco.finco.entity.transaction.model.Transaction;
 
 public class User {
 
@@ -22,6 +23,7 @@ public class User {
     private List<Asset> assets;
     private List<Liabilitie> liabilities;
     private List<Role> roles;
+    private List<Transaction> transactions;
 
     public User() {
 
@@ -29,7 +31,7 @@ public class User {
 
     public User(Long id, String name, String email, String password, LocalDateTime registrationDate,
             List<Account> accounts, List<Goal> goals, List<Asset> assets, List<Liabilitie> liabilities,
-            List<Role> roles) {
+            List<Role> roles, List<Transaction> transactions) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -40,6 +42,7 @@ public class User {
         this.assets = assets;
         this.liabilities = liabilities;
         this.roles = roles;
+        this.transactions = transactions;
     }
 
     public Long getId() {
@@ -120,6 +123,45 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        return true;
     }
 
 }
