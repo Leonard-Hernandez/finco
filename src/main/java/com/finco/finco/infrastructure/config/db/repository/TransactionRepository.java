@@ -3,10 +3,12 @@ package com.finco.finco.infrastructure.config.db.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.finco.finco.entity.transaction.model.TransactionType;
 import com.finco.finco.infrastructure.config.db.schema.TransactionSchema;
 
+@Repository
 public interface TransactionRepository extends JpaRepository<TransactionSchema, Long> {
 
     List<TransactionSchema> findByUserId(Long userId);

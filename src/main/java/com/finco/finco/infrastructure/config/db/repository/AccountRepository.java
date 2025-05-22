@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 
+@Repository
 public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
 
     List<AccountSchema> findByUserId(Long userId);
