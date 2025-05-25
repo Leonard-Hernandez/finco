@@ -24,7 +24,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "Goals")
+@Table(name = "goals")
 @Getter
 @Setter
 @ToString

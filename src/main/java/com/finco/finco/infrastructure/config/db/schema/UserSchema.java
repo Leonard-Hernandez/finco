@@ -31,7 +31,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 @Getter
 @Setter
 @ToString
@@ -55,6 +55,9 @@ public class UserSchema {
 
     @Column(name = "registration_Date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime registrationDate;
+
+    @Column(name = "enable", columnDefinition = "DEFAULT 1")
+    private Boolean enable;
 
     @OneToMany(mappedBy = "user")
     private List<AccountSchema> accounts;
@@ -91,6 +94,7 @@ public class UserSchema {
             this.getEmail(),
             this.getPassword(),
             this.getRegistrationDate(),
+            this.getEnable(),
             accounts,
             goals,
             assets,

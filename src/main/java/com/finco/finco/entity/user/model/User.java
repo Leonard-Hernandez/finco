@@ -17,6 +17,7 @@ public class User {
     private String email;
     private String password;
     private LocalDateTime registrationDate;
+    private Boolean enable;
 
     private List<Account> accounts;
     private List<Goal> goals;
@@ -30,13 +31,14 @@ public class User {
     }
 
     public User(Long id, String name, String email, String password, LocalDateTime registrationDate,
-            List<Account> accounts, List<Goal> goals, List<Asset> assets, List<Liabilitie> liabilities,
-            List<Role> roles, List<Transaction> transactions) {
+            Boolean enable, List<Account> accounts, List<Goal> goals, List<Asset> assets, 
+            List<Liabilitie> liabilities, List<Role> roles, List<Transaction> transactions) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.registrationDate = registrationDate;
+        this.enable = enable;
         this.accounts = accounts;
         this.goals = goals;
         this.assets = assets;
@@ -132,6 +134,14 @@ public class User {
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
     }
+
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    } 
 
     @Override
     public int hashCode() {
