@@ -2,8 +2,6 @@ package com.finco.finco.infrastructure.config.db.schema;
 
 import java.time.LocalDate;
 
-import com.finco.finco.entity.liabilitie.model.Liabilitie;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -56,20 +54,5 @@ public class LiabilitieSchema {
     private LocalDate endDate;
 
     private String description;
-
-    public Liabilitie toLiabilitie() {
-        Liabilitie liabilitie = new Liabilitie(
-            this.getId(),
-            this.getUser().getId(),
-            this.getName(),
-            this.getPendingBalance(),
-            this.getInterestRate(),
-            this.getStartDate(),
-            this.getEndDate(),
-            this.getDescription()
-        );
-
-        return liabilitie;
-    }
 
 }

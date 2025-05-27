@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.AccountType;
+import com.finco.finco.entity.user.model.User;
 
 public interface AccountGateway {
 
@@ -14,10 +15,10 @@ public interface AccountGateway {
 
     Optional<Account> findById(Long id);
 
-    List<Account> findbyUserId(Long userId);
+    List<Account> findbyUser(User user);
 
-    List<Account> findByUserIdAndType(Long userId , AccountType type);
+    List<Account> findByUserAndType(User user , AccountType type);
 
-    Long getTotalByUserId(Long userId);
+    Long getTotalByUser(User user);
 
 }

@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.finco.finco.entity.goal.model.Goal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -64,20 +62,5 @@ public class GoalSchema {
 
     @OneToMany(mappedBy = "goal")
     private List<TransactionSchema> transactions;
-
-    public Goal toGoal() {
-        Goal goal = new Goal(
-            this.getId(),
-            this.getUser().getId(),
-            this.getName(),
-            this.getTargetAmount(),
-            this.getDeadLine(),
-            this.getDescription(),
-            this.getCreationDate(),
-            this.getSavedAmount()
-        );
-
-        return goal;
-    }
 
 }

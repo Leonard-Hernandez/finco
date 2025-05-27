@@ -2,35 +2,39 @@ package com.finco.finco.entity.transaction.model;
 
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.goal.model.Goal;
+import com.finco.finco.entity.user.model.User;
+
 public class Transaction {
 
     private Long id;
-    private Long userId;
-    private Long account_id;
+    private User user;
+    private Account account;
     private TransactionType type;
     private Long amount;
     private LocalDateTime date;
     private String description;
     private String category;
-    private Long goalId;
-    private Long transferAccountId;
+    private Goal goal;
+    private Account transferAccount;
 
     public Transaction() {
 
     }
 
-    public Transaction(Long id, Long userId, Long account_id, TransactionType type, Long amount, LocalDateTime date,
-            String description, String category, Long goalId, Long transferAccountId) {
+    public Transaction(Long id, User user, Account account, TransactionType type, Long amount, LocalDateTime date,
+            String description, String category, Goal goal, Account transferAccount) {
         this.id = id;
-        this.userId = userId;
-        this.account_id = account_id;
+        this.user = user;
+        this.account = account;
         this.type = type;
         this.amount = amount;
         this.date = date;
         this.description = description;
         this.category = category;
-        this.goalId = goalId;
-        this.transferAccountId = transferAccountId;
+        this.goal = goal;
+        this.transferAccount = transferAccount;
     }
 
     public Long getId() {
@@ -41,20 +45,20 @@ public class Transaction {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Long getAccount_id() {
-        return account_id;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccount_id(Long account_id) {
-        this.account_id = account_id;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public TransactionType getType() {
@@ -97,20 +101,20 @@ public class Transaction {
         this.category = category;
     }
 
-    public Long getGoalId() {
-        return goalId;
+    public Goal getGoal() {
+        return goal;
     }
 
-    public void setGoalId(Long goalId) {
-        this.goalId = goalId;
+    public void setGoal(Goal goal) {
+        this.goal = goal;
     }
 
-    public Long getTransferAccountId() {
-        return transferAccountId;
+    public Account getTransferAccount() {
+        return transferAccount;
     }
 
-    public void setTransferAccountId(Long transferAccountId) {
-        this.transferAccountId = transferAccountId;
+    public void setTransferAccount(Account transferAccount) {
+        this.transferAccount = transferAccount;
     }
 
     @Override
@@ -118,7 +122,6 @@ public class Transaction {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         return result;
     }
 
@@ -135,11 +138,6 @@ public class Transaction {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
             return false;
         return true;
     }

@@ -2,10 +2,12 @@ package com.finco.finco.entity.asset.model;
 
 import java.time.LocalDate;
 
+import com.finco.finco.entity.user.model.User;
+
 public class Asset {
 
     private Long id;
-    private Long userId;
+    private User user;
     private String name;
     private Long estimatedValue;
     private LocalDate acquisitionDate;
@@ -16,10 +18,10 @@ public class Asset {
 
     }
 
-    public Asset(Long id, Long userId, String name, Long estimatedValue, LocalDate acquisitionDate,
+    public Asset(Long id, User user, String name, Long estimatedValue, LocalDate acquisitionDate,
             Long interestRate, String description) {
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.name = name;
         this.estimatedValue = estimatedValue;
         this.acquisitionDate = acquisitionDate;
@@ -35,12 +37,12 @@ public class Asset {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getName() {
@@ -88,7 +90,6 @@ public class Asset {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         return result;
     }
 
@@ -105,11 +106,6 @@ public class Asset {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
             return false;
         return true;
     }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.finco.finco.entity.asset.model.Asset;
+import com.finco.finco.entity.user.model.User;
 
 public interface AssetGateway {
 
@@ -13,6 +14,8 @@ public interface AssetGateway {
 
     Optional<Asset> findById(Long id);
 
-    List<Asset> findByUserIdAndNameLike(Long userId, String search);
+    List<Asset> findAllByUser(User used);
+
+    List<Asset> findByUserAndNameLike(User user, String search);
 
 }

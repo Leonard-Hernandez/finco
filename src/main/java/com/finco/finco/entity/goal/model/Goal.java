@@ -3,10 +3,12 @@ package com.finco.finco.entity.goal.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.user.model.User;
+
 public class Goal {
 
     private Long id;
-    private Long userId;
+    private User user;
     private String name;
     private Long targetAmount;
     private LocalDate deadLine;
@@ -17,10 +19,10 @@ public class Goal {
     public Goal() {
     };
 
-    public Goal(Long id, Long userId, String name, Long targetAmount, LocalDate deadLine, String description,
+    public Goal(Long id, User user, String name, Long targetAmount, LocalDate deadLine, String description,
             LocalDateTime creationDate, Long savedAmount) {
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.name = name;
         this.targetAmount = targetAmount;
         this.deadLine = deadLine;
@@ -37,12 +39,12 @@ public class Goal {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getName() {
@@ -98,7 +100,6 @@ public class Goal {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         return result;
     }
 
@@ -115,11 +116,6 @@ public class Goal {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
             return false;
         return true;
     }

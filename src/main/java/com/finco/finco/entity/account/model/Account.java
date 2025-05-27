@@ -2,10 +2,12 @@ package com.finco.finco.entity.account.model;
 
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.user.model.User;
+
 public class Account {
 
     private Long id;
-    private Long userId;
+    private User user;
     private String name;
     private AccountType type;
     private Long balance;
@@ -17,10 +19,10 @@ public class Account {
     public Account() {
     }
 
-    public Account(Long id, Long userId, String name, AccountType type, Long balance, CurrencyEnum currency,
+    public Account(Long id, User user, String name, AccountType type, Long balance, CurrencyEnum currency,
             LocalDateTime creationDate, String description, boolean isDefault) {
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.name = name;
         this.type = type;
         this.balance = balance;
@@ -38,12 +40,12 @@ public class Account {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getName() {
@@ -107,7 +109,6 @@ public class Account {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         return result;
     }
 
@@ -124,11 +125,6 @@ public class Account {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
             return false;
         return true;
     }

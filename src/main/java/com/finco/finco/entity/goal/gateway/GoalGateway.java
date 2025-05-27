@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.finco.finco.entity.goal.model.Goal;
+import com.finco.finco.entity.user.model.User;
 
 public interface GoalGateway {
 
@@ -13,8 +14,8 @@ public interface GoalGateway {
 
     Optional<Goal> findById(Long id);
 
-    List<Goal> findByUserId(Long id);
+    List<Goal> findAllByUser(User user);
 
-    List<Goal> findByUserIdAndNameLike(Long userId, String search);
+    List<Goal> findAllByUserAndNameLike(User user, String search);
 
 }

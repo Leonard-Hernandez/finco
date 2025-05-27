@@ -2,10 +2,12 @@ package com.finco.finco.entity.liabilitie.model;
 
 import java.time.LocalDate;
 
+import com.finco.finco.entity.user.model.User;
+
 public class Liabilitie {
 
     private Long id;
-    private Long userId;
+    private User user;
     private Long name;
     private Long pendingBalance;
     private Long interestRate;
@@ -17,10 +19,10 @@ public class Liabilitie {
 
     }
 
-    public Liabilitie(Long id, Long userId, Long name, Long pendingBalance, Long interestRate, LocalDate startDate,
+    public Liabilitie(Long id, User user, Long name, Long pendingBalance, Long interestRate, LocalDate startDate,
             LocalDate endDate, String description) {
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.name = name;
         this.pendingBalance = pendingBalance;
         this.interestRate = interestRate;
@@ -37,12 +39,12 @@ public class Liabilitie {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getName() {
@@ -98,7 +100,6 @@ public class Liabilitie {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         return result;
     }
 
@@ -115,11 +116,6 @@ public class Liabilitie {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
             return false;
         return true;
     }
