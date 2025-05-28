@@ -119,5 +119,4 @@ public class Goal {
             return false;
         return true;
     }
-
 }
