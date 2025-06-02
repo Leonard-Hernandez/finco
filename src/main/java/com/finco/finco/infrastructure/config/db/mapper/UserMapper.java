@@ -3,6 +3,7 @@ package com.finco.finco.infrastructure.config.db.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.account.model.Account;
@@ -12,6 +13,12 @@ import com.finco.finco.entity.liabilitie.model.Liabilitie;
 import com.finco.finco.entity.role.model.Role;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
+import com.finco.finco.infrastructure.config.db.schema.AssetSchema;
+import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
+import com.finco.finco.infrastructure.config.db.schema.LiabilitieSchema;
+import com.finco.finco.infrastructure.config.db.schema.RoleSchema;
+import com.finco.finco.infrastructure.config.db.schema.TransactionSchema;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
@@ -99,6 +106,55 @@ public class UserMapper {
         user.setEnable(userSchema.getEnable());
 
         return user;
+    }
+
+    public UserSchema toUserSchema(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        UserSchema userSchema = new UserSchema();
+
+        userSchema.setId(user.getId());
+        userSchema.setName(user.getName());
+        userSchema.setEmail(user.getEmail());
+        userSchema.setPassword(user.getPassword());
+        userSchema.setRegistrationDate(user.getRegistrationDate());
+        userSchema.setEnable(user.getEnable());
+
+        List<AccountSchema> accounts = user.getAccounts() != null
+                ? user.getAccounts().stream().map(accountMapper::toAccountSchema).collect(Collectors.toList())
+                : List.of();
+
+        List<GoalSchema> goals = user.getGoals() != null
+                ? user.getGoals().stream().map(goalMapper::toGoalSchema).collect(Collectors.toList())
+                : List.of();
+
+        List<AssetSchema> assets = user.getAssets() != null
+                ? user.getAssets().stream().map(assetMapper::toAssetSchema).collect(Collectors.toList())
+                : List.of();
+
+        List<LiabilitieSchema> liabilities = user.getLiabilities() != null
+                ? user.getLiabilities().stream().map(liabilitieMapper::toLiabilitieSchema).collect(Collectors.toList())
+                : List.of();
+
+        List<RoleSchema> roles = user.getRoles() != null
+                ? user.getRoles().stream().map(roleMapper::toRoleSchema).collect(Collectors.toList())
+                : List.of();
+
+        List<TransactionSchema> transactions = user.getTransactions() != null
+                ? user.getTransactions().stream().map(transactionMapper::toTransactionSchema)
+                        .collect(Collectors.toList())
+                : List.of();
+
+        userSchema.setAccounts(accounts);
+        userSchema.setGoals(goals);
+        userSchema.setAssets(assets);
+        userSchema.setLiabilities(liabilities);
+        userSchema.setRoles(roles);
+        userSchema.setTransactions(transactions);
+
+        return userSchema;
     }
 
 }

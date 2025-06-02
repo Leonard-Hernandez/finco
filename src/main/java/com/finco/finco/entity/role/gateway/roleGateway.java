@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.finco.finco.entity.role.model.Role;
 
-public interface roleGateway {
+public interface RoleGateway {
 
     Optional<Role> findByName(String name);
 

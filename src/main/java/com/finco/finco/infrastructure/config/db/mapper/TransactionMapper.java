@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.config.db.mapper;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.transaction.model.Transaction;
@@ -24,7 +25,7 @@ public class TransactionMapper {
     private final AccountRepository accountRepository;
     private final GoalRepository goalRepository;
 
-    public TransactionMapper(UserMapper userMapper, AccountMapper accountMapper, GoalMapper goalMapper,
+    public TransactionMapper(@Lazy UserMapper userMapper, AccountMapper accountMapper, GoalMapper goalMapper,
             UserRepository userRepository, AccountRepository accountRepository, GoalRepository goalRepository) {
         this.userMapper = userMapper;
         this.accountMapper = accountMapper;

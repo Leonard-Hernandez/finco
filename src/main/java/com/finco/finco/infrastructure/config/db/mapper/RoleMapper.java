@@ -15,8 +15,8 @@ public class RoleMapper {
 
         Role role = new Role();
 
-        role.setId(role.getId());
-        role.setName(role.getName());
+        role.setId(roleSchema.getId());
+        role.setName(roleSchema.getName());
 
         return role;
     }

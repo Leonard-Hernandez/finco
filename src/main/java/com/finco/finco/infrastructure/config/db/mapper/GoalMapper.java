@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.config.db.mapper;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.goal.model.Goal;
@@ -14,7 +15,7 @@ public class GoalMapper {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
 
-    public GoalMapper(UserMapper usermMapper, UserRepository userRepository) {
+    public GoalMapper(@Lazy UserMapper usermMapper, UserRepository userRepository) {
         this.userMapper = usermMapper;
         this.userRepository = userRepository;
     }

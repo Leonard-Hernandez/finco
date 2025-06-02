@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.config.db.mapper;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
@@ -14,7 +15,7 @@ public class LiabilitieMapper {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
 
-    public LiabilitieMapper(UserMapper userMapper, UserRepository userRepository) {
+    public LiabilitieMapper(@Lazy UserMapper userMapper, UserRepository userRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
     }
