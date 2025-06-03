@@ -12,11 +12,15 @@ public class UpdateUserUseCase {
         this.userGateway = userGateway;
     }
 
-    public User execute(IUserUpdateData userData) {
+    public User execute(Long id, IUserUpdateData userData) {
         User user = new User();
-        user.setId(userData.id());
-        user.setName(userData.name());
-        user.setEnable(userData.enable());
+        user.setId(id);
+        if (userData.name() != null && !userData.name().isEmpty()) {
+            user.setName(userData.name());            
+        }
+        if (userData.enable() != null) {
+            user.setEnable(userData.enable());
+        }
 
         return userGateway.update(user);
     }
