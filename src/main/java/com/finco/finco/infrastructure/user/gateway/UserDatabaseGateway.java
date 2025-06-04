@@ -36,16 +36,8 @@ public class UserDatabaseGateway implements UserGateway {
 
     @Override
     public User update(User user) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        UserSchema authUser = userRepository.findByEmail(email).get();
-
-        if (!authUser.getId().equals(user.getId())) {
-            throw new RuntimeException("User not found");
-        }
-
         
+        verifyUserAuth(user);  
 
         return userMapper.toUser(userRepository.save(userMapper.toUserSchema(user)));
     }
@@ -58,6 +50,17 @@ public class UserDatabaseGateway implements UserGateway {
     @Override
     public Optional<User> findById(Long id) {
         return userRepository.findById(id).map(userMapper::toUser);
+    }
+
+    public void verifyUserAuth(User user) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        UserSchema authUser = userRepository.findByEmail(email).get();
+
+        if (!authUser.getId().equals(user.getId())) {
+            throw new RuntimeException("User not found");
+        }
     }
 
 }

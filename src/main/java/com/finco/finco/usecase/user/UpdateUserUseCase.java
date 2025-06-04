@@ -13,8 +13,9 @@ public class UpdateUserUseCase {
     }
 
     public User execute(Long id, IUserUpdateData userData) {
-        User user = new User();
-        user.setId(id);
+        
+        User user = userGateway.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
         if (userData.name() != null && !userData.name().isEmpty()) {
             user.setName(userData.name());            
         }
