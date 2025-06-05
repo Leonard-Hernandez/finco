@@ -18,7 +18,7 @@ CREATE TABLE accounts (
     currency VARCHAR(3) NOT NULL DEFAULT 'COP',
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     description TEXT,
-    isDefault BOOLEAN,
+    is_Default BOOLEAN,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

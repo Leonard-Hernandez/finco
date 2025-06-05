@@ -36,11 +36,11 @@ public class TransactionSchema {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private UserSchema user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private AccountSchema account;
 
@@ -48,7 +48,7 @@ public class TransactionSchema {
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-    @Column(name = "account", precision = 10, scale = 2, nullable = false)
+    @Column(name = "amount", precision = 10, scale = 2, nullable = false)
     private Long amount;
 
     @Column(name = "date", 
@@ -59,11 +59,11 @@ public class TransactionSchema {
 
     private String category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "goal_id")
     private GoalSchema goal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "transfer_account_id")
     private AccountSchema transferAccount;
 
