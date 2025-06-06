@@ -1,4 +1,4 @@
-package com.finco.finco.infrastructure.error.controller;
+package com.finco.finco.infrastructure.config.error;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class ExceptionHandlerController {
     @ExceptionHandler({UserNotFoundException.class, RoleNotFoundException.class})
     private ResponseEntity<Map<String, String>> notFoundException(EbusinessException ex) {
         Map<String, String> body = new HashMap<>();
-        body.put("error", ex.getClass().toString());
+        body.put("error", ex.getClass().getSimpleName());
         body.put("message", ex.getMessage());
         body.put("datetime", LocalDateTime.now().toString());
 
