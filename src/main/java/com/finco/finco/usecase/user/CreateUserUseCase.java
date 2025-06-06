@@ -2,6 +2,7 @@ package com.finco.finco.usecase.user;
 
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.role.exception.RoleNotFoundException;
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
@@ -26,7 +27,7 @@ public class CreateUserUseCase {
         user.setEnable(true);
         user.setRegistrationDate(LocalDateTime.now());
 
-        user.setRoles(List.of(roleGateway.findByName("ROLE_USER").orElseThrow(() -> new RuntimeException("Role not found"))));
+        user.setRoles(List.of(roleGateway.findByName("ROLE_USER").orElseThrow(() -> new RoleNotFoundException())));
 
         return userGateway.create(user);
     }

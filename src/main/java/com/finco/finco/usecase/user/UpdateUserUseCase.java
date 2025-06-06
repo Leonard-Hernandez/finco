@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.user;
 
+import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.usecase.user.dto.IUserUpdateData;
@@ -14,7 +15,7 @@ public class UpdateUserUseCase {
 
     public User execute(Long id, IUserUpdateData userData) {
         
-        User user = userGateway.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userGateway.findById(id).orElseThrow(() -> new UserNotFoundException());
 
         if (userData.name() != null && !userData.name().isEmpty()) {
             user.setName(userData.name());            

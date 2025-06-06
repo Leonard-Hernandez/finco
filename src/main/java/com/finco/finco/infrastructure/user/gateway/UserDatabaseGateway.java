@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.mapper.UserMapper;
@@ -59,7 +59,7 @@ public class UserDatabaseGateway implements UserGateway {
         UserSchema authUser = userRepository.findByEmail(email).get();
 
         if (!authUser.getId().equals(user.getId())) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
         }
     }
 
