@@ -3,6 +3,8 @@ package com.finco.finco.infrastructure.config.db.schema;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.finco.finco.infrastructure.user.validation.unique.UniqueEmail;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,6 +17,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,12 +41,16 @@ public class UserSchema {
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @NotBlank
     private String name;
 
     @Column(name = "email", unique = true, nullable = false)
+    @Email
+    @UniqueEmail
     private String email;
 
     @Column(name = "password", nullable = false)
+    @NotBlank
     private String password;
 
     @Column(name = "registration_Date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

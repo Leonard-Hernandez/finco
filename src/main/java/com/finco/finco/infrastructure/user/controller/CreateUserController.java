@@ -8,6 +8,8 @@ import com.finco.finco.infrastructure.user.dto.UserPublicData;
 import com.finco.finco.infrastructure.user.dto.UserRegistrationData;
 import com.finco.finco.usecase.user.CreateUserUseCase;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class CreateUserController {
 
@@ -18,7 +20,7 @@ public class CreateUserController {
     }
 
     @PostMapping("/user")
-    public UserPublicData createUser(@RequestBody UserRegistrationData data) {
+    public UserPublicData createUser(@RequestBody @Valid UserRegistrationData data) {
 
         return new UserPublicData(createUserUseCase.execute(data));
 
