@@ -16,7 +16,7 @@ public class GetUserController {
         this.getUserUserCase = getUserController;
     }
 
-    @GetMapping("/user{id}")
+    @GetMapping("/user/{id}")
     public UserPublicData getUser(@PathVariable long id) {
 
         return new UserPublicData(getUserUserCase.execute(id));

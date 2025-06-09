@@ -11,6 +11,7 @@ import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.role.gateway.RoleDatabaseGateway;
 import com.finco.finco.infrastructure.user.gateway.UserDatabaseGateway;
 import com.finco.finco.usecase.user.CreateUserUseCase;
+import com.finco.finco.usecase.user.GetUserUseCase;
 import com.finco.finco.usecase.user.UpdateUserUseCase;
 
 @Configuration
@@ -27,6 +28,11 @@ public class AppConfig {
     UpdateUserUseCase updateUserUseCase(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         UserDatabaseGateway userGateway = new UserDatabaseGateway(userRepository, userMapper, passwordEncoder);
         return new UpdateUserUseCase(userGateway);
+    }
+
+    @Bean GetUserUseCase getUserUseCase(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+        UserDatabaseGateway userGateway = new UserDatabaseGateway(userRepository, userMapper, passwordEncoder);
+        return new GetUserUseCase(userGateway);
     }
 
 }
