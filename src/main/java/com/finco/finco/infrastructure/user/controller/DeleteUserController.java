@@ -1,0 +1,24 @@
+package com.finco.finco.infrastructure.user.controller;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.finco.finco.infrastructure.user.dto.UserPublicData;
+import com.finco.finco.usecase.user.DeleteUserUseCase;
+
+@RestController
+public class DeleteUserController {
+
+    private DeleteUserUseCase deleteUserUseCase;
+
+    public DeleteUserController(DeleteUserUseCase deleteUserUseCase) {
+        this.deleteUserUseCase = deleteUserUseCase;
+    }
+
+    @DeleteMapping("/user/{id}")
+    public UserPublicData deleteUser(@PathVariable Long id) {
+        return new UserPublicData(deleteUserUseCase.excute(id));
+    }
+
+}

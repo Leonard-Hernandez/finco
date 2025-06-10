@@ -12,7 +12,7 @@ public class GetUserController {
 
     private final GetUserUseCase getUserUserCase;
 
-    public GetUserController(GetUserUseCase getUserController){
+    public GetUserController(GetUserUseCase getUserController) {
         this.getUserUserCase = getUserController;
     }
 
