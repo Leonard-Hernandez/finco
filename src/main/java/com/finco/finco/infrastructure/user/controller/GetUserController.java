@@ -1,7 +1,9 @@
 package com.finco.finco.infrastructure.user.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finco.finco.infrastructure.user.dto.UserPublicData;
@@ -17,6 +19,7 @@ public class GetUserController {
     }
 
     @GetMapping("/user/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public UserPublicData getUser(@PathVariable long id) {
 
         return new UserPublicData(getUserUserCase.execute(id));
