@@ -11,6 +11,7 @@ import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.mapper.UserMapper;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
+import com.finco.finco.infrastructure.config.db.schema.RoleSchema;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 public class UserDatabaseGateway implements UserGateway {
@@ -27,6 +28,8 @@ public class UserDatabaseGateway implements UserGateway {
 
     @Override
     public User create(User user) {
+
+        verifyUserAuth(user);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -61,23 +64,20 @@ public class UserDatabaseGateway implements UserGateway {
         String email = auth.getName();
 
         UserSchema authUser = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        
+        Optional<RoleSchema> admin = authUser.getRoles().stream().filter(role -> 
+            "ROLE_ADMIN".equals(role.getName())
+        ).findFirst();
 
-        if (!authUser.getId().equals(user.getId())) {
+        if (!authUser.getId().equals(user.getId()) || !admin.isPresent()) {
             throw new UserNotFoundException();
         }
     }
 
     public void verifyUserAuth(Long id) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        UserSchema authUser = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-
         User user = userMapper.toLigthUser(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
 
-        if (!authUser.getId().equals(user.getId())) {
-            throw new UserNotFoundException();
-        }
+        verifyUserAuth(user);
     }
 
 }

@@ -3,7 +3,6 @@ package com.finco.finco.infrastructure.config.db.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.account.model.Account;
