@@ -2,10 +2,16 @@ package com.finco.finco.infrastructure.user.gateway;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.ScrollPosition.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
@@ -78,6 +84,30 @@ public class UserDatabaseGateway implements UserGateway {
         User user = userMapper.toLigthUser(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
 
         verifyUserAuth(user);
+    }
+
+    @Override
+    public PagedResult<User> findAll(PageRequest pageRequest) {
+        Sort sort = pageRequest.getSortBy()
+        .map(sortBy -> {
+            Sort.Direction direction = pageRequest.getSortDirection()
+                                                .filter(d -> d.equalsIgnoreCase("desc"))
+                                                .map(d -> Sort.Direction.DESC)
+                                                .orElse(Sort.Direction.ASC);
+            return Sort.by(direction, sortBy);
+        })
+        .orElse(Sort.unsorted());
+
+        Pageable springPageable = org.springframework.data.domain.PageRequest.of(
+        pageRequest.getPageNumber(),
+        pageRequest.getPageSize(),
+        sort
+        );
+
+        Page<UserSchema> userSchemaPage = userRepository.findAll(springPageable);
+
+        return userMapper.toUserPagedResult(userSchemaPage, pageRequest); // Nuevo método en mapper
+
     }
 
 }

@@ -13,6 +13,7 @@ import com.finco.finco.infrastructure.user.gateway.UserDatabaseGateway;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
 import com.finco.finco.usecase.user.CreateUserUseCase;
 import com.finco.finco.usecase.user.DeleteUserUseCase;
+import com.finco.finco.usecase.user.GetAllUserUseCase;
 import com.finco.finco.usecase.user.GetUserUseCase;
 import com.finco.finco.usecase.user.UpdateUserUseCase;
 
@@ -49,6 +50,12 @@ public class AppConfig {
         return new GetUserUseCase(userGateway);
     }
 
+    @Bean
+    GetAllUserUseCase getAllUserUseCase(UserRepository userRepository, UserMapper userMapper,
+    PasswordEncoder passwordEncoder) {
+        UserDatabaseGateway userGateway = new UserDatabaseGateway(userRepository, userMapper, passwordEncoder);
+        return new GetAllUserUseCase(userGateway);
+    }
     @Bean
     DeleteUserUseCase deleteUserUseCase(UserRepository userRepository, UserMapper userMapper,
             PasswordEncoder passwordEncoder) {

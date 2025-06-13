@@ -3,12 +3,15 @@ package com.finco.finco.infrastructure.config.db.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.asset.model.Asset;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.role.model.Role;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.user.model.User;
@@ -154,6 +157,28 @@ public class UserMapper {
         userSchema.setTransactions(transactions);
 
         return userSchema;
+    }
+
+    public PagedResult<User> toUserPagedResult(Page<UserSchema> userSchemaPage, PageRequest pageRequest) {
+        if (userSchemaPage == null) {
+            return PagedResult.empty(pageRequest);
+        }
+
+        List<User> userList = userSchemaPage.getContent().stream()
+                                            .map(this::toLigthUser)
+                                            .collect(Collectors.toList());
+
+        return new PagedResult<>(
+            userList,
+            userSchemaPage.getTotalElements(),
+            userSchemaPage.getTotalPages(),
+            userSchemaPage.getNumber(),
+            userSchemaPage.getSize(),
+            userSchemaPage.isFirst(),
+            userSchemaPage.isLast(),
+            userSchemaPage.hasNext(),
+            userSchemaPage.hasPrevious()
+        );
     }
 
 }

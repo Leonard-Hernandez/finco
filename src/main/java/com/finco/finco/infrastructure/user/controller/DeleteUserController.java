@@ -12,7 +12,7 @@ import com.finco.finco.usecase.user.DeleteUserUseCase;
 @RestController
 public class DeleteUserController {
 
-    private DeleteUserUseCase deleteUserUseCase;
+    private final DeleteUserUseCase deleteUserUseCase;
 
     public DeleteUserController(DeleteUserUseCase deleteUserUseCase) {
         this.deleteUserUseCase = deleteUserUseCase;
