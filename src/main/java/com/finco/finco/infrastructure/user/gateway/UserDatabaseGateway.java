@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.ScrollPosition.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,27 +64,6 @@ public class UserDatabaseGateway implements UserGateway {
         return userRepository.findById(id).map(userMapper::toUser);
     }
 
-    public void verifyUserAuth(User user) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        UserSchema authUser = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        
-        Optional<RoleSchema> admin = authUser.getRoles().stream().filter(role -> 
-            "ROLE_ADMIN".equals(role.getName())
-        ).findFirst();
-
-        if (!authUser.getId().equals(user.getId()) || !admin.isPresent()) {
-            throw new UserNotFoundException();
-        }
-    }
-
-    public void verifyUserAuth(Long id) {
-        User user = userMapper.toLigthUser(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
-
-        verifyUserAuth(user);
-    }
-
     @Override
     public PagedResult<User> findAll(PageRequest pageRequest) {
         Sort sort = pageRequest.getSortBy()
@@ -108,6 +86,28 @@ public class UserDatabaseGateway implements UserGateway {
 
         return userMapper.toUserPagedResult(userSchemaPage, pageRequest); // Nuevo método en mapper
 
+    }
+
+    public void verifyUserAuth(User user) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        UserSchema authUser = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        
+        Optional<RoleSchema> admin = authUser.getRoles().stream().filter(role -> 
+            "ROLE_ADMIN".equals(role.getName())
+        ).findFirst();
+
+        if (!authUser.getId().equals(user.getId()) && !admin.isPresent()) {
+            throw new UserNotFoundException();
+        }
+        
+    }
+
+    public void verifyUserAuth(Long id) {
+        User user = userMapper.toLigthUser(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
+
+        verifyUserAuth(user);
     }
 
 }
