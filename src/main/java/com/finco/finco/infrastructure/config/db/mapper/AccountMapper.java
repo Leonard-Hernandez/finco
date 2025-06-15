@@ -85,7 +85,7 @@ public class AccountMapper {
         accountSchema.setCurrency(account.getCurrency());
         accountSchema.setCreationDate(account.getCreationDate());
         accountSchema.setDescription(account.getDescription());
-        accountSchema.setDefault(accountSchema.isDefault());
+        accountSchema.setDefault(account.isDefault());
 
         return accountSchema;
 

@@ -56,6 +56,7 @@ public class AccountSchema {
     @Column(name = "currency", 
                     columnDefinition = "Default 'COP'", 
                     length = 3)
+    @Enumerated(EnumType.STRING)
     private CurrencyEnum currency;
 
     @Column(name = "creation_date", 

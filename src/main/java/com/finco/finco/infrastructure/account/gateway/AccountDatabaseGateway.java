@@ -22,7 +22,7 @@ public class AccountDatabaseGateway implements AccountGateway{
 
     @Override
     public Account create(Account account) {
-        return accountMapper.toAccountWithoutUser(accountRepository.save(accountMapper.toAccountSchema(account)));
+        return accountMapper.toAccount(accountRepository.save(accountMapper.toAccountSchema(account)));
     }
 
     @Override
