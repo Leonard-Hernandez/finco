@@ -2,12 +2,15 @@ package com.finco.finco.infrastructure.role.gateway;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.role.model.Role;
 import com.finco.finco.infrastructure.config.db.mapper.RoleMapper;
 import com.finco.finco.infrastructure.config.db.repository.RoleRepository;
 import com.finco.finco.infrastructure.config.db.schema.RoleSchema;
 
+@Component
 public class RoleDatabaseGateway implements RoleGateway{
 
     private final RoleRepository roleRepository;

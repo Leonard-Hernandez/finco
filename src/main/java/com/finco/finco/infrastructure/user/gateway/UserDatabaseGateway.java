@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
@@ -19,6 +20,7 @@ import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.RoleSchema;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
+@Component
 public class UserDatabaseGateway implements UserGateway {
 
     private final UserRepository userRepository;
@@ -33,8 +35,6 @@ public class UserDatabaseGateway implements UserGateway {
 
     @Override
     public User create(User user) {
-
-        verifyUserAuth(user);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 

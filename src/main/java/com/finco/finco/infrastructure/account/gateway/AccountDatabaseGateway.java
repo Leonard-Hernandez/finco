@@ -3,6 +3,8 @@ package com.finco.finco.infrastructure.account.gateway;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.AccountType;
@@ -10,6 +12,7 @@ import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.mapper.AccountMapper;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 
+@Component
 public class AccountDatabaseGateway implements AccountGateway{
 
     private final AccountRepository accountRepository;
