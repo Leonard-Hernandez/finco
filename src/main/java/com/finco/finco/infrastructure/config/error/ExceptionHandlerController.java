@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.finco.finco.entity.EbusinessException;
 import com.finco.finco.entity.role.exception.RoleNotFoundException;
+import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 
 @RestControllerAdvice
@@ -41,6 +42,16 @@ public class ExceptionHandlerController {
         }
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(AccessDeniedBusinessException.class)
+    public ResponseEntity<Map<String, String>> accessDeniedException(AccessDeniedBusinessException ex) {
+        Map<String, String> body = new HashMap<>();
+        body.put("error", ex.getClass().getSimpleName());
+        body.put("message", ex.getMessage());
+        body.put("datetime", LocalDateTime.now().toString());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(body);
     }
 
 }

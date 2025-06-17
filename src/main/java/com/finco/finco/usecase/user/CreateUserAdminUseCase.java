@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import com.finco.finco.entity.role.exception.RoleNotFoundException;
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.role.model.Role;
+import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
+import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.usecase.user.dto.IUserRegistrationData;
@@ -14,13 +16,19 @@ public class CreateUserAdminUseCase {
 
     private final UserGateway userGateway;
     private final RoleGateway roleGateway;
+    private final AuthGateway authGateway;
 
-    public CreateUserAdminUseCase(UserGateway userGateway, RoleGateway roleGateway) {
+    public CreateUserAdminUseCase(UserGateway userGateway, RoleGateway roleGateway, AuthGateway authGateway) {
         this.userGateway = userGateway;
         this.roleGateway = roleGateway;
+        this.authGateway = authGateway;
     }
 
     public User execute(IUserRegistrationData userData) {
+        if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
+            throw new AccessDeniedBusinessException();
+        }
+
         User user = new User();
         user.setName(userData.name());
         user.setEmail(userData.email());

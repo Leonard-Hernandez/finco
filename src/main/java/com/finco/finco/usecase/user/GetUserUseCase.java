@@ -1,18 +1,22 @@
 package com.finco.finco.usecase.user;
 
+import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
 
 public class GetUserUseCase {
 
-    private UserGateway userGateway;
+    private final UserGateway userGateway;
+    private final AuthGateway authGateway;
 
-    public GetUserUseCase(UserGateway userGateway) {
+    public GetUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
         this.userGateway = userGateway;
+        this.authGateway = authGateway;
     }
 
     public User execute(Long id) {
+        authGateway.verifyOwnershipOrAdmin(id);
         return userGateway.findById(id).orElseThrow(UserNotFoundException::new);
     }
 

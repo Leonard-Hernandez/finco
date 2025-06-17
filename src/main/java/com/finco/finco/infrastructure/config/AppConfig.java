@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.role.gateway.RoleGateway;
+import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
@@ -25,35 +26,35 @@ public class AppConfig {
     }
 
     @Bean
-    CreateUserAdminUseCase createUserAdminUserCase(UserGateway userGateway, RoleGateway roleGateway) {
-        return new CreateUserAdminUseCase(userGateway, roleGateway);
+    CreateUserAdminUseCase createUserAdminUserCase(UserGateway userGateway, RoleGateway roleGateway, AuthGateway authGateway) {
+        return new CreateUserAdminUseCase(userGateway, roleGateway, authGateway);
     }
 
     @Bean
-    UpdateUserUseCase updateUserUseCase(UserGateway userGateway) {
-        return new UpdateUserUseCase(userGateway);
+    UpdateUserUseCase updateUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
+        return new UpdateUserUseCase(userGateway, authGateway);
     }
 
     @Bean
-    GetUserUseCase getUserUseCase(UserGateway userGateway) {
-        return new GetUserUseCase(userGateway);
+    GetUserUseCase getUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
+        return new GetUserUseCase(userGateway, authGateway);
     }
 
     @Bean
-    GetAllUserUseCase getAllUserUseCase(UserGateway userGateway) {
-        return new GetAllUserUseCase(userGateway);
+    GetAllUserUseCase getAllUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
+        return new GetAllUserUseCase(userGateway, authGateway);
     }
 
     @Bean
-    DeleteUserUseCase deleteUserUseCase(UserGateway userGateway) {
-        return new DeleteUserUseCase(userGateway);
+    DeleteUserUseCase deleteUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
+        return new DeleteUserUseCase(userGateway, authGateway);
     }
 
     // Accounts beans
 
     @Bean
-    CreateAccountUseCase createAccountUseCase(UserGateway userGateway, AccountGateway accountGateway) {
-        return new CreateAccountUseCase(accountGateway, userGateway);
+    CreateAccountUseCase createAccountUseCase(UserGateway userGateway, AccountGateway accountGateway, AuthGateway authGateway) {
+        return new CreateAccountUseCase(accountGateway, userGateway, authGateway);
     }
 
 }

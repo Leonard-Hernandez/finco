@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
@@ -13,13 +14,17 @@ public class CreateAccountUseCase {
 
     private AccountGateway accountGateway;
     private UserGateway userGateway;
+    private AuthGateway authGateway;
 
-    public CreateAccountUseCase(AccountGateway accountGateway, UserGateway userGateway) {
+    public CreateAccountUseCase(AccountGateway accountGateway, UserGateway userGateway, AuthGateway authGateway) {
         this.accountGateway = accountGateway;
         this.userGateway = userGateway;
+        this.authGateway = authGateway;
     }
 
     public Account execute(IAccountRegistrationData data) {
+
+        authGateway.verifyOwnershipOrAdmin(data.userId());
 
         User user = userGateway.findById(data.userId()).orElseThrow(UserNotFoundException::new);
 
