@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
@@ -29,9 +30,9 @@ public class AccountDatabaseGateway implements AccountGateway{
     }
 
     @Override
+    @Transactional
     public Account update(Account account) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        return accountMapper.toAccount(accountRepository.save(accountMapper.toAccountSchema(account)));
     }
 
     @Override
@@ -42,8 +43,7 @@ public class AccountDatabaseGateway implements AccountGateway{
 
     @Override
     public Optional<Account> findById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        return accountRepository.findById(id).map(accountMapper::toAccount);
     }
 
     @Override

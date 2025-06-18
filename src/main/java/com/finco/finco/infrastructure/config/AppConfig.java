@@ -8,6 +8,7 @@ import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
+import com.finco.finco.usecase.account.UpdateAccountUseCase;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
 import com.finco.finco.usecase.user.CreateUserUseCase;
 import com.finco.finco.usecase.user.DeleteUserUseCase;
@@ -55,6 +56,11 @@ public class AppConfig {
     @Bean
     CreateAccountUseCase createAccountUseCase(UserGateway userGateway, AccountGateway accountGateway, AuthGateway authGateway) {
         return new CreateAccountUseCase(accountGateway, userGateway, authGateway);
+    }
+
+    @Bean
+    UpdateAccountUseCase UpdateAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
+        return new UpdateAccountUseCase(accountGateway, authGateway);
     }
 
 }

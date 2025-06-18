@@ -7,9 +7,8 @@ public interface IAccountUpdateData {
 
     String name();
     AccountType type();
-    Long balance();
     CurrencyEnum currency();
     String description();
-    boolean isDefault();
+    Boolean isDefault();
 
 }

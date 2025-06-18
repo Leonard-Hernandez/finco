@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -72,5 +73,9 @@ public class AccountSchema {
 
     @OneToMany(mappedBy = "account")
     private List<TransactionSchema> transferTransactions;
+
+    @Version
+    @Column(name = "version")
+    private int version;
 
 }
