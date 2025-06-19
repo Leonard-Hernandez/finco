@@ -76,6 +76,6 @@ public class AccountSchema {
 
     @Version
     @Column(name = "version")
-    private int version;
+    private Long version;
 
 }
