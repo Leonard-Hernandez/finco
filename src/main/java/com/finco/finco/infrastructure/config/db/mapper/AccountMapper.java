@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
@@ -14,10 +15,12 @@ public class AccountMapper {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository; 
 
-    public AccountMapper(@Lazy UserMapper userMapper, UserRepository userRepository) {
+    public AccountMapper(@Lazy UserMapper userMapper, UserRepository userRepository, AccountRepository accountRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
     public Account toAccount(AccountSchema accountSchema) {
@@ -86,6 +89,10 @@ public class AccountMapper {
         accountSchema.setCreationDate(account.getCreationDate());
         accountSchema.setDescription(account.getDescription());
         accountSchema.setDefault(account.isDefault());
+
+        Long version = accountRepository.getVersionByAccountId(account.getId());
+
+        accountSchema.setVersion(version);
 
         return accountSchema;
 

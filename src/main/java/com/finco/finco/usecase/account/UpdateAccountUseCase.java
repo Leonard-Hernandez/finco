@@ -10,6 +10,8 @@ public class UpdateAccountUseCase {
 
     private final AccountGateway accountGateway;
     private final AuthGateway authGateway;
+   
+    private SL
 
     public UpdateAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
         this.accountGateway = accountGateway;

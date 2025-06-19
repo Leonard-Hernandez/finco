@@ -19,4 +19,7 @@ public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
     @Query("SELECT SUM(a.balance) FROM AccountSchema a WHERE a.user.id = :userId")
     Long getTotalByUserId(Long userId);
 
+    @Query("SELECT a.version FROM AccountSchema a WHERE a.id = :id")
+    Long getVersionByAccountId(Long id);
+
 }
