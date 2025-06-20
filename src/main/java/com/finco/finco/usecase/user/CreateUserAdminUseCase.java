@@ -2,6 +2,7 @@ package com.finco.finco.usecase.user;
 
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.role.exception.RoleNotFoundException;
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.role.model.Role;
@@ -24,6 +25,7 @@ public class CreateUserAdminUseCase {
         this.authGateway = authGateway;
     }
 
+    @TransactionalDomainAnnotation()
     public User execute(IUserRegistrationData userData) {
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
             throw new AccessDeniedBusinessException();

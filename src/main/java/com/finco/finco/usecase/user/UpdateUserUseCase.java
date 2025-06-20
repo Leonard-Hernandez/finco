@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.user;
 
+import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.entity.user.gateway.UserGateway;
@@ -16,6 +17,7 @@ public class UpdateUserUseCase {
         this.authGateway = authGateway;
     }
 
+    @TransactionalDomainAnnotation
     public User execute(Long id, IUserUpdateData userData) {
 
         authGateway.verifyOwnershipOrAdmin(id);

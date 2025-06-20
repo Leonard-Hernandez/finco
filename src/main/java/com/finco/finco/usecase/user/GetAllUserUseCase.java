@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.user;
 
+import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
@@ -17,6 +18,8 @@ public class GetAllUserUseCase {
         this.authGateway = authGateway;
     }
 
+
+    @TransactionalDomainAnnotation(readOnly = true)
     public PagedResult<User> execute(PageRequest page) {
 
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
