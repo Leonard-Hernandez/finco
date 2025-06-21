@@ -3,6 +3,7 @@ package com.finco.finco.usecase.account;
 import com.finco.finco.entity.account.exception.AccountNotFoundException;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.usecase.account.dto.IAccountUpdateData;
 
@@ -16,6 +17,7 @@ public class UpdateAccountUseCase {
         this.authGateway = authGateway;
     }
 
+    @TransactionalDomainAnnotation
     public Account execute(Long id, IAccountUpdateData data) {
 
         Account account = accountGateway.findById(id).orElseThrow(AccountNotFoundException::new);

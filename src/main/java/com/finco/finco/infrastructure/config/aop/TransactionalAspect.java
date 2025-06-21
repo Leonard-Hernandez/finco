@@ -22,7 +22,7 @@ public class TransactionalAspect {
         this.transactionManager = transactionManager;
     }
 
-    @Around("@annotation(useCaseTransactional)")
+    @Around("@annotation(transactionalDomainAnnotation)")
     @Transactional(rollbackFor = Throwable.class)
     public Object applyTransaction(ProceedingJoinPoint joinPoint,
             TransactionalDomainAnnotation transactionalDomainAnnotation) throws Throwable {
