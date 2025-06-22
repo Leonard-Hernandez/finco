@@ -4,20 +4,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
-import com.finco.finco.entity.user.model.User;
-import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.LiabilitieSchema;
-import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
 public class LiabilitieMapper {
 
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
 
-    public LiabilitieMapper(@Lazy UserMapper userMapper, UserRepository userRepository) {
+    public LiabilitieMapper(@Lazy UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.userRepository = userRepository;
     }
 
     public Liabilitie toLiabilitie(LiabilitieSchema liabilitieSchema) {
@@ -44,20 +39,14 @@ public class LiabilitieMapper {
             return null;
         }
 
-        UserSchema userSchema = null;
-        User userDomain = liabilitie.getUser();
-
-        if (userDomain == null || userDomain.getId() == null) {
+        if (liabilitie.getUser() == null || liabilitie.getUser().getId() == null) {
             throw new IllegalArgumentException("Goal must be associated with an existing User (with an ID).");
         }
-
-        userSchema = userRepository.findById(userDomain.getId())
-                .orElseThrow(() -> new RuntimeException("user not found"));
 
         LiabilitieSchema liabilitieSchema = new LiabilitieSchema();
 
         liabilitieSchema.setId(liabilitie.getId());
-        liabilitieSchema.setUser(userSchema);
+        liabilitieSchema.setUser(userMapper.toUserSchema(liabilitie.getUser()));
         liabilitieSchema.setName(liabilitie.getName());
         liabilitieSchema.setPendingBalance(liabilitie.getPendingBalance());
         liabilitieSchema.setInterestRate(liabilitie.getInterestRate());

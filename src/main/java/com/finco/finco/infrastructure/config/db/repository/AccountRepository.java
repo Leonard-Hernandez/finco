@@ -12,7 +12,7 @@ import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 @Repository
 public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
 
-    List<AccountSchema> findByUserId(Long userId);
+    List<AccountSchema> findAllByUserId(Long userId);
 
     List<AccountSchema> findByUserIdAndType(Long userId , AccountType type);
 

@@ -4,20 +4,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.goal.model.Goal;
-import com.finco.finco.entity.user.model.User;
-import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
-import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
 public class GoalMapper {
 
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
 
-    public GoalMapper(@Lazy UserMapper usermMapper, UserRepository userRepository) {
+    public GoalMapper(@Lazy UserMapper usermMapper) {
         this.userMapper = usermMapper;
-        this.userRepository = userRepository;
     }
 
     public Goal toGoal(GoalSchema goalSchema) {
@@ -68,18 +63,12 @@ public class GoalMapper {
 
         GoalSchema goalSchema = new GoalSchema();
 
-        UserSchema userSchema = null;
-        User userDomain = goal.getUser();
-
-        if (userDomain == null || userDomain.getId() == null) {
+        if (goal.getUser() == null || goal.getUser().getId() == null) {
             throw new IllegalArgumentException("Goal must be associated with an existing User (with an ID).");
         }
 
-        userSchema = userRepository.findById(userDomain.getId())
-                .orElseThrow(() -> new RuntimeException("user not found"));
-
         goalSchema.setId(goal.getId());
-        goalSchema.setUser(userSchema);
+        goalSchema.setUser(userMapper.toUserSchema(goal.getUser()));
         goalSchema.setName(goal.getName());
         goalSchema.setTargetAmount(goal.getTargetAmount());
         goalSchema.setDeadLine(goal.getDeadLine());

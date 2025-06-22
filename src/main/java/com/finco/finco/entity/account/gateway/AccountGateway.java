@@ -15,7 +15,7 @@ public interface AccountGateway {
 
     Optional<Account> findById(Long id);
 
-    List<Account> findbyUser(User user);
+    List<Account> findByUser(User user);
 
     List<Account> findByUserAndType(User user , AccountType type);
 

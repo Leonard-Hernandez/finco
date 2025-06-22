@@ -4,22 +4,17 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.account.model.Account;
-import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
-import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
-import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
 public class AccountMapper {
 
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
     private final AccountRepository accountRepository; 
 
-    public AccountMapper(@Lazy UserMapper userMapper, UserRepository userRepository, AccountRepository accountRepository) {
+    public AccountMapper(@Lazy UserMapper userMapper, AccountRepository accountRepository) {
         this.userMapper = userMapper;
-        this.userRepository = userRepository;
         this.accountRepository = accountRepository;
     }
 
@@ -71,19 +66,13 @@ public class AccountMapper {
             return null;
         }
 
-        UserSchema userSchema = null;
-        User userDomain = account.getUser();
-
-        if (userDomain == null || userDomain.getId() == null) {
+        if (account.getUser() == null || account.getUser().getId() == null) {
             throw new IllegalArgumentException("Account must be associated with an existing User (with an ID).");
         }
 
-        userSchema = userRepository.findById(userDomain.getId())
-                .orElseThrow(() -> new RuntimeException("user not found"));
-
         AccountSchema accountSchema = new AccountSchema();
         accountSchema.setId(account.getId());
-        accountSchema.setUser(userSchema);
+        accountSchema.setUser(userMapper.toUserSchema(account.getUser()));
         accountSchema.setName(account.getName());
         accountSchema.setType(account.getType());
         accountSchema.setBalance(account.getBalance());

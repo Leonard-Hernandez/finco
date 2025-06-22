@@ -39,7 +39,7 @@ public class JpaUserDetailsService implements UserDetailsService {
         return new User(
             user.getEmail(),
             user.getPassword(),
-            true,
+            user.getEnable(),
             true,
             true,
             true,

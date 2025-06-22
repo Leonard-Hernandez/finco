@@ -4,15 +4,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.transaction.model.Transaction;
-import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
-import com.finco.finco.infrastructure.config.db.repository.GoalRepository;
-import com.finco.finco.infrastructure.config.db.repository.UserRepository;
-import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
-import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
 import com.finco.finco.infrastructure.config.db.schema.TransactionSchema;
-import com.finco.finco.infrastructure.config.db.schema.UserSchema;
-
-
 
 @Component
 public class TransactionMapper {
@@ -21,18 +13,10 @@ public class TransactionMapper {
     private final AccountMapper accountMapper;
     private final GoalMapper goalMapper;
 
-    private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
-    private final GoalRepository goalRepository;
-
-    public TransactionMapper(@Lazy UserMapper userMapper, AccountMapper accountMapper, GoalMapper goalMapper,
-            UserRepository userRepository, AccountRepository accountRepository, GoalRepository goalRepository) {
+    public TransactionMapper(@Lazy UserMapper userMapper, AccountMapper accountMapper, GoalMapper goalMapper) {
         this.userMapper = userMapper;
         this.accountMapper = accountMapper;
         this.goalMapper = goalMapper;
-        this.userRepository = userRepository;
-        this.accountRepository = accountRepository;
-        this.goalRepository = goalRepository;
     }
 
     public Transaction toTransaction(TransactionSchema transactionSchema) {
@@ -61,44 +45,31 @@ public class TransactionMapper {
             return null;
         }
 
-        UserSchema userSchema = null;
-        AccountSchema accountSchema = null;
-        GoalSchema goalSchema = null;
-        AccountSchema transferAccountSchema = null;
-
         if (transaction.getUser() == null || transaction.getUser().getId() == null) {
             throw new IllegalArgumentException("Transaction must be associated with an existing User (with an ID).");
         }
-        userSchema = userRepository.findById(transaction.getUser().getId())
-                         .orElseThrow(() -> new RuntimeException("UserSchema not found for ID: " + transaction.getUser().getId() + " associated with transaction."));
 
         if (transaction.getAccount() == null || transaction.getAccount().getId() == null) {
             throw new IllegalArgumentException("Transaction must be associated with an existing Account (with an ID).");
         }
-        accountSchema = accountRepository.findById(transaction.getAccount().getId())
-                            .orElseThrow(() -> new RuntimeException("AccountSchema not found for ID: " + transaction.getAccount().getId() + " associated with transaction."));
-
-        if (transaction.getGoal() != null && transaction.getGoal().getId() != null) {
-            goalSchema = goalRepository.findById(transaction.getGoal().getId())
-                            .orElseThrow(() -> new RuntimeException("GoalSchema not found for ID: " + transaction.getGoal().getId() + " associated with transaction."));
-        }
-
-        if (transaction.getTransferAccount() != null && transaction.getTransferAccount().getId() != null) {
-            transferAccountSchema = accountRepository.findById(transaction.getTransferAccount().getId())
-                            .orElseThrow(() -> new RuntimeException("TransferAccountSchema not found for ID: " + transaction.getTransferAccount().getId() + " associated with transaction."));
-        }
 
         TransactionSchema transactionSchema = new TransactionSchema();
         transactionSchema.setId(transaction.getId());
-        transactionSchema.setUser(userSchema);
-        transactionSchema.setAccount(accountSchema);
+        transactionSchema.setUser(userMapper.toUserSchema(transaction.getUser()));
+        transactionSchema.setAccount(accountMapper.toAccountSchema(transaction.getAccount()));
         transactionSchema.setType(transactionSchema.getType());
         transactionSchema.setAmount(transaction.getAmount());
         transactionSchema.setDate(transaction.getDate());
         transactionSchema.setDescription(transaction.getDescription());
         transactionSchema.setCategory(transaction.getCategory());
-        transactionSchema.setGoal(goalSchema);
-        transactionSchema.setTransferAccount(transferAccountSchema);
+
+        if (transaction.getGoal() != null && transaction.getGoal().getId() != null) {
+            transactionSchema.setGoal(goalMapper.toGoalSchema(transaction.getGoal()));
+        }
+
+        if (transaction.getTransferAccount() != null && transaction.getTransferAccount().getId() != null) {
+            transactionSchema.setTransferAccount(accountMapper.toAccountSchema(transaction.getTransferAccount()));
+        }
 
         return transactionSchema;
 

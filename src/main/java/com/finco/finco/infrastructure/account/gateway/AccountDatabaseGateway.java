@@ -2,6 +2,7 @@ package com.finco.finco.infrastructure.account.gateway;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,9 +48,8 @@ public class AccountDatabaseGateway implements AccountGateway{
     }
 
     @Override
-    public List<Account> findbyUser(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findbyUser'");
+    public List<Account> findByUser(User user) {
+        return accountRepository.findAllByUserId(user.getId()).stream().map(accountMapper::toAccount).collect(Collectors.toList());
     }
 
     @Override
