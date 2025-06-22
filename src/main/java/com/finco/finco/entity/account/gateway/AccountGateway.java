@@ -11,7 +11,7 @@ public interface AccountGateway {
 
     Account create(Account account);
     Account update(Account account);
-    void delete(Account account);
+    Account delete(Account account);
 
     Optional<Account> findById(Long id);
 

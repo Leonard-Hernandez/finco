@@ -52,6 +52,7 @@ public class AssetSchema {
 
     private String description;
 
+    @Column(name = "enable", columnDefinition = "DEFAULT 1")
     private boolean enable;
 
 }

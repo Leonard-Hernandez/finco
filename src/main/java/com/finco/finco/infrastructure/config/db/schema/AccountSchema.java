@@ -68,6 +68,7 @@ public class AccountSchema {
 
     private boolean isDefault;
 
+    @Column(name = "enable", columnDefinition = "DEFAULT 1")
     private boolean enable;
 
     @OneToMany(mappedBy = "account")

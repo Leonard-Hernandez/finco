@@ -63,6 +63,7 @@ public class GoalSchema {
     @OneToMany(mappedBy = "goal")
     private List<TransactionSchema> transactions;
 
+    @Column(name = "enable", columnDefinition = "DEFAULT 1")
     private boolean enable;
 
 }

@@ -36,9 +36,9 @@ public class AccountDatabaseGateway implements AccountGateway{
     }
 
     @Override
-    public void delete(Account account) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    public Account delete(Account account) {
+        account.setEnable(false);
+        return accountMapper.toAccount(accountRepository.save(accountMapper.toAccountSchema(account)));
     }
 
     @Override

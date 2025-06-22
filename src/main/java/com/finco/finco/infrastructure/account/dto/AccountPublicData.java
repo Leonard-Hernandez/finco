@@ -16,7 +16,8 @@ public record AccountPublicData(
     CurrencyEnum currency,
     LocalDateTime creationDate,
     String description,
-    boolean isDefault
+    boolean isDefault,
+    boolean enable
 ) implements IAccountPublicData{
 
     public AccountPublicData(Account account){
@@ -29,7 +30,8 @@ public record AccountPublicData(
             account.getCurrency(),
             account.getCreationDate(),
             account.getDescription(),
-            account.isDefault()
+            account.isDefault(),
+            account.isEnable()
         );
     }
 

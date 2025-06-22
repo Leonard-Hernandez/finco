@@ -45,7 +45,8 @@ public class UserDatabaseGateway implements UserGateway {
 
     @Override
     public void delete(User user) {
-        userRepository.delete(userMapper.toUserSchema(user));
+        user.setEnable(false);
+        userRepository.save(userMapper.toUserSchema(user));
     }
 
     @Override
@@ -70,7 +71,7 @@ public class UserDatabaseGateway implements UserGateway {
                 pageRequest.getPageSize(),
                 sort);
 
-        Page<UserSchema> userSchemaPage = userRepository.findAll(springPageable);
+        Page<UserSchema> userSchemaPage = userRepository.findAllByEnableTrue(springPageable);
 
         return userMapper.toUserPagedResult(userSchemaPage, pageRequest); // Nuevo método en mapper
 
