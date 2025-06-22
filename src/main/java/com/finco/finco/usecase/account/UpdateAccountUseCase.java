@@ -39,6 +39,9 @@ public class UpdateAccountUseCase {
         if (data.isDefault() != null) {
             account.setDefault(data.isDefault());
         }
+        if (data.enable() != null) {
+            account.setEnable(data.enable());
+        }
 
         return accountGateway.update(account);
 

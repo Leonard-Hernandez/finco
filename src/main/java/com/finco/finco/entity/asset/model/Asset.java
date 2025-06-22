@@ -13,13 +13,14 @@ public class Asset {
     private LocalDate acquisitionDate;
     private Long interestRate;
     private String description;
+    private boolean enable;
 
     public Asset() {
 
     }
 
     public Asset(Long id, User user, String name, Long estimatedValue, LocalDate acquisitionDate,
-            Long interestRate, String description) {
+            Long interestRate, String description, boolean enable) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -27,6 +28,7 @@ public class Asset {
         this.acquisitionDate = acquisitionDate;
         this.interestRate = interestRate;
         this.description = description;
+        this.enable = enable;
     }
 
     public Long getId() {
@@ -83,6 +85,14 @@ public class Asset {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     @Override

@@ -15,12 +15,13 @@ public class Goal {
     private String description;
     private LocalDateTime creationDate;
     private Long savedAmount;
+    private boolean enable;
 
     public Goal() {
     };
 
     public Goal(Long id, User user, String name, Long targetAmount, LocalDate deadLine, String description,
-            LocalDateTime creationDate, Long savedAmount) {
+            LocalDateTime creationDate, Long savedAmount, boolean enable) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -29,6 +30,7 @@ public class Goal {
         this.description = description;
         this.creationDate = creationDate;
         this.savedAmount = savedAmount;
+        this.enable = enable;
     }
 
     public Long getId() {
@@ -95,6 +97,14 @@ public class Goal {
         this.savedAmount = savedAmount;
     }
 
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -119,4 +129,5 @@ public class Goal {
             return false;
         return true;
     }
+
 }

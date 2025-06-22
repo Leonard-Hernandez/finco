@@ -15,12 +15,13 @@ public class Account {
     private LocalDateTime creationDate;
     private String description;
     private boolean isDefault;
+    private boolean enable;
 
     public Account() {
     }
 
     public Account(Long id, User user, String name, AccountType type, Long balance, CurrencyEnum currency,
-            LocalDateTime creationDate, String description, boolean isDefault) {
+            LocalDateTime creationDate, String description, boolean isDefault, boolean enable) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -30,6 +31,7 @@ public class Account {
         this.creationDate = creationDate;
         this.description = description;
         this.isDefault = isDefault;
+        this.enable = enable;
     }
 
     public Long getId() {
@@ -104,6 +106,14 @@ public class Account {
         this.isDefault = isDefault;
     }
 
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -128,5 +138,5 @@ public class Account {
             return false;
         return true;
     }
-    
+
 }

@@ -122,7 +122,7 @@ public class UserMapper {
         userSchema.setEmail(user.getEmail());
         userSchema.setPassword(user.getPassword());
         userSchema.setRegistrationDate(user.getRegistrationDate());
-        userSchema.setEnable(user.getEnable());
+        userSchema.setEnable(user.isEnable());
 
         List<AccountSchema> accounts = user.getAccounts() != null
                 ? user.getAccounts().stream().map(accountMapper::toAccountSchema).collect(Collectors.toList())

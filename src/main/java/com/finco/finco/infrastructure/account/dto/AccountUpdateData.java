@@ -9,6 +9,7 @@ public record AccountUpdateData(
         AccountType type,
         CurrencyEnum currency,
         String description,
-        Boolean isDefault) implements IAccountUpdateData {
+        Boolean isDefault,
+        Boolean enable) implements IAccountUpdateData {
 
 }

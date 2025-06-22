@@ -68,6 +68,8 @@ public class AccountSchema {
 
     private boolean isDefault;
 
+    private boolean enable;
+
     @OneToMany(mappedBy = "account")
      private List<TransactionSchema> transactions;
 

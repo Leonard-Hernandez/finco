@@ -14,13 +14,14 @@ public class Liabilitie {
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
+    private boolean enable;
 
     public Liabilitie() {
 
     }
 
     public Liabilitie(Long id, User user, Long name, Long pendingBalance, Long interestRate, LocalDate startDate,
-            LocalDate endDate, String description) {
+            LocalDate endDate, String description, boolean enable) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -29,6 +30,7 @@ public class Liabilitie {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
+        this.enable = enable;
     }
 
     public Long getId() {
@@ -93,6 +95,14 @@ public class Liabilitie {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     @Override

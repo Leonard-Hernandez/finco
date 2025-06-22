@@ -18,7 +18,7 @@ public record UserPublicData(
             user.getName(), 
             user.getEmail(), 
             user.getRegistrationDate(), 
-            user.getEnable()
+            user.isEnable()
         );
     }
 

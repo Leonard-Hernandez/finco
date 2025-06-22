@@ -135,7 +135,7 @@ public class User {
         this.transactions = transactions;
     }
 
-    public Boolean getEnable() {
+    public Boolean isEnable() {
         return enable;
     }
 

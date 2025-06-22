@@ -52,4 +52,6 @@ public class AssetSchema {
 
     private String description;
 
+    private boolean enable;
+
 }

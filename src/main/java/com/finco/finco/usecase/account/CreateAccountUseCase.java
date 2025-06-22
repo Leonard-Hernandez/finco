@@ -38,6 +38,7 @@ public class CreateAccountUseCase {
         account.setCurrency(data.currency());
         account.setCreationDate(LocalDateTime.now());
         account.setDescription(data.description());
+        account.setEnable(true);
 
         if (user.getAccounts().size() == 0) {
             account.setDefault(true);

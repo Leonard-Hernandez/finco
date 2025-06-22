@@ -10,5 +10,6 @@ public interface IAccountUpdateData {
     CurrencyEnum currency();
     String description();
     Boolean isDefault();
+    Boolean enable();
 
 }

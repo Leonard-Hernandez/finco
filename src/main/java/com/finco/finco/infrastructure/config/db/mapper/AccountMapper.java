@@ -38,6 +38,7 @@ public class AccountMapper {
         account.setCreationDate(accountSchema.getCreationDate());
         account.setDescription(accountSchema.getDescription());
         account.setDefault(accountSchema.isDefault());
+        account.setEnable(accountSchema.isEnable());
 
         return account;
 
@@ -58,6 +59,7 @@ public class AccountMapper {
         account.setCreationDate(accountSchema.getCreationDate());
         account.setDescription(accountSchema.getDescription());
         account.setDefault(accountSchema.isDefault());
+        account.setEnable(accountSchema.isEnable());
 
         return account;
 
@@ -89,6 +91,7 @@ public class AccountMapper {
         accountSchema.setCreationDate(account.getCreationDate());
         accountSchema.setDescription(account.getDescription());
         accountSchema.setDefault(account.isDefault());
+        accountSchema.setEnable(account.isEnable());
 
         Long version = accountRepository.getVersionByAccountId(account.getId());
 
