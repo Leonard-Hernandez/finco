@@ -38,7 +38,8 @@ public class AppConfig {
     }
 
     @Bean
-    CreateUserAdminUseCase createUserAdminUserCase(UserGateway userGateway, RoleGateway roleGateway, AuthGateway authGateway) {
+    CreateUserAdminUseCase createUserAdminUserCase(UserGateway userGateway, RoleGateway roleGateway,
+            AuthGateway authGateway) {
         return new CreateUserAdminUseCase(userGateway, roleGateway, authGateway);
     }
 
@@ -65,7 +66,8 @@ public class AppConfig {
     // Accounts beans
 
     @Bean
-    CreateAccountUseCase createAccountUseCase(UserGateway userGateway, AccountGateway accountGateway, AuthGateway authGateway) {
+    CreateAccountUseCase createAccountUseCase(UserGateway userGateway, AccountGateway accountGateway,
+            AuthGateway authGateway) {
         return new CreateAccountUseCase(accountGateway, userGateway, authGateway);
     }
 
