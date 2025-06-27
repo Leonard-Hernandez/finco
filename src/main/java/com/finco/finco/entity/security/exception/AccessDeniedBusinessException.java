@@ -1,6 +1,6 @@
 package com.finco.finco.entity.security.exception;
 
-import com.finco.finco.entity.EbusinessException;
+import com.finco.finco.entity.exception.EbusinessException;
 
 public class AccessDeniedBusinessException extends EbusinessException{
 

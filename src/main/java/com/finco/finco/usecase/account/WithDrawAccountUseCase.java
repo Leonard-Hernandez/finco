@@ -5,22 +5,24 @@ import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.infrastructure.account.dto.AccountTransactionData;
 
-public class GetAccountUseCase {
+public class WithDrawAccountUseCase {
 
     private final AccountGateway accountGateway;
     private final AuthGateway authGateway;
 
-    public GetAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
+    public WithDrawAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
         this.accountGateway = accountGateway;
         this.authGateway = authGateway;
     }
 
-    @TransactionalDomainAnnotation(readOnly = true)
-    public Account execute(Long id) {
+    @TransactionalDomainAnnotation
+    public Account execute(Long id, AccountTransactionData data) {
         Account account = accountGateway.findById(id).orElseThrow(AccountNotFoundException::new);
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
-        return account;
+        account.withdraw(data.amount());
+        return accountGateway.update(account);
     }
 
 }

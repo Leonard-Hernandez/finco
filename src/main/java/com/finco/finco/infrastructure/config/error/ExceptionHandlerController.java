@@ -13,7 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.finco.finco.entity.EbusinessException;
+import com.finco.finco.entity.exception.EbusinessException;
 
 @RestControllerAdvice
 public class ExceptionHandlerController {

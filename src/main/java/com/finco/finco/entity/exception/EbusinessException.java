@@ -1,4 +1,4 @@
-package com.finco.finco.entity;
+package com.finco.finco.entity.exception;
 
 public class EbusinessException extends RuntimeException {
 

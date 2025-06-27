@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
-import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.user.model.User;
@@ -21,7 +20,7 @@ import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 
 @Component
-public class AccountDatabaseGateway implements AccountGateway{
+public class AccountDatabaseGateway implements AccountGateway {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
@@ -77,21 +76,18 @@ public class AccountDatabaseGateway implements AccountGateway{
 
     @Override
     public List<Account> findByUser(User user) {
-        return accountRepository.findAllByUserId(user.getId()).stream().map(accountMapper::toAccount).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Account> findByUserAndType(User user, AccountType type) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByUserAndType'");
+        return accountRepository.findAllByUserId(user.getId()).stream().map(accountMapper::toAccount)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Long getTotalByUser(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTotalByUser'");
+        return accountRepository.getTotalByUserId(user.getId());
     }
 
-
+    @Override
+    public Optional<Account> findDefaultByUser(User user) {
+        return accountRepository.findDefaultByUserId(user.getId()).map(accountMapper::toAccount);
+    }
 
 }

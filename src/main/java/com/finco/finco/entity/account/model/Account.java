@@ -2,6 +2,8 @@ package com.finco.finco.entity.account.model;
 
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.exception.AmountMustBeGreaterThanZeroException;
+import com.finco.finco.entity.exception.InsufficientBalanceException;
 import com.finco.finco.entity.user.model.User;
 
 public class Account {
@@ -112,6 +114,22 @@ public class Account {
 
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+
+    public Long deposit(Long amount) {
+        if (amount <= 0) {
+            throw new AmountMustBeGreaterThanZeroException();
+        }
+        this.balance += amount;
+        return this.balance;
+    }
+
+    public Long withdraw(Long amount) {
+        if (this.balance < amount && this.type != AccountType.CREDIT) {
+            throw new InsufficientBalanceException();
+        }
+        this.balance -= amount;
+        return this.balance;
     }
 
     @Override
