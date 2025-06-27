@@ -1,9 +1,15 @@
 package com.finco.finco.infrastructure.config.db.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 
@@ -88,6 +94,28 @@ public class AccountMapper {
 
         return accountSchema;
 
+    }
+
+    public PagedResult<Account> toAccountPagedResult(Page<AccountSchema> accountSchemaPage, PageRequest page) {
+        if (accountSchemaPage == null) {
+            return PagedResult.empty(page);
+        }
+
+        List<Account> accountList = accountSchemaPage.getContent().stream()
+                                            .map(this::toAccount)
+                                            .collect(Collectors.toList());
+
+        return new PagedResult<>(
+            accountList,
+            accountSchemaPage.getTotalElements(),
+            accountSchemaPage.getTotalPages(),
+            accountSchemaPage.getNumber(),
+            accountSchemaPage.getSize(),
+            accountSchemaPage.isFirst(),
+            accountSchemaPage.isLast(),
+            accountSchemaPage.hasNext(),
+            accountSchemaPage.hasPrevious()
+        );
     }
 
 }

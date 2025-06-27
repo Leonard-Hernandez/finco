@@ -2,6 +2,8 @@ package com.finco.finco.infrastructure.config.db.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,5 +23,7 @@ public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
 
     @Query("SELECT a.version FROM AccountSchema a WHERE a.id = :id")
     Long getVersionByAccountId(Long id);
+
+    Page<AccountSchema> findAllByEnableTrue(Pageable springPageable);
 
 }

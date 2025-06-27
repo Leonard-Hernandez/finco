@@ -4,15 +4,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.AccountType;
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.mapper.AccountMapper;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
+import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 
 @Component
 public class AccountDatabaseGateway implements AccountGateway{
@@ -48,6 +54,28 @@ public class AccountDatabaseGateway implements AccountGateway{
     }
 
     @Override
+    public PagedResult<Account> findAll(PageRequest page) {
+        Sort sort = page.getSortBy()
+                .map(sortBy -> {
+                    Sort.Direction direction = page.getSortDirection()
+                            .filter(d -> d.equalsIgnoreCase("desc"))
+                            .map(d -> Sort.Direction.DESC)
+                            .orElse(Sort.Direction.ASC);
+                    return Sort.by(direction, sortBy);
+                })
+                .orElse(Sort.unsorted());
+
+        Pageable springPageable = org.springframework.data.domain.PageRequest.of(
+                page.getPageNumber(),
+                page.getPageSize(),
+                sort);
+
+        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByEnableTrue(springPageable);
+
+        return accountMapper.toAccountPagedResult(accountSchemaPage, page);
+    }
+
+    @Override
     public List<Account> findByUser(User user) {
         return accountRepository.findAllByUserId(user.getId()).stream().map(accountMapper::toAccount).collect(Collectors.toList());
     }
@@ -63,5 +91,7 @@ public class AccountDatabaseGateway implements AccountGateway{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getTotalByUser'");
     }
+
+
 
 }
