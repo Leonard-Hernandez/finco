@@ -87,7 +87,7 @@ public class AccountDatabaseGateway implements AccountGateway {
 
     @Override
     public Optional<Account> findDefaultByUser(User user) {
-        return accountRepository.findDefaultByUserId(user.getId()).map(accountMapper::toAccount);
+        return accountRepository.findByIsDefaultTrueAndUserId(user.getId()).map(accountMapper::toAccount);
     }
 
 }

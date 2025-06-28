@@ -1,5 +1,6 @@
 package com.finco.finco.entity.account.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.finco.finco.entity.exception.AmountMustBeGreaterThanZeroException;
@@ -12,7 +13,7 @@ public class Account {
     private User user;
     private String name;
     private AccountType type;
-    private Long balance;
+    private BigDecimal balance;
     private CurrencyEnum currency;
     private LocalDateTime creationDate;
     private String description;
@@ -22,7 +23,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(Long id, User user, String name, AccountType type, Long balance, CurrencyEnum currency,
+    public Account(Long id, User user, String name, AccountType type, BigDecimal balance, CurrencyEnum currency,
             LocalDateTime creationDate, String description, boolean isDefault, boolean enable) {
         this.id = id;
         this.user = user;
@@ -68,12 +69,12 @@ public class Account {
         this.type = type;
     }
 
-    public Long getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
-        this.balance = balance;
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance != null ? balance : BigDecimal.ZERO;
     }
 
     public CurrencyEnum getCurrency() {
@@ -116,19 +117,23 @@ public class Account {
         this.enable = enable;
     }
 
-    public Long deposit(Long amount) {
-        if (amount <= 0) {
+    public BigDecimal deposit(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new AmountMustBeGreaterThanZeroException();
         }
-        this.balance += amount;
+        this.balance = this.balance.add(amount);
         return this.balance;
     }
 
-    public Long withdraw(Long amount) {
-        if (this.balance < amount && this.type != AccountType.CREDIT) {
+    public boolean hasSufficientBalance(BigDecimal amount) {
+        return this.balance.compareTo(amount) >= 0;
+    }
+
+    public BigDecimal withdraw(BigDecimal amount) {
+        if (!hasSufficientBalance(amount) && this.type != AccountType.CREDIT) {
             throw new InsufficientBalanceException();
         }
-        this.balance -= amount;
+        this.balance = this.balance.subtract(amount);
         return this.balance;
     }
 

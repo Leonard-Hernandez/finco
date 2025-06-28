@@ -22,9 +22,7 @@ public class DeleteUserUseCase {
 
         User user = userGateway.findById(id).orElseThrow(UserNotFoundException::new);
 
-        userGateway.delete(user);
-
-        return user;
+        return userGateway.delete(user);
 
     }
 

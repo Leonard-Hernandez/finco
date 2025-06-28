@@ -1,8 +1,10 @@
 package com.finco.finco.entity.transaction.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.exception.AmountMustBeGreaterThanZeroException;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.user.model.User;
 
@@ -12,7 +14,7 @@ public class Transaction {
     private User user;
     private Account account;
     private TransactionType type;
-    private Long amount;
+    private BigDecimal amount;
     private LocalDateTime date;
     private String description;
     private String category;
@@ -23,7 +25,7 @@ public class Transaction {
 
     }
 
-    public Transaction(Long id, User user, Account account, TransactionType type, Long amount, LocalDateTime date,
+    public Transaction(Long id, User user, Account account, TransactionType type, BigDecimal amount, LocalDateTime date,
             String description, String category, Goal goal, Account transferAccount) {
         this.id = id;
         this.user = user;
@@ -69,11 +71,14 @@ public class Transaction {
         this.type = type;
     }
 
-    public Long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AmountMustBeGreaterThanZeroException();
+        }
         this.amount = amount;
     }
 

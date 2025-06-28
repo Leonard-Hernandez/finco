@@ -57,7 +57,7 @@ public class TransactionMapper {
         transactionSchema.setId(transaction.getId());
         transactionSchema.setUser(userMapper.toUserSchema(transaction.getUser()));
         transactionSchema.setAccount(accountMapper.toAccountSchema(transaction.getAccount()));
-        transactionSchema.setType(transactionSchema.getType());
+        transactionSchema.setType(transaction.getType());
         transactionSchema.setAmount(transaction.getAmount());
         transactionSchema.setDate(transaction.getDate());
         transactionSchema.setDescription(transaction.getDescription());

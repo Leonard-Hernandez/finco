@@ -1,9 +1,9 @@
 package com.finco.finco.usecase.account;
 
-import com.finco.finco.entity.account.exception.AccountNotFoundException;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
+import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 
 public class GetAccountUseCase {
@@ -18,7 +18,7 @@ public class GetAccountUseCase {
 
     @TransactionalDomainAnnotation(readOnly = true)
     public Account execute(Long id) {
-        Account account = accountGateway.findById(id).orElseThrow(AccountNotFoundException::new);
+        Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
         return account;
     }

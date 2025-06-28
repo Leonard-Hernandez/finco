@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.config.db.schema;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,8 +43,8 @@ public class GoalSchema {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "target_amount", precision = 10, scale = 2, nullable = false)
-    private Long targetAmount;
+    @Column(name = "target_amount", precision = 19, scale = 2, nullable = false)
+    private BigDecimal targetAmount;
 
     @Column(name = "deadline")
     private LocalDate deadLine;
@@ -55,10 +56,10 @@ public class GoalSchema {
     private LocalDateTime creationDate;
 
     @Column(name = "saved_amount", 
-            precision = 10, scale = 2, 
-            columnDefinition = "DEFAULT 0.00", 
+            precision = 19, scale = 2, 
+            columnDefinition = "DECIMAL(19,2) DEFAULT 0.00", 
             nullable = false)
-    private Long savedAmount;
+    private BigDecimal savedAmount;
 
     @OneToMany(mappedBy = "goal")
     private List<TransactionSchema> transactions;

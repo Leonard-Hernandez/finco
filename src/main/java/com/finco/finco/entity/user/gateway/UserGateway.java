@@ -10,7 +10,7 @@ public interface UserGateway {
 
     User create(User user);
     User update(User user);
-    void delete(User user);
+    User delete(User user);
 
     Optional<User> findById(Long id);
 

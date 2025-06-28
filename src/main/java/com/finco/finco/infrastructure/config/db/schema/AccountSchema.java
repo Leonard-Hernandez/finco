@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.config.db.schema;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -51,8 +52,8 @@ public class AccountSchema {
     @Enumerated(EnumType.STRING)
     private AccountType type;
 
-    @Column(name = "balance", columnDefinition = "DEFAULT 0.00")
-    private Long balance;
+    @Column(name = "balance", precision = 19, scale = 2, columnDefinition = "DECIMAL(19,2) DEFAULT 0.00")
+    private BigDecimal balance;
 
     @Column(name = "currency", 
                     columnDefinition = "Default 'COP'", 

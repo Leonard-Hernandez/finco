@@ -11,6 +11,7 @@ import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.infrastructure.config.aop.TransactionalAspect;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
+import com.finco.finco.usecase.account.DeleteAccountUseCase;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
 import com.finco.finco.usecase.account.GetAccountUseCase;
 import com.finco.finco.usecase.account.GetAllAccountUseCase;
@@ -98,6 +99,11 @@ public class AppConfig {
     @Bean
     WithDrawAccountUseCase withDrawAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
         return new WithDrawAccountUseCase(accountGateway, authGateway);
+    }
+
+    @Bean
+    DeleteAccountUseCase deleteAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
+        return new DeleteAccountUseCase(accountGateway, authGateway);
     }
 
 }

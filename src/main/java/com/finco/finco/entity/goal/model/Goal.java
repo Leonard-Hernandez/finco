@@ -1,8 +1,10 @@
 package com.finco.finco.entity.goal.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.exception.AmountMustBeGreaterThanZeroException;
 import com.finco.finco.entity.user.model.User;
 
 public class Goal {
@@ -10,18 +12,18 @@ public class Goal {
     private Long id;
     private User user;
     private String name;
-    private Long targetAmount;
+    private BigDecimal targetAmount;
     private LocalDate deadLine;
     private String description;
     private LocalDateTime creationDate;
-    private Long savedAmount;
+    private BigDecimal savedAmount;
     private boolean enable;
 
     public Goal() {
     };
 
-    public Goal(Long id, User user, String name, Long targetAmount, LocalDate deadLine, String description,
-            LocalDateTime creationDate, Long savedAmount, boolean enable) {
+    public Goal(Long id, User user, String name, BigDecimal targetAmount, LocalDate deadLine, String description,
+            LocalDateTime creationDate, BigDecimal savedAmount, boolean enable) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -57,11 +59,14 @@ public class Goal {
         this.name = name;
     }
 
-    public Long getTargetAmount() {
+    public BigDecimal getTargetAmount() {
         return targetAmount;
     }
 
-    public void setTargetAmount(Long targetAmount) {
+    public void setTargetAmount(BigDecimal targetAmount) {
+        if (targetAmount == null || targetAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AmountMustBeGreaterThanZeroException();
+        }
         this.targetAmount = targetAmount;
     }
 
@@ -89,12 +94,19 @@ public class Goal {
         this.creationDate = creationDate;
     }
 
-    public Long getSavedAmount() {
+    public BigDecimal getSavedAmount() {
         return savedAmount;
     }
 
-    public void setSavedAmount(Long savedAmount) {
-        this.savedAmount = savedAmount;
+    public void setSavedAmount(BigDecimal savedAmount) {
+        this.savedAmount = savedAmount != null ? savedAmount : BigDecimal.ZERO;
+    }
+    
+    public void addToSavedAmount(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AmountMustBeGreaterThanZeroException();
+        }
+        this.savedAmount = this.savedAmount.add(amount);
     }
 
     public boolean isEnable() {

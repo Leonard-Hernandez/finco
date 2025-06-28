@@ -44,9 +44,9 @@ public class UserDatabaseGateway implements UserGateway {
     }
 
     @Override
-    public void delete(User user) {
+    public User delete(User user) {
         user.setEnable(false);
-        userRepository.save(userMapper.toUserSchema(user));
+        return userMapper.toUser(userRepository.save(userMapper.toUserSchema(user)));
     }
 
     @Override

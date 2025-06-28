@@ -1,28 +1,32 @@
 package com.finco.finco.usecase.account;
 
+import com.finco.finco.entity.account.exception.CannotDeactivateDefaultAccountException;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
-import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
-import com.finco.finco.usecase.account.dto.IAccountTransactionData;
 
-public class DepositAccountUseCase {
+public class DeleteAccountUseCase {
 
     private final AccountGateway accountGateway;
     private final AuthGateway authGateway;
 
-    public DepositAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
+    public DeleteAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
         this.accountGateway = accountGateway;
         this.authGateway = authGateway;
     }
 
-    @TransactionalDomainAnnotation
-    public Account execute(Long id, IAccountTransactionData data) {
-        Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
+    public Account execute(Long accountId) {
+
+        Account account = accountGateway.findById(accountId).orElseThrow(AccessDeniedBusinessException::new);
+
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
-        account.deposit(data.amount());
-        return accountGateway.update(account);
+
+        if (account.isDefault()) {
+            throw new CannotDeactivateDefaultAccountException(); 
+        }
+
+        return accountGateway.delete(account);
     }
 
 }

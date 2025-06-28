@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.account.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.finco.finco.entity.account.model.Account;
@@ -12,7 +13,7 @@ public record AccountPublicData(
     Long userId,
     String name,
     AccountType type,
-    Long balance,
+    BigDecimal balance,
     CurrencyEnum currency,
     LocalDateTime creationDate,
     String description,

@@ -27,6 +27,6 @@ public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
 
     Page<AccountSchema> findAllByEnableTrue(Pageable springPageable);
 
-    Optional<AccountSchema> findDefaultByUserId(Long id);
+    Optional<AccountSchema> findByIsDefaultTrueAndUserId(Long id);
 
 }

@@ -1,11 +1,11 @@
 package com.finco.finco.usecase.account;
 
-import com.finco.finco.entity.account.exception.AccountNotFoundException;
 import com.finco.finco.entity.account.exception.CannotDeactivateDefaultAccountException;
 import com.finco.finco.entity.account.exception.DefaultAccountNotFoundException;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
+import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.usecase.account.dto.IAccountUpdateData;
 
@@ -22,7 +22,7 @@ public class UpdateAccountUseCase {
     @TransactionalDomainAnnotation
     public Account execute(Long id, IAccountUpdateData data) {
 
-        Account account = accountGateway.findById(id).orElseThrow(AccountNotFoundException::new);
+        Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
 
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
 
@@ -40,6 +40,9 @@ public class UpdateAccountUseCase {
         }
 
         if (data.enable() != null) {
+            if (data.enable() == false && account.isDefault()) {
+                throw new CannotDeactivateDefaultAccountException();
+            }
             account.setEnable(data.enable());
         }
 

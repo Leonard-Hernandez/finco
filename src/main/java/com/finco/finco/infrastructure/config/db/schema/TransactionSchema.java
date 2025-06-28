@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.config.db.schema;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.finco.finco.entity.transaction.model.TransactionType;
@@ -47,8 +48,8 @@ public class TransactionSchema {
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-    @Column(name = "amount", precision = 10, scale = 2, nullable = false)
-    private Long amount;
+    @Column(name = "amount", precision = 19, scale = 2, nullable = false)
+    private BigDecimal amount;
 
     @Column(name = "date", 
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
