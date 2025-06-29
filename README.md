@@ -1,6 +1,6 @@
 # FinCo - Personal Finance Management API
 
-FinCo is a robust, scalable, and clean-architecture based API designed to help you manage your personal finances in an agile and efficient way. This project serves as both a practical financial tool and a learning resource for implementing clean architecture principles in a real-world application.
+FinCo is a robust, scalable, and clean-architecture based API designed to help you manage your personal finances in an agile and efficient way. This project serves as both a practical financial tool and a learning resource for implementing clean architecture principles in a real-world application. 
 
 ## 🚀 Features
 
