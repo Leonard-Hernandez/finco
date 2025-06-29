@@ -16,17 +16,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.account.model.CurrencyEnum;
+import com.finco.finco.entity.exception.IncompatibleCurrencyException;
 import com.finco.finco.entity.exception.InsufficientBalanceException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.user.model.User;
-import com.finco.finco.infrastructure.account.dto.AccountTransactionData;
-import com.finco.finco.usecase.account.WithDrawAccountUseCase;
+import com.finco.finco.usecase.account.TransferAccountUseCase;
+import com.finco.finco.usecase.account.dto.IAccountTransferData;
 
 @ExtendWith(MockitoExtension.class)
-public class WithDrawAccountUseCaseTest {
+public class TransferAccountUseCaseTest {
 
     @Mock
     private AccountGateway accountGateway;
@@ -37,24 +39,27 @@ public class WithDrawAccountUseCaseTest {
     @Mock
     private TransactionGateway transactionGateway;
 
-    private WithDrawAccountUseCase withDrawAccountUseCase;
+    @Mock
+    private IAccountTransferData transferData;
+
+    private TransferAccountUseCase transferAccountUseCase;
     private Account testAccount;
+    private Account testAccount2;
     private User testUser;
-    private AccountTransactionData transactionData;
     private final Long accountId = 1L;
+    private final Long transferAccountId = 2L;
     private final Long userId = 1L;
     private final BigDecimal initialBalance = BigDecimal.valueOf(1000);
-    private final BigDecimal withdrawAmount = BigDecimal.valueOf(500);
-    private final BigDecimal excessiveWithdrawAmount = BigDecimal.valueOf(1500);
+    private final BigDecimal transferAmount = BigDecimal.valueOf(500);
 
     @BeforeEach
     public void setUp() {
-        withDrawAccountUseCase = new WithDrawAccountUseCase(accountGateway, authGateway, transactionGateway);
-
+        transferAccountUseCase = new TransferAccountUseCase(accountGateway, authGateway, transactionGateway);
+        
         testUser = new User();
         testUser.setId(userId);
         testUser.setName("Test User");
-
+        
         testAccount = new Account();
         testAccount.setId(accountId);
         testAccount.setName("Test Account");
@@ -62,38 +67,48 @@ public class WithDrawAccountUseCaseTest {
         testAccount.setUser(testUser);
         testAccount.setEnable(true);
 
-        transactionData = new AccountTransactionData(withdrawAmount, "Withdraw", "Withdrawal");
+        testAccount2 = new Account();
+        testAccount2.setId(transferAccountId);
+        testAccount2.setName("Test Account");
+        testAccount2.setBalance(initialBalance);
+        testAccount2.setUser(testUser);
+        testAccount2.setEnable(true);
+    
     }
 
     @Test
-    @DisplayName("Withdraw from account successfully")
-    public void withdrawFromAccountSuccess() {
+    @DisplayName("Transfer to account successfully")
+    public void transferToAccountSuccess() {
         // Arrange
+        when(transferData.amount()).thenReturn(transferAmount);
+        when(transferData.transferAccountId()).thenReturn(transferAccountId);
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
+        when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
         when(transactionGateway.create(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Account result = withDrawAccountUseCase.execute(accountId, transactionData);
+        Account result = transferAccountUseCase.execute(accountId, transferData);
 
         // Assert
         assertNotNull(result);
-        assertEquals(initialBalance.subtract(withdrawAmount), result.getBalance());
+        assertEquals(initialBalance.subtract(transferAmount), result.getBalance());
+        assertEquals(initialBalance.add(transferAmount), testAccount2.getBalance());
         verify(accountGateway, times(1)).findById(accountId);
-        verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
-        verify(accountGateway, times(1)).update(any(Account.class));
+        verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
+        verify(accountGateway, times(2)).update(any(Account.class));
     }
 
     @Test
-    @DisplayName("Withdraw from non-existing account should throw AccessDeniedBusinessException")
-    public void withdrawFromNonExistingAccountShouldThrowException() {
+    @DisplayName("Transfer to non-existing account should throw AccessDeniedBusinessException")
+    public void transferToNonExistingAccountShouldThrowException() {
         // Arrange
         when(accountGateway.findById(accountId)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(AccessDeniedBusinessException.class, () -> {
-            withDrawAccountUseCase.execute(accountId, transactionData);
+            transferAccountUseCase.execute(accountId, transferData);
         });
 
         verify(accountGateway, times(1)).findById(accountId);
@@ -102,37 +117,43 @@ public class WithDrawAccountUseCaseTest {
     }
 
     @Test
-    @DisplayName("Withdraw from account without permission should throw AccessDeniedBusinessException")
-    public void withdrawFromAccountWithoutPermissionShouldThrowException() {
+    @DisplayName("Transfer to account with insufficient balance should throw InsufficientBalanceException")
+    public void transferToAccountWithInsufficientBalanceShouldThrowException() {
         // Arrange
+        when(transferData.amount()).thenReturn(BigDecimal.valueOf(1500));
+        when(transferData.transferAccountId()).thenReturn(transferAccountId);
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
-        doThrow(AccessDeniedBusinessException.class).when(authGateway).verifyOwnershipOrAdmin(userId);
-
-        // Act & Assert
-        assertThrows(AccessDeniedBusinessException.class, () -> {
-            withDrawAccountUseCase.execute(accountId, transactionData);
-        });
-
-        verify(accountGateway, times(1)).findById(accountId);
-        verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
-        verify(accountGateway, never()).update(any(Account.class));
-    }
-
-    @Test
-    @DisplayName("Withdraw more than account balance should throw InsufficientFundsException")
-    public void withdrawMoreThanBalanceShouldThrowException() {
-        // Arrange
-        transactionData = new AccountTransactionData(excessiveWithdrawAmount, "Withdraw", "Withdrawal");
-        when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
+        when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act & Assert
         assertThrows(InsufficientBalanceException.class, () -> {
-            withDrawAccountUseCase.execute(accountId, transactionData);
+            transferAccountUseCase.execute(accountId, transferData);
         });
 
         verify(accountGateway, times(1)).findById(accountId);
-        verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
+        verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, never()).update(any(Account.class));
     }
+
+    @Test
+    @DisplayName("Transfer to account with incompatible currency should throw IncompatibleCurrencyException")
+    public void transferToAccountWithIncompatibleCurrencyShouldThrowException() {
+        // Arrange
+        testAccount.setCurrency(CurrencyEnum.USD);
+        when(transferData.transferAccountId()).thenReturn(transferAccountId);
+        when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
+        when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
+        doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
+
+        // Act & Assert
+        assertThrows(IncompatibleCurrencyException.class, () -> {
+            transferAccountUseCase.execute(accountId, transferData);
+        });
+
+        verify(accountGateway, times(1)).findById(accountId);
+        verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
+        verify(accountGateway, never()).update(any(Account.class));
+    }
+
 }

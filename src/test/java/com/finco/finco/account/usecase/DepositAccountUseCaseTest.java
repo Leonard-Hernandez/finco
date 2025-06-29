@@ -18,6 +18,8 @@ import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.transaction.gateway.TransactionGateway;
+import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
 import com.finco.finco.usecase.account.dto.IAccountTransactionData;
@@ -32,6 +34,9 @@ public class DepositAccountUseCaseTest {
     private AuthGateway authGateway;
 
     @Mock
+    private TransactionGateway transactionGateway;
+
+    @Mock
     private IAccountTransactionData transactionData;
 
     private DepositAccountUseCase depositAccountUseCase;
@@ -44,7 +49,7 @@ public class DepositAccountUseCaseTest {
 
     @BeforeEach
     public void setUp() {
-        depositAccountUseCase = new DepositAccountUseCase(accountGateway, authGateway);
+        depositAccountUseCase = new DepositAccountUseCase(accountGateway, authGateway, transactionGateway);
         
         testUser = new User();
         testUser.setId(userId);
@@ -65,6 +70,7 @@ public class DepositAccountUseCaseTest {
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
         when(transactionData.amount()).thenReturn(depositAmount);
+        when(transactionGateway.create(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act

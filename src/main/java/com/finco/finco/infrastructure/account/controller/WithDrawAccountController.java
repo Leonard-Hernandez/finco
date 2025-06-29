@@ -1,7 +1,7 @@
 package com.finco.finco.infrastructure.account.controller;
 
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +20,7 @@ public class WithDrawAccountController {
         this.withDrawAccountUseCase = withDrawAccountUseCase;
     }
 
-    @PutMapping("/account/{id}/withdraw")
+    @PostMapping("/account/{id}/withdraw")
     public AccountPublicData withdraw(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(withDrawAccountUseCase.execute(id, data));
     }

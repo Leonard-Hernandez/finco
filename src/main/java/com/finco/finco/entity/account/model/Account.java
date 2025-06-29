@@ -136,6 +136,11 @@ public class Account {
         this.balance = this.balance.subtract(amount);
         return this.balance;
     }
+    
+    public void transfer(BigDecimal amount, Account transferAccount) {
+        this.withdraw(amount);
+        transferAccount.deposit(amount);
+    }
 
     @Override
     public int hashCode() {
@@ -161,5 +166,6 @@ public class Account {
             return false;
         return true;
     }
+
 
 }

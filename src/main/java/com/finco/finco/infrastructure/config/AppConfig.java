@@ -8,6 +8,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.infrastructure.config.aop.TransactionalAspect;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
@@ -15,6 +16,7 @@ import com.finco.finco.usecase.account.DeleteAccountUseCase;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
 import com.finco.finco.usecase.account.GetAccountUseCase;
 import com.finco.finco.usecase.account.GetAllAccountUseCase;
+import com.finco.finco.usecase.account.TransferAccountUseCase;
 import com.finco.finco.usecase.account.UpdateAccountUseCase;
 import com.finco.finco.usecase.account.WithDrawAccountUseCase;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
@@ -92,13 +94,18 @@ public class AppConfig {
     }
 
     @Bean
-    DepositAccountUseCase depositAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
-        return new DepositAccountUseCase(accountGateway, authGateway);
+    DepositAccountUseCase depositAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+        return new DepositAccountUseCase(accountGateway, authGateway, transactionGateway);
     }
 
     @Bean
-    WithDrawAccountUseCase withDrawAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
-        return new WithDrawAccountUseCase(accountGateway, authGateway);
+    WithDrawAccountUseCase withDrawAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+        return new WithDrawAccountUseCase(accountGateway, authGateway, transactionGateway);
+    }
+
+    @Bean
+    TransferAccountUseCase transferAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+        return new TransferAccountUseCase(accountGateway, authGateway, transactionGateway);
     }
 
     @Bean

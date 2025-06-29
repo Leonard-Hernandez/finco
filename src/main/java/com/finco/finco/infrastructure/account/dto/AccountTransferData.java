@@ -4,14 +4,18 @@ import java.math.BigDecimal;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-import com.finco.finco.usecase.account.dto.IAccountTransactionData;
+import com.finco.finco.usecase.account.dto.IAccountTransferData;
 
-public record AccountTransactionData(
+public record AccountTransferData(
+    @NotNull(message = "Account ID is required")
+    Long accountId, 
+    @NotNull(message = "Transfer account ID is required")
+    Long transferAccountId, 
     @NotNull(message = "Amount is required")
     @Min(value = 0, message = "Amount must be positive")
     BigDecimal amount, 
     String category, 
     String description
-) implements IAccountTransactionData {
+) implements IAccountTransferData {
 
 }

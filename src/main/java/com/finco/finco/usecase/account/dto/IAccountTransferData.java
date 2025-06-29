@@ -2,12 +2,13 @@ package com.finco.finco.usecase.account.dto;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.Positive;
+public interface IAccountTransferData {
 
-public interface IAccountTransactionData {
+    Long accountId();
 
-    @Positive(message = "Amount must be greater than zero")
     BigDecimal amount();
+
+    Long transferAccountId();
 
     String category();
 

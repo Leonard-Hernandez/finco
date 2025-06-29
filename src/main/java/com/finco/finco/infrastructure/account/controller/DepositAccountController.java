@@ -1,7 +1,7 @@
 package com.finco.finco.infrastructure.account.controller;
 
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +20,7 @@ public class DepositAccountController {
         this.depositAccountUseCase = depositAccountUseCase;
     }
 
-    @PutMapping("/account/{id}/deposit")
+    @PostMapping("/account/{id}/deposit")
     public AccountPublicData deposit(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(depositAccountUseCase.execute(id, data));
     }
