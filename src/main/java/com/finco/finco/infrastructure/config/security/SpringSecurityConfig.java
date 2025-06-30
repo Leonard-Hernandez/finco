@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.finco.finco.infrastructure.config.security.filter.JwtAuthenticationFilter;
 import com.finco.finco.infrastructure.config.security.filter.JwtValidationFilter;
+import com.finco.finco.infrastructure.config.security.services.JwtService;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +23,9 @@ public class SpringSecurityConfig {
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
+
+    @Autowired
+    private JwtService jwtService;
 
     @Bean
     AuthenticationManager authenticationManager() throws Exception {
@@ -34,8 +38,8 @@ public class SpringSecurityConfig {
             .requestMatchers(HttpMethod.POST, "/user").permitAll()
             .requestMatchers("/admin/*").hasRole("ADMIN")
             .anyRequest().authenticated())
-            .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-            .addFilter(new JwtValidationFilter(authenticationManager()))
+            .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtService))
+            .addFilter(new JwtValidationFilter(authenticationManager(), jwtService))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .build();

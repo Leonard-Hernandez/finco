@@ -4,14 +4,9 @@ import java.math.BigDecimal;
 
 public interface IAccountTransferData {
 
-    Long accountId();
-
     BigDecimal amount();
-
     Long transferAccountId();
-
     String category();
-
     String description();
 
 }

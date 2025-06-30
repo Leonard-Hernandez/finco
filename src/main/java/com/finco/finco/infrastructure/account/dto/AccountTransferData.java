@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import com.finco.finco.usecase.account.dto.IAccountTransferData;
 
 public record AccountTransferData(
-    @NotNull(message = "Account ID is required")
-    Long accountId, 
     @NotNull(message = "Transfer account ID is required")
     Long transferAccountId, 
     @NotNull(message = "Amount is required")

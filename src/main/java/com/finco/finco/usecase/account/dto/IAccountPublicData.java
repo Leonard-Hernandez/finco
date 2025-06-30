@@ -17,6 +17,6 @@ public interface IAccountPublicData {
     LocalDateTime creationDate();
     String description();
     boolean isDefault();
-    boolean enable();
+    boolean isEnable();
 
 }

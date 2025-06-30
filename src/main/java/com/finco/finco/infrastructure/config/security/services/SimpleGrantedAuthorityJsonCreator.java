@@ -1,4 +1,4 @@
-package com.finco.finco.infrastructure.config.security;
+package com.finco.finco.infrastructure.config.security.services;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

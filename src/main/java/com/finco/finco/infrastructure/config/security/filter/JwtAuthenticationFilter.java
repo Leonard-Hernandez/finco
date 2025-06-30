@@ -1,8 +1,6 @@
 package com.finco.finco.infrastructure.config.security.filter;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,9 +16,8 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finco.finco.infrastructure.user.dto.UserLoginData;
+import com.finco.finco.infrastructure.config.security.services.JwtService;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,10 +27,13 @@ import static com.finco.finco.infrastructure.config.security.TokenJwtConfig.*;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    private final JwtService jwtService;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -67,19 +66,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         
         User user = (User) authResult.getPrincipal();
 
-        Collection<? extends GrantedAuthority> roles = user.getAuthorities();
-
-        Claims claims = Jwts.claims().add(
-            "authorities", new ObjectMapper().writeValueAsString(roles)
-            ).build();
-
-        String token = Jwts.builder()
-                .subject(user.getUsername())
-                .claims(claims)
-                .signWith(SECRECT_KEY)
-                .issuedAt(new Date())
-                .issuedAt(new Date(System.currentTimeMillis() + 3600000))
-                .compact();
+        String token = jwtService.generateToken(user);
 
         response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
         

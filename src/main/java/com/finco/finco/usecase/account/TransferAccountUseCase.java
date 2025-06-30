@@ -42,7 +42,7 @@ public class TransferAccountUseCase {
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setAmount(data.amount());
-        transaction.setType(TransactionType.TRANSFER);
+        transaction.setType(TransactionType.WITHDRAW);
         transaction.setDate(LocalDateTime.now());
         transaction.setUser(account.getUser());
         transaction.setTransferAccount(transferAccount);
@@ -57,7 +57,7 @@ public class TransferAccountUseCase {
         Transaction transferTransaction = new Transaction();
         transferTransaction.setAccount(transferAccount);
         transferTransaction.setAmount(data.amount());
-        transferTransaction.setType(TransactionType.TRANSFER);
+        transferTransaction.setType(TransactionType.DEPOSIT);
         transferTransaction.setDate(LocalDateTime.now());
         transferTransaction.setUser(transferAccount.getUser());
         transferTransaction.setTransferAccount(account);

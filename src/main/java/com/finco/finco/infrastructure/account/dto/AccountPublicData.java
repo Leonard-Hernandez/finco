@@ -18,7 +18,7 @@ public record AccountPublicData(
     LocalDateTime creationDate,
     String description,
     boolean isDefault,
-    boolean enable
+    boolean isEnable
 ) implements IAccountPublicData{
 
     public AccountPublicData(Account account){
