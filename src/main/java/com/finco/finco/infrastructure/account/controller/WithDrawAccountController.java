@@ -20,7 +20,7 @@ public class WithDrawAccountController {
         this.withDrawAccountUseCase = withDrawAccountUseCase;
     }
 
-    @PostMapping("/account/{id}/withdraw")
+    @PostMapping("/accounts/{id}/withdraw")
     public AccountPublicData withdraw(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(withDrawAccountUseCase.execute(id, data));
     }

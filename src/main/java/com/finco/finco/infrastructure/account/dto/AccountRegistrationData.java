@@ -13,5 +13,4 @@ public record AccountRegistrationData(
         BigDecimal balance,
         CurrencyEnum currency,
         String description) implements IAccountRegistrationData {
-
 }

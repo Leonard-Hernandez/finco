@@ -7,7 +7,6 @@ import com.finco.finco.entity.account.model.CurrencyEnum;
 
 public interface IAccountRegistrationData {
 
-    Long userId();
     String name();
     AccountType type();
     BigDecimal balance();

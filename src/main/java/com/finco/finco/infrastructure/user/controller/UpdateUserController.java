@@ -21,7 +21,7 @@ public class UpdateUserController {
         this.updateUserUseCase = updateUserUseCase;
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Validated
     public UserPublicData updateUser(@Valid @RequestBody UserUpdateData data, @PathVariable Long id) {

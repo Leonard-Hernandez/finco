@@ -24,11 +24,11 @@ public class CreateAccountUseCase {
     }
 
     @TransactionalDomainAnnotation
-    public Account execute(IAccountRegistrationData data) {
+    public Account execute(Long userId, IAccountRegistrationData data) {
 
-        authGateway.verifyOwnershipOrAdmin(data.userId());
+        authGateway.verifyOwnershipOrAdmin(userId);
 
-        User user = userGateway.findById(data.userId()).orElseThrow(UserNotFoundException::new);
+        User user = userGateway.findById(userId).orElseThrow(UserNotFoundException::new);
 
         Account account = new Account();
         account.setUser(user);

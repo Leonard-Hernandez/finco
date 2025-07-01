@@ -20,7 +20,7 @@ public class TransferAccountController {
         this.transferAccountUseCase = transferAccountUseCase;
     }
 
-    @PostMapping("/account/{id}/transfer")
+    @PostMapping("/accounts/{id}/transfer")
     public AccountPublicData transfer(@PathVariable Long id, @Valid @RequestBody AccountTransferData data) {
         return new AccountPublicData(transferAccountUseCase.execute(id, data));
     }

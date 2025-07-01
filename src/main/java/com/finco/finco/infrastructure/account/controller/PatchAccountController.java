@@ -19,7 +19,7 @@ public class PatchAccountController {
         this.updateAccountUseCase = updateAccountUseCase;
     }
 
-    @PatchMapping("/account/{id}")
+    @PatchMapping("/accounts/{id}")
     @ResponseStatus(HttpStatus.OK)
     public AccountPublicData patchAccount(@RequestBody AccountUpdateData data, @PathVariable Long id) {
         return new AccountPublicData(updateAccountUseCase.execute(id, data));

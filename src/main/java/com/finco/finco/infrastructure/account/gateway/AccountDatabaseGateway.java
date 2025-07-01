@@ -1,8 +1,6 @@
 package com.finco.finco.infrastructure.account.gateway;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +12,6 @@ import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
-import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.mapper.AccountMapper;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
@@ -75,19 +72,35 @@ public class AccountDatabaseGateway implements AccountGateway {
     }
 
     @Override
-    public List<Account> findByUser(User user) {
-        return accountRepository.findAllByUserId(user.getId()).stream().map(accountMapper::toAccount)
-                .collect(Collectors.toList());
+    public PagedResult<Account> findAllByUser(PageRequest page, Long userId) {
+        Sort sort = page.getSortBy()
+                .map(sortBy -> {
+                    Sort.Direction direction = page.getSortDirection()
+                            .filter(d -> d.equalsIgnoreCase("desc"))
+                            .map(d -> Sort.Direction.DESC)
+                            .orElse(Sort.Direction.ASC);
+                    return Sort.by(direction, sortBy);
+                })
+                .orElse(Sort.unsorted());
+
+        Pageable springPageable = org.springframework.data.domain.PageRequest.of(
+                page.getPageNumber(),
+                page.getPageSize(),
+                sort);
+
+        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByUserId(springPageable,userId);
+
+        return accountMapper.toAccountPagedResult(accountSchemaPage, page);
     }
 
     @Override
-    public Long getTotalByUser(User user) {
-        return accountRepository.getTotalByUserId(user.getId());
+    public Long getTotalByUser(Long userId) {
+        return accountRepository.getTotalByUserId(userId);
     }
 
     @Override
-    public Optional<Account> findDefaultByUser(User user) {
-        return accountRepository.findByIsDefaultTrueAndUserId(user.getId()).map(accountMapper::toAccount);
+    public Optional<Account> findDefaultByUserId(Long userId) {
+        return accountRepository.findByIsDefaultTrueAndUserId(userId).map(accountMapper::toAccount);
     }
 
 }

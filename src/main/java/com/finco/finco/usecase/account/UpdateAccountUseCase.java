@@ -51,7 +51,7 @@ public class UpdateAccountUseCase {
                 throw new CannotDeactivateDefaultAccountException();
             }
 
-            Account oldDeafaultAccount = accountGateway.findDefaultByUser(account.getUser()).orElseThrow(DefaultAccountNotFoundException::new);
+            Account oldDeafaultAccount = accountGateway.findDefaultByUserId(account.getUser().getId()).orElseThrow(DefaultAccountNotFoundException::new);
 
             oldDeafaultAccount.setDefault(false);
 

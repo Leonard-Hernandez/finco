@@ -18,7 +18,7 @@ public class GetAccountController {
         this.getAccountUseCase = getAccountUseCase;
     }
 
-    @GetMapping("/account/{id}")
+    @GetMapping("/accounts/{id}")
     @ResponseStatus(HttpStatus.OK)
     public AccountPublicData getAccount(@PathVariable Long id) {
         return new AccountPublicData(getAccountUseCase.execute(id));

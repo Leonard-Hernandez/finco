@@ -20,7 +20,7 @@ public class DepositAccountController {
         this.depositAccountUseCase = depositAccountUseCase;
     }
 
-    @PostMapping("/account/{id}/deposit")
+    @PostMapping("/accounts/{id}/deposit")
     public AccountPublicData deposit(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(depositAccountUseCase.execute(id, data));
     }

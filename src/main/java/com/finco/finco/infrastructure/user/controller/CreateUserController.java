@@ -21,7 +21,7 @@ public class CreateUserController {
         this.createUserUseCase = createUserUseCase;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     public UserPublicData createUser(@RequestBody @Valid UserRegistrationData data) {
 

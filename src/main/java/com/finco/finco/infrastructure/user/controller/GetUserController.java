@@ -18,7 +18,7 @@ public class GetUserController {
         this.getUserUserCase = getUserController;
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserPublicData getUser(@PathVariable long id) {
 

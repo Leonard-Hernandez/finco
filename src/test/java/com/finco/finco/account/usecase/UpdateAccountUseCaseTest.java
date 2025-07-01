@@ -101,7 +101,7 @@ public class UpdateAccountUseCaseTest {
         when(updateData.enable()).thenReturn(null);
         when(updateData.isDefault()).thenReturn(true);
         when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(accountGateway.findDefaultByUser(testUser)).thenReturn(Optional.of(defaultAccount));
+        when(accountGateway.findDefaultByUserId(userId)).thenReturn(Optional.of(defaultAccount));
         // Act
         Account result = updateAccountUseCase.execute(accountId, updateData);
 

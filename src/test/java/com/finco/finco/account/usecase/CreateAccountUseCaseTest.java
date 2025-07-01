@@ -69,7 +69,6 @@ public class CreateAccountUseCaseTest {
     @DisplayName("Create account successfully")
     public void createAccountSuccess() {
         // Arrange
-        when(accountData.userId()).thenReturn(userId);
         when(accountData.name()).thenReturn("Test Account");
         when(accountData.balance()).thenReturn(BigDecimal.valueOf(1000));
         when(accountData.currency()).thenReturn(CurrencyEnum.USD);
@@ -84,7 +83,7 @@ public class CreateAccountUseCaseTest {
         });
 
         // Act
-        Account result = createAccountUseCase.execute(accountData);
+        Account result = createAccountUseCase.execute(userId, accountData);
 
         // Assert
         assertNotNull(result);
@@ -102,13 +101,12 @@ public class CreateAccountUseCaseTest {
     @DisplayName("Create account for non-existing user should throw UserNotFoundException")
     public void createAccountForNonExistingUserShouldThrowException() {
         // Arrange
-        when(accountData.userId()).thenReturn(userId);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
         when(userGateway.findById(userId)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(UserNotFoundException.class, () -> {
-            createAccountUseCase.execute(accountData);
+            createAccountUseCase.execute(userId, accountData);
         });
 
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
@@ -120,12 +118,11 @@ public class CreateAccountUseCaseTest {
     @DisplayName("Create account without permission should throw AccessDeniedBusinessException")
     public void createAccountWithoutPermissionShouldThrowException() {
         // Arrange
-        when(accountData.userId()).thenReturn(2L);
         doThrow(AccessDeniedBusinessException.class).when(authGateway).verifyOwnershipOrAdmin(2L);
 
         // Act & Assert
         assertThrows(AccessDeniedBusinessException.class, () -> {
-            createAccountUseCase.execute(accountData);
+            createAccountUseCase.execute(2L, accountData);
         });
 
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(2L);

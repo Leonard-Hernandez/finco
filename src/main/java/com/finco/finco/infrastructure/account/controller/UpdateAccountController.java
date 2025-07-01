@@ -21,7 +21,7 @@ public class UpdateAccountController {
         this.updateAccountUseCase = updateAccountUseCase;
     }
 
-    @PutMapping("/account/{id}")
+    @PutMapping("/accounts/{id}")
     @Validated
     @ResponseStatus(HttpStatus.OK)
     public AccountPublicData updateAccount(@PathVariable Long id, @Valid @RequestBody AccountUpdateData data) {
