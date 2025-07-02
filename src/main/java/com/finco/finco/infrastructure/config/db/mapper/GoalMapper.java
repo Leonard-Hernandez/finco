@@ -1,9 +1,15 @@
 package com.finco.finco.infrastructure.config.db.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.goal.model.Goal;
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
 
 @Component
@@ -77,6 +83,28 @@ public class GoalMapper {
         goalSchema.setSavedAmount(goal.getSavedAmount());
 
         return goalSchema;
+    }
+
+    public PagedResult<Goal> toGoalPagedResult(Page<GoalSchema> goalSchemaPage, PageRequest pageRequest) {
+        if (goalSchemaPage == null) {
+            return PagedResult.empty(pageRequest);
+        }
+
+        List<Goal> goalList = goalSchemaPage.getContent().stream()
+                                            .map(this::toGoal)
+                                            .collect(Collectors.toList());
+
+        return new PagedResult<>(
+            goalList,
+            goalSchemaPage.getTotalElements(),
+            goalSchemaPage.getTotalPages(),
+            goalSchemaPage.getNumber(),
+            goalSchemaPage.getSize(),
+            goalSchemaPage.isFirst(),
+            goalSchemaPage.isLast(),
+            goalSchemaPage.hasNext(),
+            goalSchemaPage.hasPrevious()
+        );
     }
 
 }
