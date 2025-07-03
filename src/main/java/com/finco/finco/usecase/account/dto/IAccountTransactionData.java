@@ -13,4 +13,6 @@ public interface IAccountTransactionData {
 
     String description();
 
+    BigDecimal fee();
+
 }

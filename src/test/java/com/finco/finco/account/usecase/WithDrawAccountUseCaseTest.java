@@ -62,7 +62,7 @@ public class WithDrawAccountUseCaseTest {
         testAccount.setUser(testUser);
         testAccount.setEnable(true);
 
-        transactionData = new AccountTransactionData(withdrawAmount, "Withdraw", "Withdrawal");
+        transactionData = new AccountTransactionData(withdrawAmount, "Withdraw", "Withdrawal", BigDecimal.valueOf(10));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class WithDrawAccountUseCaseTest {
     @DisplayName("Withdraw more than account balance should throw InsufficientFundsException")
     public void withdrawMoreThanBalanceShouldThrowException() {
         // Arrange
-        transactionData = new AccountTransactionData(excessiveWithdrawAmount, "Withdraw", "Withdrawal");
+        transactionData = new AccountTransactionData(excessiveWithdrawAmount, "Withdraw", "Withdrawal", BigDecimal.valueOf(10));
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
 

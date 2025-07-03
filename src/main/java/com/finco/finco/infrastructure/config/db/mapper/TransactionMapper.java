@@ -31,6 +31,7 @@ public class TransactionMapper {
         transaction.setAccount(accountMapper.toAccountWithoutUser(transactionSchema.getAccount()));
         transaction.setGoal(goalMapper.toGoalWithoutUser(transactionSchema.getGoal()));
         transaction.setAmount(transactionSchema.getAmount());
+        transaction.setFee(transactionSchema.getFee());
         transaction.setDate(transactionSchema.getDate());
         transaction.setDescription(transactionSchema.getDescription());
         transaction.setCategory(transactionSchema.getCategory());
@@ -59,6 +60,7 @@ public class TransactionMapper {
         transactionSchema.setAccount(accountMapper.toAccountSchema(transaction.getAccount()));
         transactionSchema.setType(transaction.getType());
         transactionSchema.setAmount(transaction.getAmount());
+        transactionSchema.setFee(transaction.getFee());
         transactionSchema.setDate(transaction.getDate());
         transactionSchema.setDescription(transaction.getDescription());
         transactionSchema.setCategory(transaction.getCategory());

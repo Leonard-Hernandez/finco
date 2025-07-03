@@ -11,7 +11,8 @@ public record AccountTransactionData(
     @Min(value = 0, message = "Amount must be positive")
     BigDecimal amount, 
     String category, 
-    String description
+    String description,
+    BigDecimal fee
 ) implements IAccountTransactionData {
 
 }

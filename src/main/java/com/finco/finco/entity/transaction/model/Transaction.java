@@ -15,6 +15,7 @@ public class Transaction {
     private Account account;
     private TransactionType type;
     private BigDecimal amount;
+    private BigDecimal fee;
     private LocalDateTime date;
     private String description;
     private String category;
@@ -25,13 +26,14 @@ public class Transaction {
 
     }
 
-    public Transaction(Long id, User user, Account account, TransactionType type, BigDecimal amount, LocalDateTime date,
+    public Transaction(Long id, User user, Account account, TransactionType type, BigDecimal amount, BigDecimal fee, LocalDateTime date,
             String description, String category, Goal goal, Account transferAccount) {
         this.id = id;
         this.user = user;
         this.account = account;
         this.type = type;
         this.amount = amount;
+        this.fee = fee;
         this.date = date;
         this.description = description;
         this.category = category;
@@ -80,6 +82,14 @@ public class Transaction {
             throw new AmountMustBeGreaterThanZeroException();
         }
         this.amount = amount;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
     }
 
     public LocalDateTime getDate() {

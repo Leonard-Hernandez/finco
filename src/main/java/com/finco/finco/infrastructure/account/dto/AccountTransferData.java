@@ -13,7 +13,9 @@ public record AccountTransferData(
     @Min(value = 0, message = "Amount must be positive")
     BigDecimal amount, 
     String category, 
-    String description
+    String description,
+    BigDecimal withdrawFee,
+    BigDecimal depositFee
 ) implements IAccountTransferData {
 
 }

@@ -51,6 +51,9 @@ public class TransactionSchema {
     @Column(name = "amount", precision = 19, scale = 2, nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "fee", precision = 10, scale = 2)
+    private BigDecimal fee;
+
     @Column(name = "date", 
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime date;

@@ -37,12 +37,24 @@ public class TransferAccountUseCase {
         }
 
         account.transfer(data.amount(), transferAccount);
+        account.withdraw(data.withdrawFee());
+        transferAccount.deposit(data.depositFee());
 
         //account transaction
+        createTransaction(account, transferAccount, data, TransactionType.WITHDRAW);
+
+        //transfer account transaction
+        createTransaction(transferAccount, account, data, TransactionType.DEPOSIT);
+
+        accountGateway.update(transferAccount);
+
+        return accountGateway.update(account);
+    }
+
+    private void createTransaction(Account account, Account transferAccount, IAccountTransferData data, TransactionType type) {
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setAmount(data.amount());
-        transaction.setType(TransactionType.WITHDRAW);
         transaction.setDate(LocalDateTime.now());
         transaction.setUser(account.getUser());
         transaction.setTransferAccount(transferAccount);
@@ -53,27 +65,19 @@ public class TransferAccountUseCase {
             transaction.setDescription(data.description());
         }
 
-        //transfer account transaction
-        Transaction transferTransaction = new Transaction();
-        transferTransaction.setAccount(transferAccount);
-        transferTransaction.setAmount(data.amount());
-        transferTransaction.setType(TransactionType.DEPOSIT);
-        transferTransaction.setDate(LocalDateTime.now());
-        transferTransaction.setUser(transferAccount.getUser());
-        transferTransaction.setTransferAccount(account);
-        if (data.category() != null) {
-            transferTransaction.setCategory(data.category());
-        }
-        if (data.description() != null) {
-            transferTransaction.setDescription(data.description());
+        if (type.equals(TransactionType.WITHDRAW)) {
+            transaction.setType(TransactionType.WITHDRAW);
+            if (data.withdrawFee() != null) {
+                transaction.setFee(data.withdrawFee());
+            }
+        } else if (type.equals(TransactionType.DEPOSIT)) {
+            transaction.setType(TransactionType.DEPOSIT);
+            if (data.depositFee() != null) {
+                transaction.setFee(data.depositFee());
+            }
         }
 
         transactionGateway.create(transaction);
-        transactionGateway.create(transferTransaction);
-
-        accountGateway.update(transferAccount);
-
-        return accountGateway.update(account);
     }
 
 }

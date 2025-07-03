@@ -8,5 +8,7 @@ public interface IAccountTransferData {
     Long transferAccountId();
     String category();
     String description();
+    BigDecimal withdrawFee();
+    BigDecimal depositFee();
 
 }

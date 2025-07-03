@@ -36,14 +36,17 @@ public class WithDrawAccountUseCase {
         transaction.setAccount(account);
         transaction.setAmount(data.amount());
         transaction.setType(TransactionType.WITHDRAW);
+        transaction.setDate(LocalDateTime.now());
+        transaction.setUser(account.getUser());
         if (data.category() != null) {
             transaction.setCategory(data.category());
         }
         if (data.description() != null) {
             transaction.setDescription(data.description());
         }
-        transaction.setDate(LocalDateTime.now());
-        transaction.setUser(account.getUser());
+        if (data.fee() != null) {
+            transaction.setFee(data.fee());
+        }
 
         transactionGateway.create(transaction);
 
