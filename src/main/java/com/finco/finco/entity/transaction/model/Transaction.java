@@ -26,7 +26,8 @@ public class Transaction {
 
     }
 
-    public Transaction(Long id, User user, Account account, TransactionType type, BigDecimal amount, BigDecimal fee, LocalDateTime date,
+    public Transaction(Long id, User user, Account account, TransactionType type, BigDecimal amount, BigDecimal fee,
+            LocalDateTime date,
             String description, String category, Goal goal, Account transferAccount) {
         this.id = id;
         this.user = user;
@@ -156,5 +157,5 @@ public class Transaction {
             return false;
         return true;
     }
-    
+
 }
