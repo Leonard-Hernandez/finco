@@ -19,12 +19,15 @@ public class Account {
     private String description;
     private boolean isDefault;
     private boolean enable;
+    private double depositFee;
+    private double withdrawFee;
 
     public Account() {
     }
 
     public Account(Long id, User user, String name, AccountType type, BigDecimal balance, CurrencyEnum currency,
-            LocalDateTime creationDate, String description, boolean isDefault, boolean enable) {
+            LocalDateTime creationDate, String description, boolean isDefault, boolean enable, double depositFee,
+            double withdrawFee) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -35,6 +38,8 @@ public class Account {
         this.description = description;
         this.isDefault = isDefault;
         this.enable = enable;
+        this.depositFee = depositFee;
+        this.withdrawFee = withdrawFee;
     }
 
     public Long getId() {
@@ -117,11 +122,27 @@ public class Account {
         this.enable = enable;
     }
 
+    public double getDepositFee() {
+        return depositFee;
+    }
+
+    public void setDepositFee(double depositFee) {
+        this.depositFee = depositFee;
+    }
+
+    public double getWithdrawFee() {
+        return withdrawFee;
+    }
+
+    public void setWithdrawFee(double withdrawFee) {
+        this.withdrawFee = withdrawFee;
+    }
+
     public BigDecimal deposit(BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new AmountMustBeGreaterThanZeroException();
         }
-        this.balance = this.balance.add(amount);
+        this.balance = this.balance.add(amount.subtract(amount.multiply(new BigDecimal(depositFee))));
         return this.balance;
     }
 
@@ -130,16 +151,17 @@ public class Account {
     }
 
     public BigDecimal withdraw(BigDecimal amount) {
+
         if (!hasSufficientBalance(amount) && this.type != AccountType.CREDIT) {
             throw new InsufficientBalanceException();
         }
         this.balance = this.balance.subtract(amount);
         return this.balance;
     }
-    
+
     public void transfer(BigDecimal amount, Account transferAccount) {
         this.withdraw(amount);
-        transferAccount.deposit(amount);
+        transferAccount.deposit(amount.subtract(amount.multiply(new BigDecimal(this.getWithdrawFee()))));
     }
 
     @Override
@@ -166,6 +188,5 @@ public class Account {
             return false;
         return true;
     }
-
 
 }

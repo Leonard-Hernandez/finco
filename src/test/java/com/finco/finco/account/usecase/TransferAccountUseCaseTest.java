@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +52,8 @@ public class TransferAccountUseCaseTest {
     private final Long userId = 1L;
     private final BigDecimal initialBalance = BigDecimal.valueOf(1000);
     private final BigDecimal transferAmount = BigDecimal.valueOf(500);
+    private final BigDecimal expectedTransferAccountBalance = BigDecimal.valueOf(500);
+    private final BigDecimal expectedAccountBalance = BigDecimal.valueOf(1451.25);
 
     @BeforeEach
     public void setUp() {
@@ -66,6 +69,7 @@ public class TransferAccountUseCaseTest {
         testAccount.setBalance(initialBalance);
         testAccount.setUser(testUser);
         testAccount.setEnable(true);
+        testAccount.setWithdrawFee(0.05);
 
         testAccount2 = new Account();
         testAccount2.setId(transferAccountId);
@@ -73,7 +77,7 @@ public class TransferAccountUseCaseTest {
         testAccount2.setBalance(initialBalance);
         testAccount2.setUser(testUser);
         testAccount2.setEnable(true);
-    
+        testAccount2.setDepositFee(0.05);    
     }
 
     @Test
@@ -91,10 +95,11 @@ public class TransferAccountUseCaseTest {
         // Act
         Account result = transferAccountUseCase.execute(accountId, transferData);
 
+
         // Assert
         assertNotNull(result);
-        assertEquals(initialBalance.subtract(transferAmount), result.getBalance());
-        assertEquals(initialBalance.add(transferAmount), testAccount2.getBalance());
+        assertEquals(expectedTransferAccountBalance, result.getBalance());
+        assertEquals(expectedAccountBalance, testAccount2.getBalance().setScale(2, RoundingMode.HALF_UP));
         verify(accountGateway, times(1)).findById(accountId);
         verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, times(2)).update(any(Account.class));

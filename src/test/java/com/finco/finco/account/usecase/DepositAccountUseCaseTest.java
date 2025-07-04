@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +47,7 @@ public class DepositAccountUseCaseTest {
     private final Long userId = 1L;
     private final BigDecimal initialBalance = BigDecimal.valueOf(1000);
     private final BigDecimal depositAmount = BigDecimal.valueOf(500);
+    private BigDecimal expectedAccountBalance = BigDecimal.valueOf(1475);
 
     @BeforeEach
     public void setUp() {
@@ -61,6 +63,8 @@ public class DepositAccountUseCaseTest {
         testAccount.setBalance(initialBalance);
         testAccount.setUser(testUser);
         testAccount.setEnable(true);
+        testAccount.setDepositFee(0.05);
+
     }
 
     @Test
@@ -78,7 +82,7 @@ public class DepositAccountUseCaseTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(initialBalance.add(depositAmount), result.getBalance());
+        assertEquals(expectedAccountBalance, result.getBalance().setScale(0, RoundingMode.HALF_UP));
         verify(accountGateway, times(1)).findById(accountId);
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, times(1)).update(any(Account.class));

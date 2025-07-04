@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.account;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
@@ -29,7 +30,8 @@ public class TransferAccountUseCase {
         Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
 
-        Account transferAccount = accountGateway.findById(data.transferAccountId()).orElseThrow(AccessDeniedBusinessException::new);
+        Account transferAccount = accountGateway.findById(data.transferAccountId())
+                .orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(transferAccount.getUser().getId());
 
         if (account.getCurrency() != transferAccount.getCurrency()) {
@@ -37,24 +39,32 @@ public class TransferAccountUseCase {
         }
 
         account.transfer(data.amount(), transferAccount);
-        account.withdraw(data.withdrawFee());
-        transferAccount.deposit(data.depositFee());
 
-        //account transaction
-        createTransaction(account, transferAccount, data, TransactionType.WITHDRAW);
+        // account transaction
+        createTransaction(account, transferAccount, data, TransactionType.WITHDRAW, data.amount());
 
-        //transfer account transaction
-        createTransaction(transferAccount, account, data, TransactionType.DEPOSIT);
+        BigDecimal depositAmount = data.amount()
+                .subtract(data.amount().multiply(new BigDecimal(account.getDepositFee())));
+
+        // transfer account transaction
+        createTransaction(transferAccount, account, data, TransactionType.DEPOSIT, depositAmount);
 
         accountGateway.update(transferAccount);
 
         return accountGateway.update(account);
     }
 
-    private void createTransaction(Account account, Account transferAccount, IAccountTransferData data, TransactionType type) {
+    private void createTransaction(Account account, Account transferAccount, IAccountTransferData data,
+            TransactionType type, BigDecimal amount) {
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
-        transaction.setAmount(data.amount());
+        if (type.equals(TransactionType.WITHDRAW)) {
+            transaction.setAmount(amount.subtract(amount.multiply(new BigDecimal(account.getWithdrawFee()))));
+            transaction.setFee(amount.multiply(new BigDecimal(account.getWithdrawFee())));
+        } else if (type.equals(TransactionType.DEPOSIT)) {
+            transaction.setAmount(amount.subtract(amount.multiply(new BigDecimal(account.getDepositFee()))));
+            transaction.setFee(amount.multiply(new BigDecimal(account.getDepositFee())));
+        }
         transaction.setDate(LocalDateTime.now());
         transaction.setUser(account.getUser());
         transaction.setTransferAccount(transferAccount);
@@ -68,12 +78,12 @@ public class TransferAccountUseCase {
         if (type.equals(TransactionType.WITHDRAW)) {
             transaction.setType(TransactionType.WITHDRAW);
             if (data.withdrawFee() != null) {
-                transaction.setFee(data.withdrawFee());
+                transaction.setFee(data.amount().multiply(new BigDecimal(account.getWithdrawFee())));
             }
         } else if (type.equals(TransactionType.DEPOSIT)) {
             transaction.setType(TransactionType.DEPOSIT);
             if (data.depositFee() != null) {
-                transaction.setFee(data.depositFee());
+                transaction.setFee(data.amount().multiply(new BigDecimal(account.getDepositFee())));
             }
         }
 

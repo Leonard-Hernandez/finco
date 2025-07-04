@@ -40,6 +40,8 @@ public class AccountMapper {
         account.setDescription(accountSchema.getDescription());
         account.setDefault(accountSchema.isDefault());
         account.setEnable(accountSchema.isEnable());
+        account.setDepositFee(accountSchema.getDepositFee());
+        account.setWithdrawFee(accountSchema.getWithdrawFee());
 
         return account;
 
@@ -61,6 +63,9 @@ public class AccountMapper {
         account.setDescription(accountSchema.getDescription());
         account.setDefault(accountSchema.isDefault());
         account.setEnable(accountSchema.isEnable());
+        account.setDepositFee(accountSchema.getDepositFee());
+        account.setWithdrawFee(accountSchema.getWithdrawFee());
+        
 
         return account;
 
@@ -87,6 +92,8 @@ public class AccountMapper {
         accountSchema.setDescription(account.getDescription());
         accountSchema.setDefault(account.isDefault());
         accountSchema.setEnable(account.isEnable());
+        accountSchema.setDepositFee(account.getDepositFee());
+        accountSchema.setWithdrawFee(account.getWithdrawFee());
 
         Long version = accountRepository.getVersionByAccountId(account.getId());
 

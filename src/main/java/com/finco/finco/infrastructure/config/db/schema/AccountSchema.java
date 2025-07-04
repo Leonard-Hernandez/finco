@@ -82,4 +82,10 @@ public class AccountSchema {
     @Column(name = "version")
     private Long version;
 
+    @Column(name = "deposit_fee", columnDefinition = "DEFAULT 0.00")
+    private double depositFee;
+
+    @Column(name = "withdraw_fee", columnDefinition = "DEFAULT 0.00")
+    private double withdrawFee;
+
 }
