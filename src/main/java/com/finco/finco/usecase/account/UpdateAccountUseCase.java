@@ -60,6 +60,13 @@ public class UpdateAccountUseCase {
             account.setDefault(data.isDefault());
         }
 
+        if (data.withdrawFee() != null) {
+            account.setWithdrawFee(data.withdrawFee());
+        }
+        if (data.depositFee() != null) {
+            account.setDepositFee(data.depositFee());
+        }
+
         return accountGateway.update(account);
 
     }

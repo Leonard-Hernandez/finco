@@ -21,7 +21,9 @@ public record AccountPublicData(
     LocalDateTime creationDate,
     String description,
     boolean isDefault,
-    boolean isEnable
+    boolean isEnable,
+    Double withdrawFee,
+    Double depositFee
 ) implements IAccountPublicData{
 
     public AccountPublicData(Account account){
@@ -35,7 +37,9 @@ public record AccountPublicData(
             account.getCreationDate(),
             account.getDescription(),
             account.isDefault(),
-            account.isEnable()
+            account.isEnable(),
+            account.getWithdrawFee(),
+            account.getDepositFee()
         );
     }
 

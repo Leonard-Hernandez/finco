@@ -11,5 +11,7 @@ public interface IAccountUpdateData {
     String description();
     Boolean isDefault();
     Boolean enable();
+    Double withdrawFee();
+    Double depositFee();
 
 }

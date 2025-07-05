@@ -124,8 +124,19 @@ public class UserMapper {
         userSchema.setRegistrationDate(user.getRegistrationDate());
         userSchema.setEnable(user.isEnable());
 
+        // Create minimal account schemas with just the IDs to prevent circular references
         List<AccountSchema> accounts = user.getAccounts() != null
-                ? user.getAccounts().stream().map(accountMapper::toAccountSchema).collect(Collectors.toList())
+                ? user.getAccounts().stream().map(account -> {
+                    AccountSchema accountSchema = new AccountSchema();
+                    accountSchema.setId(account.getId());
+                    accountSchema.setName(account.getName());
+                    accountSchema.setType(account.getType());
+                    accountSchema.setBalance(account.getBalance());
+                    accountSchema.setCurrency(account.getCurrency());
+                    accountSchema.setDefault(account.isDefault());
+                    accountSchema.setEnable(account.isEnable());
+                    return accountSchema;
+                }).collect(Collectors.toList())
                 : List.of();
 
         List<GoalSchema> goals = user.getGoals() != null

@@ -12,6 +12,7 @@ import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
+import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
 public class AccountMapper {
@@ -72,7 +73,6 @@ public class AccountMapper {
     }
 
     public AccountSchema toAccountSchema(Account account) {
-
         if (account == null) {
             return null;
         }
@@ -83,7 +83,12 @@ public class AccountMapper {
 
         AccountSchema accountSchema = new AccountSchema();
         accountSchema.setId(account.getId());
-        accountSchema.setUser(userMapper.toUserSchema(account.getUser()));
+        
+        // Create a minimal user schema with just the ID to prevent circular reference
+        UserSchema userSchema = new UserSchema();
+        userSchema.setId(account.getUser().getId());
+        accountSchema.setUser(userSchema);
+        
         accountSchema.setName(account.getName());
         accountSchema.setType(account.getType());
         accountSchema.setBalance(account.getBalance());
@@ -96,7 +101,6 @@ public class AccountMapper {
         accountSchema.setWithdrawFee(account.getWithdrawFee());
 
         Long version = accountRepository.getVersionByAccountId(account.getId());
-
         accountSchema.setVersion(version);
 
         return accountSchema;

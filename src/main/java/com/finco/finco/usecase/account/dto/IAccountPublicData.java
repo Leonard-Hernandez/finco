@@ -18,5 +18,7 @@ public interface IAccountPublicData {
     String description();
     boolean isDefault();
     boolean isEnable();
+    Double withdrawFee();
+    Double depositFee();
 
 }

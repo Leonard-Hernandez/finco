@@ -39,6 +39,12 @@ public class CreateAccountUseCase {
         account.setCreationDate(LocalDateTime.now());
         account.setDescription(data.description());
         account.setEnable(true);
+        if (data.withdrawFee() != null) {
+            account.setWithdrawFee(data.withdrawFee());
+        }
+        if (data.depositFee() != null) {
+            account.setDepositFee(data.depositFee());
+        }
 
         if (user.getAccounts().size() == 0) {
             account.setDefault(true);

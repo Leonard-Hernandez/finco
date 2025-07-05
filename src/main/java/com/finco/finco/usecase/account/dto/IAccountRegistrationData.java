@@ -12,5 +12,7 @@ public interface IAccountRegistrationData {
     BigDecimal balance();
     CurrencyEnum currency();
     String description();
+    Double withdrawFee();
+    Double depositFee();
 
 }

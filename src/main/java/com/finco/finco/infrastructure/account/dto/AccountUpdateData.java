@@ -18,6 +18,8 @@ public record AccountUpdateData(
         @NotNull(message = "IsDefault cannot be null")
         Boolean isDefault,
         @NotNull(message = "Enable cannot be null")
-        Boolean enable) implements IAccountUpdateData {
+        Boolean enable,
+        Double withdrawFee,
+        Double depositFee) implements IAccountUpdateData {
 
 }
