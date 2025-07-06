@@ -15,10 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.finco.finco.entity.account.exception.ExchangeRateNotFound;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.CurrencyEnum;
-import com.finco.finco.entity.exception.IncompatibleCurrencyException;
 import com.finco.finco.entity.exception.InsufficientBalanceException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
@@ -52,7 +52,7 @@ public class TransferAccountUseCaseTest {
     private final Long userId = 1L;
     private final BigDecimal initialBalance = BigDecimal.valueOf(1000);
     private final BigDecimal transferAmount = BigDecimal.valueOf(500);
-    private final BigDecimal expectedTransferAccountBalance = BigDecimal.valueOf(500);
+    private final BigDecimal expectedTransferAccountBalance = BigDecimal.valueOf(475.00);
     private final BigDecimal expectedAccountBalance = BigDecimal.valueOf(1451.25);
 
     @BeforeEach
@@ -98,11 +98,35 @@ public class TransferAccountUseCaseTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals(expectedTransferAccountBalance, result.getBalance());
+        assertEquals(expectedTransferAccountBalance, result.getBalance().setScale(1, RoundingMode.HALF_UP));
         assertEquals(expectedAccountBalance, testAccount2.getBalance().setScale(2, RoundingMode.HALF_UP));
         verify(accountGateway, times(1)).findById(accountId);
         verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, times(2)).update(any(Account.class));
+    }
+
+    @Test
+    @DisplayName("Transfer to account with incompatible currency and exchange rate")
+    public void transferToAccountWithIncompatibleCurrencySuccess() {
+        // Arrange
+        testAccount2.setCurrency(CurrencyEnum.USD);
+        when(transferData.transferAccountId()).thenReturn(transferAccountId);
+        when(transferData.exchangeRate()).thenReturn(new BigDecimal(4000));
+        when(transferData.amount()).thenReturn(transferAmount);
+        when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
+        when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
+        doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
+        when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Account result = transferAccountUseCase.execute(accountId, transferData);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expectedTransferAccountBalance, result.getBalance().setScale(1, RoundingMode.HALF_UP));
+        assertEquals(new BigDecimal(1806000), testAccount2.getBalance().setScale(0, RoundingMode.HALF_UP));
+        verify(accountGateway, times(1)).findById(accountId);
+        verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
     }
 
     @Test
@@ -142,17 +166,18 @@ public class TransferAccountUseCaseTest {
     }
 
     @Test
-    @DisplayName("Transfer to account with incompatible currency should throw IncompatibleCurrencyException")
+    @DisplayName("Transfer to account with incompatible currency and exchange rate null should throw ExchangeRateNotFound")
     public void transferToAccountWithIncompatibleCurrencyShouldThrowException() {
         // Arrange
         testAccount.setCurrency(CurrencyEnum.USD);
         when(transferData.transferAccountId()).thenReturn(transferAccountId);
+        when(transferData.exchangeRate()).thenReturn(null);
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act & Assert
-        assertThrows(IncompatibleCurrencyException.class, () -> {
+        assertThrows(ExchangeRateNotFound.class, () -> {
             transferAccountUseCase.execute(accountId, transferData);
         });
 

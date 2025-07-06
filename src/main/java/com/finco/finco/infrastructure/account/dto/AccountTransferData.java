@@ -14,8 +14,7 @@ public record AccountTransferData(
     BigDecimal amount, 
     String category, 
     String description,
-    BigDecimal withdrawFee,
-    BigDecimal depositFee
+    BigDecimal exchangeRate
 ) implements IAccountTransferData {
 
 }

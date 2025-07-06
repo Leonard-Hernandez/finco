@@ -3,9 +3,9 @@ package com.finco.finco.usecase.account;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.account.exception.ExchangeRateNotFound;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
-import com.finco.finco.entity.exception.IncompatibleCurrencyException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
@@ -27,64 +27,65 @@ public class TransferAccountUseCase {
     }
 
     public Account execute(Long id, IAccountTransferData data) {
-        Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
-        authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
+        Account fromAccount = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
+        authGateway.verifyOwnershipOrAdmin(fromAccount.getUser().getId());
 
         Account transferAccount = accountGateway.findById(data.transferAccountId())
                 .orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(transferAccount.getUser().getId());
 
-        if (account.getCurrency() != transferAccount.getCurrency()) {
-            throw new IncompatibleCurrencyException();
+        BigDecimal depositAmount = null;
+
+        if (fromAccount.getCurrency() != transferAccount.getCurrency()) {
+
+            if (data.exchangeRate() == null) {
+                throw new ExchangeRateNotFound();
+            }
+
+            fromAccount.transfer(data.amount(), transferAccount, data.exchangeRate());
+            depositAmount = data.amount()
+                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getDepositFee())))
+                    .multiply(data.exchangeRate());
+        } else {
+            fromAccount.transfer(data.amount(), transferAccount);
+            depositAmount = data.amount()
+                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getDepositFee())));
         }
 
-        account.transfer(data.amount(), transferAccount);
-
         // account transaction
-        createTransaction(account, transferAccount, data, TransactionType.WITHDRAW, data.amount());
-
-        BigDecimal depositAmount = data.amount()
-                .subtract(data.amount().multiply(new BigDecimal(account.getDepositFee())));
+        createTransaction(fromAccount, transferAccount, data, TransactionType.WITHDRAW, data.amount());
 
         // transfer account transaction
-        createTransaction(transferAccount, account, data, TransactionType.DEPOSIT, depositAmount);
+        createTransaction(transferAccount, fromAccount, data, TransactionType.DEPOSIT, depositAmount);
 
         accountGateway.update(transferAccount);
 
-        return accountGateway.update(account);
+        return accountGateway.update(fromAccount);
     }
 
     private void createTransaction(Account account, Account transferAccount, IAccountTransferData data,
             TransactionType type, BigDecimal amount) {
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
+        transaction.setDate(LocalDateTime.now());
+        transaction.setUser(account.getUser());
+        transaction.setTransferAccount(transferAccount);
+        transaction.setType(type);
         if (type.equals(TransactionType.WITHDRAW)) {
             transaction.setAmount(amount.subtract(amount.multiply(new BigDecimal(account.getWithdrawFee()))));
             transaction.setFee(amount.multiply(new BigDecimal(account.getWithdrawFee())));
         } else if (type.equals(TransactionType.DEPOSIT)) {
-            transaction.setAmount(amount.subtract(amount.multiply(new BigDecimal(account.getDepositFee()))));
+            transaction.setAmount(amount);
             transaction.setFee(amount.multiply(new BigDecimal(account.getDepositFee())));
         }
-        transaction.setDate(LocalDateTime.now());
-        transaction.setUser(account.getUser());
-        transaction.setTransferAccount(transferAccount);
+        if (data.exchangeRate() != null) {
+            transaction.setExchangeRate(data.exchangeRate());
+        }
         if (data.category() != null) {
             transaction.setCategory(data.category());
         }
         if (data.description() != null) {
             transaction.setDescription(data.description());
-        }
-
-        if (type.equals(TransactionType.WITHDRAW)) {
-            transaction.setType(TransactionType.WITHDRAW);
-            if (data.withdrawFee() != null) {
-                transaction.setFee(data.amount().multiply(new BigDecimal(account.getWithdrawFee())));
-            }
-        } else if (type.equals(TransactionType.DEPOSIT)) {
-            transaction.setType(TransactionType.DEPOSIT);
-            if (data.depositFee() != null) {
-                transaction.setFee(data.amount().multiply(new BigDecimal(account.getDepositFee())));
-            }
         }
 
         transactionGateway.create(transaction);

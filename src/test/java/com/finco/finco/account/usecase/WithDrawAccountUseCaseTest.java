@@ -46,7 +46,7 @@ public class WithDrawAccountUseCaseTest {
     private final Long userId = 1L;
     private final BigDecimal initialBalance = BigDecimal.valueOf(1000);
     private final BigDecimal withdrawAmount = BigDecimal.valueOf(500);
-    private final BigDecimal expectedAccountBalance = BigDecimal.valueOf(500);
+    private final BigDecimal expectedAccountBalance = BigDecimal.valueOf(475);
     private final BigDecimal excessiveWithdrawAmount = BigDecimal.valueOf(1500);
 
     @BeforeEach

@@ -142,7 +142,8 @@ public class Account {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new AmountMustBeGreaterThanZeroException();
         }
-        this.balance = this.balance.add(amount.subtract(amount.multiply(new BigDecimal(depositFee))));
+        BigDecimal fee = amount.multiply(new BigDecimal(this.depositFee));
+        this.balance = this.balance.add(amount.subtract(fee));
         return this.balance;
     }
 
@@ -151,17 +152,26 @@ public class Account {
     }
 
     public BigDecimal withdraw(BigDecimal amount) {
+        BigDecimal fee = amount.multiply(new BigDecimal(this.withdrawFee));
 
-        if (!hasSufficientBalance(amount) && this.type != AccountType.CREDIT) {
+        if (!hasSufficientBalance(amount.add(fee)) && this.type != AccountType.CREDIT) {
             throw new InsufficientBalanceException();
         }
-        this.balance = this.balance.subtract(amount);
+        this.balance = this.balance.subtract(amount.add(fee));
         return this.balance;
     }
 
     public void transfer(BigDecimal amount, Account transferAccount) {
         this.withdraw(amount);
-        transferAccount.deposit(amount.subtract(amount.multiply(new BigDecimal(this.getWithdrawFee()))));
+        BigDecimal fee = amount.multiply(new BigDecimal(this.withdrawFee));
+        transferAccount.deposit(amount.subtract(fee));
+    }
+
+    public void transfer(BigDecimal amount, Account transferAccount, BigDecimal exchageRate) {
+        this.withdraw(amount);
+        BigDecimal fee = amount.multiply(new BigDecimal(this.withdrawFee));
+        BigDecimal amountToTransfer = amount.subtract(fee);
+        transferAccount.deposit(amountToTransfer.multiply(exchageRate));
     }
 
     @Override

@@ -35,7 +35,7 @@ public class WithDrawAccountUseCase {
 
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
-        transaction.setAmount(data.amount().subtract(data.amount().multiply(new BigDecimal(account.getWithdrawFee()))));
+        transaction.setAmount(data.amount());
         transaction.setFee(data.amount().multiply(new BigDecimal(account.getWithdrawFee())));
         transaction.setType(TransactionType.WITHDRAW);
         transaction.setDate(LocalDateTime.now());

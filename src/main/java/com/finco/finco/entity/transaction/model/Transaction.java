@@ -21,14 +21,15 @@ public class Transaction {
     private String category;
     private Goal goal;
     private Account transferAccount;
+    private BigDecimal exchangeRate;
 
     public Transaction() {
 
     }
 
     public Transaction(Long id, User user, Account account, TransactionType type, BigDecimal amount, BigDecimal fee,
-            LocalDateTime date,
-            String description, String category, Goal goal, Account transferAccount) {
+            LocalDateTime date, String description, String category, Goal goal, Account transferAccount,
+            BigDecimal exchangeRate) {
         this.id = id;
         this.user = user;
         this.account = account;
@@ -131,6 +132,14 @@ public class Transaction {
 
     public void setTransferAccount(Account transferAccount) {
         this.transferAccount = transferAccount;
+    }
+
+    public BigDecimal getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
     }
 
     @Override
