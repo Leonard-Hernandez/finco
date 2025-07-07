@@ -61,4 +61,9 @@ public class TransactionDatabaseGateway implements TransactionGateway {
                 .map(transactionMapper::toTransaction).collect(Collectors.toList());
     }
 
+    @Override
+    public List<String> findAllCategoriesByUserId(Long userId) {
+        return transactionRepository.findAllCategoriesByUserId(userId);
+    }
+
 }

@@ -20,4 +20,6 @@ public interface TransactionGateway {
 
     List<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId);
 
+    List<String> findAllCategoriesByUserId(Long userId);
+
 }
