@@ -88,4 +88,7 @@ public class AccountSchema {
     @Column(name = "withdraw_fee", columnDefinition = "DEFAULT 0.00")
     private double withdrawFee;
 
+    @OneToMany(mappedBy = "account")
+    private List<GoalAccountBalanceSchema> goalAccountBalances;
+
 }

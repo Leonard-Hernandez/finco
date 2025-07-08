@@ -1,6 +1,5 @@
 package com.finco.finco.usecase.goal;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
@@ -38,7 +37,6 @@ public class CreateGoalUseCase {
         goal.setDeadLine(data.deadLine());
         goal.setDescription(data.description());
         goal.setCreationDate(LocalDateTime.now());
-        goal.setSavedAmount(BigDecimal.ZERO);
         goal.setEnable(true);
 
         return goalGateway.create(goal);

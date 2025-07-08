@@ -3,8 +3,10 @@ package com.finco.finco.entity.goal.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.finco.finco.entity.exception.AmountMustBeGreaterThanZeroException;
+import com.finco.finco.entity.goalAccountBalance.model.GoalAccountBalance;
 import com.finco.finco.entity.user.model.User;
 
 public class Goal {
@@ -16,14 +18,14 @@ public class Goal {
     private LocalDate deadLine;
     private String description;
     private LocalDateTime creationDate;
-    private BigDecimal savedAmount;
     private boolean enable;
+    private List<GoalAccountBalance> goalAccountBalances;
 
     public Goal() {
     };
 
     public Goal(Long id, User user, String name, BigDecimal targetAmount, LocalDate deadLine, String description,
-            LocalDateTime creationDate, BigDecimal savedAmount, boolean enable) {
+            LocalDateTime creationDate, boolean enable, List<GoalAccountBalance> goalAccountBalances) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -31,8 +33,8 @@ public class Goal {
         this.deadLine = deadLine;
         this.description = description;
         this.creationDate = creationDate;
-        this.savedAmount = savedAmount;
         this.enable = enable;
+        this.goalAccountBalances = goalAccountBalances;
     }
 
     public Long getId() {
@@ -94,27 +96,20 @@ public class Goal {
         this.creationDate = creationDate;
     }
 
-    public BigDecimal getSavedAmount() {
-        return savedAmount;
-    }
-
-    public void setSavedAmount(BigDecimal savedAmount) {
-        this.savedAmount = savedAmount != null ? savedAmount : BigDecimal.ZERO;
-    }
-    
-    public void addToSavedAmount(BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new AmountMustBeGreaterThanZeroException();
-        }
-        this.savedAmount = this.savedAmount.add(amount);
-    }
-
     public boolean isEnable() {
         return enable;
     }
 
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+
+    public List<GoalAccountBalance> getGoalAccountBalances() {
+        return goalAccountBalances;
+    }
+
+    public void setGoalAccountBalances(List<GoalAccountBalance> goalAccountBalances) {
+        this.goalAccountBalances = goalAccountBalances;
     }
 
     @Override

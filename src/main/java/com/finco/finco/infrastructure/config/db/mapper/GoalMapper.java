@@ -8,9 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.goal.model.Goal;
+import com.finco.finco.entity.goalAccountBalance.model.GoalAccountBalance;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.infrastructure.config.db.schema.GoalAccountBalanceSchema;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
+import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
 public class GoalMapper {
@@ -35,7 +38,8 @@ public class GoalMapper {
         goal.setDeadLine(goalSchema.getDeadLine());
         goal.setDescription(goalSchema.getDescription());
         goal.setCreationDate(goalSchema.getCreationDate());
-        goal.setSavedAmount(goalSchema.getSavedAmount());
+        goal.setEnable(goalSchema.isEnable());
+        goal.setGoalAccountBalances(toGoalAccountBalanceList(goalSchema.getGoalAccountBalances()));
 
         return goal;
 
@@ -55,7 +59,8 @@ public class GoalMapper {
         goal.setDeadLine(goalSchema.getDeadLine());
         goal.setDescription(goalSchema.getDescription());
         goal.setCreationDate(goalSchema.getCreationDate());
-        goal.setSavedAmount(goalSchema.getSavedAmount());
+        goal.setEnable(goalSchema.isEnable());
+        goal.setGoalAccountBalances(toGoalAccountBalanceList(goalSchema.getGoalAccountBalances()));
 
         return goal;
 
@@ -74,13 +79,16 @@ public class GoalMapper {
         }
 
         goalSchema.setId(goal.getId());
-        goalSchema.setUser(userMapper.toUserSchema(goal.getUser()));
+        UserSchema userSchema = new UserSchema();
+        userSchema.setId(goal.getUser().getId());
+        goalSchema.setUser(userSchema);
         goalSchema.setName(goal.getName());
         goalSchema.setTargetAmount(goal.getTargetAmount());
         goalSchema.setDeadLine(goal.getDeadLine());
         goalSchema.setDescription(goal.getDescription());
         goalSchema.setCreationDate(goal.getCreationDate());
-        goalSchema.setSavedAmount(goal.getSavedAmount());
+        goalSchema.setEnable(goal.isEnable());
+        goalSchema.setGoalAccountBalances(toGoalAccountBalanceSchemaList(goal.getGoalAccountBalances()));
 
         return goalSchema;
     }
@@ -105,6 +113,42 @@ public class GoalMapper {
             goalSchemaPage.hasNext(),
             goalSchemaPage.hasPrevious()
         );
+    }
+
+    public List<GoalAccountBalance> toGoalAccountBalanceList(List<GoalAccountBalanceSchema> goalAccountBalanceSchemaList) {
+        if (goalAccountBalanceSchemaList == null) {
+            return null;
+        }
+        return goalAccountBalanceSchemaList.stream()
+                .map(goalAccountBalanceSchema -> {
+                    GoalAccountBalance goalAccountBalance = new GoalAccountBalance();
+                    goalAccountBalance.setId(goalAccountBalanceSchema.getId());
+                    goalAccountBalance.setGoal(goalAccountBalanceSchema.getGoal());
+                    goalAccountBalance.setAccount(goalAccountBalanceSchema.getAccount());
+                    goalAccountBalance.setBalance(goalAccountBalanceSchema.getBalance());
+                    goalAccountBalance.setLastUpdated(goalAccountBalanceSchema.getLastUpdated());
+                    goalAccountBalance.setCreatedAt(goalAccountBalanceSchema.getCreatedAt());
+                    return goalAccountBalance;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<GoalAccountBalanceSchema> toGoalAccountBalanceSchemaList(List<GoalAccountBalance> goalAccountBalanceList) {
+        if (goalAccountBalanceList == null) {
+            return null;
+        }
+        return goalAccountBalanceList.stream()
+                .map(goalAccountBalance -> {
+                    GoalAccountBalanceSchema goalAccountBalanceSchema = new GoalAccountBalanceSchema();
+                    goalAccountBalanceSchema.setId(goalAccountBalance.getId());
+                    goalAccountBalanceSchema.setGoal(goalAccountBalance.getGoal());
+                    goalAccountBalanceSchema.setAccount(goalAccountBalance.getAccount());
+                    goalAccountBalanceSchema.setBalance(goalAccountBalance.getBalance());
+                    goalAccountBalanceSchema.setLastUpdated(goalAccountBalance.getLastUpdated());
+                    goalAccountBalanceSchema.setCreatedAt(goalAccountBalance.getCreatedAt());
+                    return goalAccountBalanceSchema;
+                })
+                .collect(Collectors.toList());
     }
 
 }

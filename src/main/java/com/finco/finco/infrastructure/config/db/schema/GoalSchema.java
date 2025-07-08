@@ -67,4 +67,7 @@ public class GoalSchema {
     @Column(name = "enable", columnDefinition = "DEFAULT 1")
     private boolean enable;
 
+    @OneToMany(mappedBy = "goal")
+    private List<GoalAccountBalanceSchema> goalAccountBalances;
+
 }
