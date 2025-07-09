@@ -16,6 +16,4 @@ public class DepositGoalUseCase {
         this.authGateway = authGateway;
     }
 
-    
-
 }
