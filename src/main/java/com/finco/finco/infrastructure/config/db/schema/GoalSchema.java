@@ -55,12 +55,6 @@ public class GoalSchema {
     @Column(name = "creation_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime creationDate;
 
-    @Column(name = "saved_amount", 
-            precision = 19, scale = 2, 
-            columnDefinition = "DECIMAL(19,2) DEFAULT 0.00", 
-            nullable = false)
-    private BigDecimal savedAmount;
-
     @OneToMany(mappedBy = "goal")
     private List<TransactionSchema> transactions;
 

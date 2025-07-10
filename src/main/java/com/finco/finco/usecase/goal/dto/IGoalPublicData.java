@@ -3,6 +3,9 @@ package com.finco.finco.usecase.goal.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.finco.finco.usecase.goalaccountbalance.dto.IGoalAccountBalanceData;
 
 public interface IGoalPublicData {
 
@@ -12,7 +15,7 @@ public interface IGoalPublicData {
     LocalDate deadLine();
     String description();
     LocalDateTime creationDate();
-    BigDecimal savedAmount();
     boolean enable();
+    List<IGoalAccountBalanceData> goalAccountBalances();
 
 }

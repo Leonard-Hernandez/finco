@@ -6,6 +6,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
+import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
@@ -20,6 +21,11 @@ import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
 import com.finco.finco.usecase.account.TransferAccountUseCase;
 import com.finco.finco.usecase.account.UpdateAccountUseCase;
 import com.finco.finco.usecase.account.WithDrawAccountUseCase;
+import com.finco.finco.usecase.goal.CreateGoalUseCase;
+import com.finco.finco.usecase.goal.DeleteGoalUseCase;
+import com.finco.finco.usecase.goal.DepositGoalUseCase;
+import com.finco.finco.usecase.goal.GetGoalUseCase;
+import com.finco.finco.usecase.goal.UpdateGoalUseCase;
 import com.finco.finco.usecase.transaction.GetCategoriesByUserUseCase;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
 import com.finco.finco.usecase.user.CreateUserUseCase;
@@ -120,11 +126,38 @@ public class AppConfig {
         return new DeleteAccountUseCase(accountGateway, authGateway);
     }
 
-    // Transaction
+    // Transactions beans
 
     @Bean
     GetCategoriesByUserUseCase getCategoriesByUserUseCase(TransactionGateway transactionGateway, AuthGateway authGateway) {
         return new GetCategoriesByUserUseCase(transactionGateway, authGateway);
+    }
+
+    // goal beans
+
+    @Bean
+    CreateGoalUseCase createGoalUseCase(GoalGateway goalGateway, UserGateway userGateway, AuthGateway authGateway) {
+        return new CreateGoalUseCase(goalGateway, userGateway, authGateway);
+    }
+
+    @Bean
+    UpdateGoalUseCase updateGoalUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
+        return new UpdateGoalUseCase(goalGateway, authGateway);
+    }
+
+    @Bean
+    GetGoalUseCase getGoalUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
+        return new GetGoalUseCase(goalGateway, authGateway);
+    }
+
+    @Bean
+    DeleteGoalUseCase deleteGoalUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
+        return new DeleteGoalUseCase(goalGateway, authGateway);
+    }
+
+    @Bean
+    DepositGoalUseCase depositGoalUseCase(GoalGateway goalGateway, AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+        return new DepositGoalUseCase(goalGateway, accountGateway, transactionGateway, authGateway);
     }
 
 }

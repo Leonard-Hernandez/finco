@@ -7,10 +7,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.goalAccountBalance.model.GoalAccountBalance;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 import com.finco.finco.infrastructure.config.db.schema.GoalAccountBalanceSchema;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
@@ -88,7 +90,11 @@ public class GoalMapper {
         goalSchema.setDescription(goal.getDescription());
         goalSchema.setCreationDate(goal.getCreationDate());
         goalSchema.setEnable(goal.isEnable());
-        goalSchema.setGoalAccountBalances(toGoalAccountBalanceSchemaList(goal.getGoalAccountBalances()));
+        if (goal.getGoalAccountBalances() != null) {
+            goalSchema.setGoalAccountBalances(toGoalAccountBalanceSchemaList(goal.getGoalAccountBalances()));
+        } else {
+            goalSchema.setGoalAccountBalances(List.of());
+        }
 
         return goalSchema;
     }
@@ -123,8 +129,12 @@ public class GoalMapper {
                 .map(goalAccountBalanceSchema -> {
                     GoalAccountBalance goalAccountBalance = new GoalAccountBalance();
                     goalAccountBalance.setId(goalAccountBalanceSchema.getId());
-                    goalAccountBalance.setGoal(goalAccountBalanceSchema.getGoal());
-                    goalAccountBalance.setAccount(goalAccountBalanceSchema.getAccount());
+                    Goal goal = new Goal();
+                    goal.setId(goalAccountBalanceSchema.getGoal().getId());
+                    goalAccountBalance.setGoal(goal);
+                    Account account = new Account();
+                    account.setId(goalAccountBalanceSchema.getAccount().getId());
+                    goalAccountBalance.setAccount(account);
                     goalAccountBalance.setBalance(goalAccountBalanceSchema.getBalance());
                     goalAccountBalance.setLastUpdated(goalAccountBalanceSchema.getLastUpdated());
                     goalAccountBalance.setCreatedAt(goalAccountBalanceSchema.getCreatedAt());
@@ -141,8 +151,12 @@ public class GoalMapper {
                 .map(goalAccountBalance -> {
                     GoalAccountBalanceSchema goalAccountBalanceSchema = new GoalAccountBalanceSchema();
                     goalAccountBalanceSchema.setId(goalAccountBalance.getId());
-                    goalAccountBalanceSchema.setGoal(goalAccountBalance.getGoal());
-                    goalAccountBalanceSchema.setAccount(goalAccountBalance.getAccount());
+                    GoalSchema goalSchema = new GoalSchema();
+                    goalSchema.setId(goalAccountBalance.getGoal().getId());
+                    goalAccountBalanceSchema.setGoal(goalSchema);
+                    AccountSchema accountSchema = new AccountSchema();
+                    accountSchema.setId(goalAccountBalance.getAccount().getId());
+                    goalAccountBalanceSchema.setAccount(accountSchema);
                     goalAccountBalanceSchema.setBalance(goalAccountBalance.getBalance());
                     goalAccountBalanceSchema.setLastUpdated(goalAccountBalance.getLastUpdated());
                     goalAccountBalanceSchema.setCreatedAt(goalAccountBalance.getCreatedAt());

@@ -24,11 +24,11 @@ public class CreateGoalUseCase {
     }
 
     @TransactionalDomainAnnotation
-    public Goal execute(Long goalId, IGoalRegistrationData data) {
+    public Goal execute(Long userId, IGoalRegistrationData data) {
 
-        authGateway.verifyOwnershipOrAdmin(data.userId());
+        authGateway.verifyOwnershipOrAdmin(userId);
 
-        User user = userGateway.findById(data.userId()).orElseThrow(UserNotFoundException::new);
+        User user = userGateway.findById(userId).orElseThrow(UserNotFoundException::new);
 
         Goal goal = new Goal();
         goal.setUser(user);

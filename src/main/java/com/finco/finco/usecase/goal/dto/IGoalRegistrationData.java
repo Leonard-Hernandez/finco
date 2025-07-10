@@ -5,7 +5,6 @@ import java.time.LocalDate;
 
 public interface IGoalRegistrationData {
 
-    Long userId();
     String name();
     BigDecimal targetAmount();
     LocalDate deadLine();

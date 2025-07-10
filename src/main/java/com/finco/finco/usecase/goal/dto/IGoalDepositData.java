@@ -6,5 +6,7 @@ public interface IGoalDepositData {
     
     Long accountId();
     BigDecimal amount();
+    String description();
+    String category();
 
 }

@@ -3,9 +3,6 @@ package com.finco.finco.infrastructure.config.db.schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.finco.finco.entity.account.model.Account;
-import com.finco.finco.entity.goal.model.Goal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,10 +33,10 @@ public class GoalAccountBalanceSchema {
     private Long id;
     @ManyToOne()
     @JoinColumn(name = "goal_id", nullable = false)
-    private Goal goal;
+    private GoalSchema goal;
     @ManyToOne()
     @JoinColumn(name = "account_id", nullable = false)
-    private Account account;
+    private AccountSchema account;
     @Column(name = "balance", precision = 19, scale = 2, nullable = false)
     private BigDecimal balance;
     @Column(name = "last_updated", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
