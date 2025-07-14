@@ -15,7 +15,6 @@ import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 import com.finco.finco.infrastructure.config.db.schema.GoalAccountBalanceSchema;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
-import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
 public class GoalMapper {
@@ -47,27 +46,6 @@ public class GoalMapper {
 
     }
 
-    public Goal toGoalWithoutUser(GoalSchema goalSchema) {
-        if (goalSchema == null) {
-            return null;
-        }
-
-        Goal goal = new Goal();
-
-        goal.setId(goalSchema.getId());
-        goal.setUser(null);
-        goal.setName(goalSchema.getName());
-        goal.setTargetAmount(goalSchema.getTargetAmount());
-        goal.setDeadLine(goalSchema.getDeadLine());
-        goal.setDescription(goalSchema.getDescription());
-        goal.setCreationDate(goalSchema.getCreationDate());
-        goal.setEnable(goalSchema.isEnable());
-        goal.setGoalAccountBalances(toGoalAccountBalanceList(goalSchema.getGoalAccountBalances()));
-
-        return goal;
-
-    }
-
     public GoalSchema toGoalSchema(Goal goal) {
 
         if (goal == null) {
@@ -81,9 +59,7 @@ public class GoalMapper {
         }
 
         goalSchema.setId(goal.getId());
-        UserSchema userSchema = new UserSchema();
-        userSchema.setId(goal.getUser().getId());
-        goalSchema.setUser(userSchema);
+        goalSchema.setUser(userMapper.toLightUserSchema(goal.getUser()));
         goalSchema.setName(goal.getName());
         goalSchema.setTargetAmount(goal.getTargetAmount());
         goalSchema.setDeadLine(goal.getDeadLine());

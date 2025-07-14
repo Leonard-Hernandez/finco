@@ -19,7 +19,7 @@ public class PatchUserController {
         this.updateUserUseCase = updateUserUseCase;
     }
 
-    @PatchMapping("/user/{id}")
+    @PatchMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserPublicData patchUser(@RequestBody UserUpdateData data, @PathVariable Long id) {
         return new UserPublicData(updateUserUseCase.execute(id, data));

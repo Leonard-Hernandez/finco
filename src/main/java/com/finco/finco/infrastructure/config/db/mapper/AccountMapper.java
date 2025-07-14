@@ -12,7 +12,6 @@ import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
-import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 @Component
 public class AccountMapper {
@@ -48,30 +47,6 @@ public class AccountMapper {
 
     }
 
-    public Account toAccountWithoutUser(AccountSchema accountSchema) {
-        if (accountSchema == null) {
-            return null;
-        }
-
-        Account account = new Account();
-        account.setId(accountSchema.getId());
-        account.setUser(null);
-        account.setName(accountSchema.getName());
-        account.setType(accountSchema.getType());
-        account.setBalance(accountSchema.getBalance());
-        account.setCurrency(accountSchema.getCurrency());
-        account.setCreationDate(accountSchema.getCreationDate());
-        account.setDescription(accountSchema.getDescription());
-        account.setDefault(accountSchema.isDefault());
-        account.setEnable(accountSchema.isEnable());
-        account.setDepositFee(accountSchema.getDepositFee());
-        account.setWithdrawFee(accountSchema.getWithdrawFee());
-        
-
-        return account;
-
-    }
-
     public AccountSchema toAccountSchema(Account account) {
         if (account == null) {
             return null;
@@ -83,12 +58,7 @@ public class AccountMapper {
 
         AccountSchema accountSchema = new AccountSchema();
         accountSchema.setId(account.getId());
-        
-        // Create a minimal user schema with just the ID to prevent circular reference
-        UserSchema userSchema = new UserSchema();
-        userSchema.setId(account.getUser().getId());
-        accountSchema.setUser(userSchema);
-        
+        accountSchema.setUser(userMapper.toLightUserSchema(account.getUser()));
         accountSchema.setName(account.getName());
         accountSchema.setType(account.getType());
         accountSchema.setBalance(account.getBalance());

@@ -46,7 +46,7 @@ public class LiabilitieMapper {
         LiabilitieSchema liabilitieSchema = new LiabilitieSchema();
 
         liabilitieSchema.setId(liabilitie.getId());
-        liabilitieSchema.setUser(userMapper.toUserSchema(liabilitie.getUser()));
+        liabilitieSchema.setUser(userMapper.toLightUserSchema(liabilitie.getUser()));
         liabilitieSchema.setName(liabilitie.getName());
         liabilitieSchema.setPendingBalance(liabilitie.getPendingBalance());
         liabilitieSchema.setInterestRate(liabilitie.getInterestRate());

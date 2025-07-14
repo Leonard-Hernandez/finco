@@ -174,6 +174,22 @@ public class UserMapper {
                 return userSchema;
         }
 
+        public UserSchema toLightUserSchema(User user) {
+                if (user == null) {
+                        return null;
+                }
+
+                UserSchema userSchema = new UserSchema();
+                userSchema.setId(user.getId());
+                userSchema.setName(user.getName());
+                userSchema.setEmail(user.getEmail());
+                userSchema.setPassword(user.getPassword());
+                userSchema.setRegistrationDate(user.getRegistrationDate());
+                userSchema.setEnable(user.isEnable());
+
+                return userSchema;
+        }
+
         public PagedResult<User> toUserPagedResult(Page<UserSchema> userSchemaPage, PageRequest pageRequest) {
                 if (userSchemaPage == null) {
                         return PagedResult.empty(pageRequest);
