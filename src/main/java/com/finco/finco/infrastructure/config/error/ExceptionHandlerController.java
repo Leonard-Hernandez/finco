@@ -13,26 +13,41 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.finco.finco.entity.account.exception.AccountNotFoundException;
 import com.finco.finco.entity.exception.EbusinessException;
+import com.finco.finco.entity.goal.exception.GoalNotFoundException;
+import com.finco.finco.entity.role.exception.RoleNotFoundException;
+import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
+import com.finco.finco.entity.user.exception.UserNotFoundException;
 
 @RestControllerAdvice
 public class ExceptionHandlerController {
 
-    @ExceptionHandler({EbusinessException.class})
+    @ExceptionHandler({ EbusinessException.class })
     private ResponseEntity<Map<String, String>> ebussinessException(EbusinessException ex) {
+        return buildResponse(ex, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ UserNotFoundException.class, AccountNotFoundException.class, GoalNotFoundException.class,
+            RoleNotFoundException.class })
+    private ResponseEntity<Map<String, String>> balanceInGoalException(EbusinessException ex) {
         return buildResponse(ex, HttpStatus.NOT_FOUND);
     }
-    
+
+    @ExceptionHandler(AccessDeniedBusinessException.class)
+    private ResponseEntity<Map<String, String>> accessDeniedBusinessException(AccessDeniedBusinessException ex) {
+        return buildResponse(ex, HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> argumentNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity<Map<String, String>> argumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> erros = e.getFieldErrors();
 
         Map<String, String> response = new HashMap<>();
 
-        for(FieldError field : erros) {
+        for (FieldError field : erros) {
             response.put(field.getField(), field.getDefaultMessage());
         }
-
         return ResponseEntity.badRequest().body(response);
     }
 

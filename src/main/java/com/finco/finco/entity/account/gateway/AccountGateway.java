@@ -1,5 +1,6 @@
 package com.finco.finco.entity.account.gateway;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import com.finco.finco.entity.account.model.Account;
@@ -21,5 +22,7 @@ public interface AccountGateway {
     PagedResult<Account> findAllByUser(PageRequest page, Long userId);
 
     Long getTotalByUser(Long userId);
+
+    BigDecimal getTotalBalanceInGoalsByAccount(Long accountId);
 
 }

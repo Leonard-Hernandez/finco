@@ -7,6 +7,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
+import com.finco.finco.entity.goalAccountBalance.gateway.GoalAccountBalanceGateway;
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
@@ -156,8 +157,8 @@ public class AppConfig {
     }
 
     @Bean
-    DepositGoalUseCase depositGoalUseCase(GoalGateway goalGateway, AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
-        return new DepositGoalUseCase(goalGateway, accountGateway, transactionGateway, authGateway);
+    DepositGoalUseCase depositGoalUseCase(GoalGateway goalGateway, GoalAccountBalanceGateway goalAccountBalanceGateway, AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+        return new DepositGoalUseCase(goalGateway, goalAccountBalanceGateway, transactionGateway, authGateway, accountGateway);
     }
 
 }

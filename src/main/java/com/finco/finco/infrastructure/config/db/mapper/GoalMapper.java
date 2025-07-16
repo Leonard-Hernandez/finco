@@ -7,22 +7,20 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.goal.model.Goal;
-import com.finco.finco.entity.goalAccountBalance.model.GoalAccountBalance;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
-import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
-import com.finco.finco.infrastructure.config.db.schema.GoalAccountBalanceSchema;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
 
 @Component
 public class GoalMapper {
 
     private final UserMapper userMapper;
+    private final GoalAccountBalanceMapper goalAccountBalanceMapper;
 
-    public GoalMapper(@Lazy UserMapper usermMapper) {
+    public GoalMapper(@Lazy UserMapper usermMapper, GoalAccountBalanceMapper goalAccountBalanceMapper) {
         this.userMapper = usermMapper;
+        this.goalAccountBalanceMapper = goalAccountBalanceMapper;
     }
 
     public Goal toGoal(GoalSchema goalSchema) {
@@ -40,7 +38,32 @@ public class GoalMapper {
         goal.setDescription(goalSchema.getDescription());
         goal.setCreationDate(goalSchema.getCreationDate());
         goal.setEnable(goalSchema.isEnable());
-        goal.setGoalAccountBalances(toGoalAccountBalanceList(goalSchema.getGoalAccountBalances()));
+        if (goalSchema.getGoalAccountBalances() != null) {
+            goal.setGoalAccountBalances(goalSchema.getGoalAccountBalances().stream()
+                    .map(goalAccountBalanceMapper::toGoalAccountBalance).collect(Collectors.toList()));
+        } else {
+            goal.setGoalAccountBalances(List.of());
+        }
+
+        return goal;
+
+    }
+
+    public Goal toLightGoal(GoalSchema goalSchema) {
+        if (goalSchema == null) {
+            return null;
+        }
+
+        Goal goal = new Goal();
+
+        goal.setId(goalSchema.getId());
+        goal.setUser(userMapper.toLigthUser(goalSchema.getUser()));
+        goal.setName(goalSchema.getName());
+        goal.setTargetAmount(goalSchema.getTargetAmount());
+        goal.setDeadLine(goalSchema.getDeadLine());
+        goal.setDescription(goalSchema.getDescription());
+        goal.setCreationDate(goalSchema.getCreationDate());
+        goal.setEnable(goalSchema.isEnable());
 
         return goal;
 
@@ -67,10 +90,30 @@ public class GoalMapper {
         goalSchema.setCreationDate(goal.getCreationDate());
         goalSchema.setEnable(goal.isEnable());
         if (goal.getGoalAccountBalances() != null) {
-            goalSchema.setGoalAccountBalances(toGoalAccountBalanceSchemaList(goal.getGoalAccountBalances()));
+            goalSchema.setGoalAccountBalances(goal.getGoalAccountBalances().stream()
+                    .map(goalAccountBalanceMapper::toGoalAccountBalanceSchema).collect(Collectors.toList()));
         } else {
             goalSchema.setGoalAccountBalances(List.of());
         }
+
+        return goalSchema;
+    }
+
+    public GoalSchema toLightGoalSchema(Goal goal) {
+        if (goal == null) {
+            return null;
+        }
+
+        GoalSchema goalSchema = new GoalSchema();
+
+        goalSchema.setId(goal.getId());
+        goalSchema.setUser(userMapper.toLightUserSchema(goal.getUser()));
+        goalSchema.setName(goal.getName());
+        goalSchema.setTargetAmount(goal.getTargetAmount());
+        goalSchema.setDeadLine(goal.getDeadLine());
+        goalSchema.setDescription(goal.getDescription());
+        goalSchema.setCreationDate(goal.getCreationDate());
+        goalSchema.setEnable(goal.isEnable());
 
         return goalSchema;
     }
@@ -81,64 +124,19 @@ public class GoalMapper {
         }
 
         List<Goal> goalList = goalSchemaPage.getContent().stream()
-                                            .map(this::toGoal)
-                                            .collect(Collectors.toList());
+                .map(this::toGoal)
+                .collect(Collectors.toList());
 
         return new PagedResult<>(
-            goalList,
-            goalSchemaPage.getTotalElements(),
-            goalSchemaPage.getTotalPages(),
-            goalSchemaPage.getNumber(),
-            goalSchemaPage.getSize(),
-            goalSchemaPage.isFirst(),
-            goalSchemaPage.isLast(),
-            goalSchemaPage.hasNext(),
-            goalSchemaPage.hasPrevious()
-        );
-    }
-
-    public List<GoalAccountBalance> toGoalAccountBalanceList(List<GoalAccountBalanceSchema> goalAccountBalanceSchemaList) {
-        if (goalAccountBalanceSchemaList == null) {
-            return null;
-        }
-        return goalAccountBalanceSchemaList.stream()
-                .map(goalAccountBalanceSchema -> {
-                    GoalAccountBalance goalAccountBalance = new GoalAccountBalance();
-                    goalAccountBalance.setId(goalAccountBalanceSchema.getId());
-                    Goal goal = new Goal();
-                    goal.setId(goalAccountBalanceSchema.getGoal().getId());
-                    goalAccountBalance.setGoal(goal);
-                    Account account = new Account();
-                    account.setId(goalAccountBalanceSchema.getAccount().getId());
-                    goalAccountBalance.setAccount(account);
-                    goalAccountBalance.setBalance(goalAccountBalanceSchema.getBalance());
-                    goalAccountBalance.setLastUpdated(goalAccountBalanceSchema.getLastUpdated());
-                    goalAccountBalance.setCreatedAt(goalAccountBalanceSchema.getCreatedAt());
-                    return goalAccountBalance;
-                })
-                .collect(Collectors.toList());
-    }
-
-    public List<GoalAccountBalanceSchema> toGoalAccountBalanceSchemaList(List<GoalAccountBalance> goalAccountBalanceList) {
-        if (goalAccountBalanceList == null) {
-            return null;
-        }
-        return goalAccountBalanceList.stream()
-                .map(goalAccountBalance -> {
-                    GoalAccountBalanceSchema goalAccountBalanceSchema = new GoalAccountBalanceSchema();
-                    goalAccountBalanceSchema.setId(goalAccountBalance.getId());
-                    GoalSchema goalSchema = new GoalSchema();
-                    goalSchema.setId(goalAccountBalance.getGoal().getId());
-                    goalAccountBalanceSchema.setGoal(goalSchema);
-                    AccountSchema accountSchema = new AccountSchema();
-                    accountSchema.setId(goalAccountBalance.getAccount().getId());
-                    goalAccountBalanceSchema.setAccount(accountSchema);
-                    goalAccountBalanceSchema.setBalance(goalAccountBalance.getBalance());
-                    goalAccountBalanceSchema.setLastUpdated(goalAccountBalance.getLastUpdated());
-                    goalAccountBalanceSchema.setCreatedAt(goalAccountBalance.getCreatedAt());
-                    return goalAccountBalanceSchema;
-                })
-                .collect(Collectors.toList());
+                goalList,
+                goalSchemaPage.getTotalElements(),
+                goalSchemaPage.getTotalPages(),
+                goalSchemaPage.getNumber(),
+                goalSchemaPage.getSize(),
+                goalSchemaPage.isFirst(),
+                goalSchemaPage.isLast(),
+                goalSchemaPage.hasNext(),
+                goalSchemaPage.hasPrevious());
     }
 
 }

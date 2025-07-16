@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
+import com.finco.finco.entity.goal.exception.BalanceInGoalException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
@@ -31,12 +32,18 @@ public class WithDrawAccountUseCase {
         Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
 
+        BigDecimal fee = data.amount().multiply(new BigDecimal(account.getWithdrawFee()));
+
+        if (accountGateway.getTotalBalanceInGoalsByAccount(account.getId()).add(data.amount()).add(fee).compareTo(account.getBalance()) > 0) {
+            throw new BalanceInGoalException();
+        }
+
         account.withdraw(data.amount());
 
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setAmount(data.amount());
-        transaction.setFee(data.amount().multiply(new BigDecimal(account.getWithdrawFee())));
+        transaction.setFee(fee);
         transaction.setType(TransactionType.WITHDRAW);
         transaction.setDate(LocalDateTime.now());
         transaction.setUser(account.getUser());

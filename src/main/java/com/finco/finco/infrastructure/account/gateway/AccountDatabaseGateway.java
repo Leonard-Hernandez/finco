@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.account.gateway;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -101,6 +102,11 @@ public class AccountDatabaseGateway implements AccountGateway {
     @Override
     public Optional<Account> findDefaultByUserId(Long userId) {
         return accountRepository.findByIsDefaultTrueAndUserId(userId).map(accountMapper::toAccount);
+    }
+
+    @Override
+    public BigDecimal getTotalBalanceInGoalsByAccount(Long accountId) {
+        return accountRepository.getTotalBalanceInGoalsByAccount(accountId);
     }
 
 }

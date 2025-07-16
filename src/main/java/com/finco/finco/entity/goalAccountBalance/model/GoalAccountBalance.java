@@ -78,10 +78,12 @@ public class GoalAccountBalance {
 
     public void deposit(BigDecimal amount) {
         this.balance = this.balance.add(amount);
+        this.lastUpdated = LocalDateTime.now();
     }
 
     public void withdraw(BigDecimal amount) {
         this.balance = this.balance.subtract(amount);
+        this.lastUpdated = LocalDateTime.now();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.config.db.repository;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -24,5 +25,8 @@ public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
     Page<AccountSchema> findAllByEnableTrue(Pageable springPageable);
 
     Optional<AccountSchema> findByIsDefaultTrueAndUserId(Long id);
+
+    @Query("SELECT SUM(a.balance) as total FROM GoalAccountBalanceSchema a WHERE a.account.id = :accountId")
+    BigDecimal getTotalBalanceInGoalsByAccount(Long accountId);
 
 }
