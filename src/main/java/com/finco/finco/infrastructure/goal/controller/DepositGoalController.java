@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.finco.finco.infrastructure.goal.dto.GoalDepositData;
+import com.finco.finco.infrastructure.goal.dto.GoalTransactionData;
 import com.finco.finco.infrastructure.goal.dto.GoalPublicData;
 import com.finco.finco.usecase.goal.DepositGoalUseCase;
 
@@ -21,7 +21,7 @@ public class DepositGoalController {
     }
 
     @PostMapping("/goals/{id}/deposit")
-    public GoalPublicData deposit(@PathVariable Long id, @Valid @RequestBody GoalDepositData data) {
+    public GoalPublicData deposit(@PathVariable Long id, @Valid @RequestBody GoalTransactionData data) {
         return new GoalPublicData(depositGoalUseCase.execute(id, data));
     }
 

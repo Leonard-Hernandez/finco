@@ -27,6 +27,7 @@ import com.finco.finco.usecase.goal.DeleteGoalUseCase;
 import com.finco.finco.usecase.goal.DepositGoalUseCase;
 import com.finco.finco.usecase.goal.GetGoalUseCase;
 import com.finco.finco.usecase.goal.UpdateGoalUseCase;
+import com.finco.finco.usecase.goal.WithDrawGoalUseCase;
 import com.finco.finco.usecase.transaction.GetCategoriesByUserUseCase;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
 import com.finco.finco.usecase.user.CreateUserUseCase;
@@ -108,17 +109,20 @@ public class AppConfig {
     }
 
     @Bean
-    DepositAccountUseCase depositAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+    DepositAccountUseCase depositAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway,
+            TransactionGateway transactionGateway) {
         return new DepositAccountUseCase(accountGateway, authGateway, transactionGateway);
     }
 
     @Bean
-    WithDrawAccountUseCase withDrawAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+    WithDrawAccountUseCase withDrawAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway,
+            TransactionGateway transactionGateway) {
         return new WithDrawAccountUseCase(accountGateway, authGateway, transactionGateway);
     }
 
     @Bean
-    TransferAccountUseCase transferAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+    TransferAccountUseCase transferAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway,
+            TransactionGateway transactionGateway) {
         return new TransferAccountUseCase(accountGateway, authGateway, transactionGateway);
     }
 
@@ -130,7 +134,8 @@ public class AppConfig {
     // Transactions beans
 
     @Bean
-    GetCategoriesByUserUseCase getCategoriesByUserUseCase(TransactionGateway transactionGateway, AuthGateway authGateway) {
+    GetCategoriesByUserUseCase getCategoriesByUserUseCase(TransactionGateway transactionGateway,
+            AuthGateway authGateway) {
         return new GetCategoriesByUserUseCase(transactionGateway, authGateway);
     }
 
@@ -157,8 +162,18 @@ public class AppConfig {
     }
 
     @Bean
-    DepositGoalUseCase depositGoalUseCase(GoalGateway goalGateway, GoalAccountBalanceGateway goalAccountBalanceGateway, AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
-        return new DepositGoalUseCase(goalGateway, goalAccountBalanceGateway, transactionGateway, authGateway, accountGateway);
+    DepositGoalUseCase depositGoalUseCase(GoalGateway goalGateway, GoalAccountBalanceGateway goalAccountBalanceGateway,
+            AccountGateway accountGateway, AuthGateway authGateway, TransactionGateway transactionGateway) {
+        return new DepositGoalUseCase(goalGateway, goalAccountBalanceGateway, transactionGateway, authGateway,
+                accountGateway);
+    }
+
+    @Bean
+    WithDrawGoalUseCase withDrawGoalUseCase(GoalGateway goalGateway,
+            GoalAccountBalanceGateway goalAccountBalanceGateway, AccountGateway accountGateway, AuthGateway authGateway,
+            TransactionGateway transactionGateway) {
+        return new WithDrawGoalUseCase(goalGateway, goalAccountBalanceGateway, transactionGateway, authGateway,
+                accountGateway);
     }
 
 }
