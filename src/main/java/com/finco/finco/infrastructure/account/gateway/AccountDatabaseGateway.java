@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +15,8 @@ import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.mapper.AccountMapper;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
+
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @Component
 public class AccountDatabaseGateway implements AccountGateway {
@@ -52,20 +53,8 @@ public class AccountDatabaseGateway implements AccountGateway {
 
     @Override
     public PagedResult<Account> findAll(PageRequest page) {
-        Sort sort = page.getSortBy()
-                .map(sortBy -> {
-                    Sort.Direction direction = page.getSortDirection()
-                            .filter(d -> d.equalsIgnoreCase("desc"))
-                            .map(d -> Sort.Direction.DESC)
-                            .orElse(Sort.Direction.ASC);
-                    return Sort.by(direction, sortBy);
-                })
-                .orElse(Sort.unsorted());
 
-        Pageable springPageable = org.springframework.data.domain.PageRequest.of(
-                page.getPageNumber(),
-                page.getPageSize(),
-                sort);
+        Pageable springPageable = toPageable(page);
 
         Page<AccountSchema> accountSchemaPage = accountRepository.findAllByEnableTrue(springPageable);
 
@@ -74,22 +63,10 @@ public class AccountDatabaseGateway implements AccountGateway {
 
     @Override
     public PagedResult<Account> findAllByUser(PageRequest page, Long userId) {
-        Sort sort = page.getSortBy()
-                .map(sortBy -> {
-                    Sort.Direction direction = page.getSortDirection()
-                            .filter(d -> d.equalsIgnoreCase("desc"))
-                            .map(d -> Sort.Direction.DESC)
-                            .orElse(Sort.Direction.ASC);
-                    return Sort.by(direction, sortBy);
-                })
-                .orElse(Sort.unsorted());
 
-        Pageable springPageable = org.springframework.data.domain.PageRequest.of(
-                page.getPageNumber(),
-                page.getPageSize(),
-                sort);
+        Pageable springPageable = toPageable(page);
 
-        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByUserId(springPageable,userId);
+        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByUserId(springPageable, userId);
 
         return accountMapper.toAccountPagedResult(accountSchemaPage, page);
     }

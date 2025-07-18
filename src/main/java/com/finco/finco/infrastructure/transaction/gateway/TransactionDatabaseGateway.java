@@ -2,14 +2,17 @@ package com.finco.finco.infrastructure.transaction.gateway;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.infrastructure.config.db.repository.TransactionRepository;
 import com.finco.finco.infrastructure.config.db.mapper.TransactionMapper;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @Component
 public class TransactionDatabaseGateway implements TransactionGateway {
@@ -38,27 +41,27 @@ public class TransactionDatabaseGateway implements TransactionGateway {
     }
 
     @Override
-    public List<Transaction> findAllByUserId(Long userId) {
-        return transactionRepository.findAllByUserId(userId).stream().map(transactionMapper::toTransaction)
-                .collect(Collectors.toList());
+    public PagedResult<Transaction> findAllByUserId(Long userId, PageRequest page) {
+        Pageable springPageable = toPageable(page);
+        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByUserId(userId, springPageable), page);
     }
 
     @Override
-    public List<Transaction> findAllByAccountId(Long accountId) {
-        return transactionRepository.findAllByAccountId(accountId).stream().map(transactionMapper::toTransaction)
-                .collect(Collectors.toList());
+    public PagedResult<Transaction> findAllByAccountId(Long accountId, PageRequest page) {
+        Pageable springPageable = toPageable(page);
+        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByAccountId(accountId, springPageable), page);
     }
 
     @Override
-    public List<Transaction> findAllByGoalId(Long goalId) {
-        return transactionRepository.findAllByGoalId(goalId).stream().map(transactionMapper::toTransaction)
-                .collect(Collectors.toList());
+    public PagedResult<Transaction> findAllByGoalId(Long goalId, PageRequest page) {
+        Pageable springPageable = toPageable(page);
+        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByGoalId(goalId, springPageable), page);
     }
 
     @Override
-    public List<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId) {
-        return transactionRepository.findAllByUserIdAndTransferAccountId(userId, TransferedId).stream()
-                .map(transactionMapper::toTransaction).collect(Collectors.toList());
+    public PagedResult<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId, PageRequest page) {
+        Pageable springPageable = toPageable(page);
+        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByUserIdAndTransferAccountId(userId, TransferedId, springPageable), page);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.finco.finco.entity.transaction.gateway;
 import java.util.List;
 import java.util.Optional;
 
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.transaction.model.Transaction;
 
 public interface TransactionGateway {
@@ -12,13 +14,13 @@ public interface TransactionGateway {
     
     Optional<Transaction> findById(Long id);
 
-    List<Transaction> findAllByUserId(Long userId);
+    PagedResult<Transaction> findAllByUserId(Long userId, PageRequest page);
 
-    List<Transaction> findAllByAccountId(Long accountId);
+    PagedResult<Transaction> findAllByAccountId(Long accountId, PageRequest page);
 
-    List<Transaction> findAllByGoalId(Long goalId);
+    PagedResult<Transaction> findAllByGoalId(Long goalId, PageRequest page);
 
-    List<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId);
+    PagedResult<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId, PageRequest page);
 
     List<String> findAllCategoriesByUserId(Long userId);
 

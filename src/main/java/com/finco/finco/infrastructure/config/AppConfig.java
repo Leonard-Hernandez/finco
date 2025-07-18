@@ -25,9 +25,13 @@ import com.finco.finco.usecase.account.WithDrawAccountUseCase;
 import com.finco.finco.usecase.goal.CreateGoalUseCase;
 import com.finco.finco.usecase.goal.DeleteGoalUseCase;
 import com.finco.finco.usecase.goal.DepositGoalUseCase;
+import com.finco.finco.usecase.goal.GetAllGoalsByUserUseCase;
 import com.finco.finco.usecase.goal.GetGoalUseCase;
 import com.finco.finco.usecase.goal.UpdateGoalUseCase;
 import com.finco.finco.usecase.goal.WithDrawGoalUseCase;
+import com.finco.finco.usecase.transaction.GetAllTransactionsByAccountUseCase;
+import com.finco.finco.usecase.transaction.GetAllTransactionsByGoalsUseCase;
+import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
 import com.finco.finco.usecase.transaction.GetCategoriesByUserUseCase;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
 import com.finco.finco.usecase.user.CreateUserUseCase;
@@ -139,6 +143,24 @@ public class AppConfig {
         return new GetCategoriesByUserUseCase(transactionGateway, authGateway);
     }
 
+    @Bean
+    GetAllTransactionsByUserUseCase getAllTransactionsByUserUseCase(TransactionGateway transactionGateway,
+            AuthGateway authGateway) {
+        return new GetAllTransactionsByUserUseCase(transactionGateway, authGateway);
+    }
+
+    @Bean
+    GetAllTransactionsByGoalsUseCase getAllTransactionsByGoalsUseCase(TransactionGateway transactionGateway,
+            GoalGateway goalGateway, AuthGateway authGateway) {
+        return new GetAllTransactionsByGoalsUseCase(transactionGateway, goalGateway, authGateway);
+    }
+
+    @Bean
+    GetAllTransactionsByAccountUseCase getAllTransactionsByAccountUseCase(TransactionGateway transactionGateway,
+            AccountGateway accountGateway, AuthGateway authGateway) {
+        return new GetAllTransactionsByAccountUseCase(transactionGateway, accountGateway, authGateway);
+    }
+
     // goal beans
 
     @Bean
@@ -154,6 +176,11 @@ public class AppConfig {
     @Bean
     GetGoalUseCase getGoalUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
         return new GetGoalUseCase(goalGateway, authGateway);
+    }
+
+    @Bean
+    GetAllGoalsByUserUseCase getAllGoalsByUserUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
+        return new GetAllGoalsByUserUseCase(goalGateway, authGateway);
     }
 
     @Bean

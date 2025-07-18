@@ -1,8 +1,14 @@
 package com.finco.finco.infrastructure.config.db.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.infrastructure.config.db.schema.TransactionSchema;
 
@@ -29,6 +35,7 @@ public class TransactionMapper {
         transaction.setId(transactionSchema.getId());
         transaction.setUser(userMapper.toLigthUser(transactionSchema.getUser()));
         transaction.setAccount(accountMapper.toAccount(transactionSchema.getAccount()));
+        transaction.setType(transactionSchema.getType());
         transaction.setGoal(goalMapper.toGoal(transactionSchema.getGoal()));
         transaction.setAmount(transactionSchema.getAmount());
         transaction.setFee(transactionSchema.getFee());
@@ -75,6 +82,28 @@ public class TransactionMapper {
 
         return transactionSchema;
 
+    }
+
+    public PagedResult<Transaction> toTransactionPagedResult(Page<TransactionSchema> transactionSchemaPage, PageRequest page) {
+        if (transactionSchemaPage == null) {
+            return PagedResult.empty(page);
+        }
+
+        List<Transaction> transactionList = transactionSchemaPage.getContent().stream()
+                                            .map(this::toTransaction)
+                                            .collect(Collectors.toList());
+
+        return new PagedResult<>(
+            transactionList,
+            transactionSchemaPage.getTotalElements(),
+            transactionSchemaPage.getTotalPages(),
+            transactionSchemaPage.getNumber(),
+            transactionSchemaPage.getSize(),
+            transactionSchemaPage.isFirst(),
+            transactionSchemaPage.isLast(),
+            transactionSchemaPage.hasNext(),
+            transactionSchemaPage.hasPrevious()
+        );
     }
 
 }

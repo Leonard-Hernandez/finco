@@ -1,0 +1,2 @@
+ALTER TABLE transactions
+ALTER COLUMN fee SET DEFAULT 0;

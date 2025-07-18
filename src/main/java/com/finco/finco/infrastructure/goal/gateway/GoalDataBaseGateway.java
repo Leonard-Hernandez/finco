@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.goal.gateway.GoalGateway;
@@ -14,6 +13,8 @@ import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.mapper.GoalMapper;
 import com.finco.finco.infrastructure.config.db.repository.GoalRepository;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
+
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @Component
 public class GoalDataBaseGateway implements GoalGateway {
@@ -49,20 +50,8 @@ public class GoalDataBaseGateway implements GoalGateway {
 
     @Override
     public PagedResult<Goal> findAllByUserId(Long userId, PageRequest pageRequest) {
-        Sort sort = pageRequest.getSortBy()
-                .map(sortBy -> {
-                    Sort.Direction direction = pageRequest.getSortDirection()
-                            .filter(d -> d.equalsIgnoreCase("desc"))
-                            .map(d -> Sort.Direction.DESC)
-                            .orElse(Sort.Direction.ASC);
-                    return Sort.by(direction, sortBy);
-                })
-                .orElse(Sort.unsorted());
 
-        Pageable springPageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber(),
-                pageRequest.getPageSize(),
-                sort);
+        Pageable springPageable = toPageable(pageRequest);
 
         Page<GoalSchema> goalSchemaPage = goalRepository.findAllByUserId(springPageable, userId);
 
