@@ -70,4 +70,7 @@ public class TransactionSchema {
     @JoinColumn(name = "transfer_account_id")
     private AccountSchema transferAccount;
 
+    @Column(name = "exchange_rate", precision = 10, scale = 2)
+    private BigDecimal exchangeRate;
+
 }

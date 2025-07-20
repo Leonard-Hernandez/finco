@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.exception.InsufficientBalanceException;
+import com.finco.finco.entity.goal.exception.BalanceInGoalException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
@@ -65,7 +66,7 @@ public class WithDrawAccountUseCaseTest {
         testAccount.setEnable(true);
         testAccount.setWithdrawFee(0.05);
 
-        transactionData = new AccountTransactionData(withdrawAmount, "Withdraw", "Withdrawal", BigDecimal.valueOf(10));
+        transactionData = new AccountTransactionData(withdrawAmount, "Withdraw", "Withdrawal");
     }
 
     @Test
@@ -76,6 +77,7 @@ public class WithDrawAccountUseCaseTest {
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
         when(transactionGateway.create(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(accountGateway.getTotalBalanceInGoalsByAccount(accountId)).thenReturn(BigDecimal.ZERO);
 
         // Act
         Account result = withDrawAccountUseCase.execute(accountId, transactionData);
@@ -125,12 +127,32 @@ public class WithDrawAccountUseCaseTest {
     @DisplayName("Withdraw more than account balance should throw InsufficientFundsException")
     public void withdrawMoreThanBalanceShouldThrowException() {
         // Arrange
-        transactionData = new AccountTransactionData(excessiveWithdrawAmount, "Withdraw", "Withdrawal", BigDecimal.valueOf(10));
+        transactionData = new AccountTransactionData(excessiveWithdrawAmount, "Withdraw", "Withdrawal");
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
+        when(accountGateway.getTotalBalanceInGoalsByAccount(accountId)).thenReturn(BigDecimal.ZERO);
 
         // Act & Assert
         assertThrows(InsufficientBalanceException.class, () -> {
+            withDrawAccountUseCase.execute(accountId, transactionData);
+        });
+
+        verify(accountGateway, times(1)).findById(accountId);
+        verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
+        verify(accountGateway, never()).update(any(Account.class));
+    }
+
+    @Test
+    @DisplayName("Withdraw more than account balance should throw InsufficientFundsException")
+    public void withdrawAccountInGoalsShouldThrowException() {
+        // Arrange
+        transactionData = new AccountTransactionData(BigDecimal.valueOf(300), "Withdraw", "Withdrawal");
+        when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
+        doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
+        when(accountGateway.getTotalBalanceInGoalsByAccount(accountId)).thenReturn(BigDecimal.valueOf(1800));
+
+        // Act & Assert
+        assertThrows(BalanceInGoalException.class, () -> {
             withDrawAccountUseCase.execute(accountId, transactionData);
         });
 

@@ -12,7 +12,4 @@ public interface IAccountTransactionData {
     String category();
 
     String description();
-
-    BigDecimal fee();
-
 }

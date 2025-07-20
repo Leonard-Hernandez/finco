@@ -41,6 +41,7 @@ public class Transaction {
         this.category = category;
         this.goal = goal;
         this.transferAccount = transferAccount;
+        this.exchangeRate = exchangeRate;
     }
 
     public Long getId() {

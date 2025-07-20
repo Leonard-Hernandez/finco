@@ -5,6 +5,16 @@ import java.time.LocalDate;
 
 import com.finco.finco.usecase.goal.dto.IGoalRegistrationData;
 
-public record GoalRegistrationData(String name, BigDecimal targetAmount, LocalDate deadLine, String description) implements IGoalRegistrationData{
+import jakarta.validation.constraints.NotNull;
+
+public record GoalRegistrationData(
+    @NotNull(message = "Name is required")
+    String name, 
+    @NotNull(message = "Target amount is required")
+    BigDecimal targetAmount, 
+    @NotNull(message = "Dead line is required")
+    LocalDate deadLine, 
+    String description)
+        implements IGoalRegistrationData {
 
 }

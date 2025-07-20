@@ -1,0 +1,1 @@
+Alter table transactions add column exchange_rate decimal(10,2);

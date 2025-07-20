@@ -43,6 +43,7 @@ public class TransactionMapper {
         transaction.setDescription(transactionSchema.getDescription());
         transaction.setCategory(transactionSchema.getCategory());
         transaction.setTransferAccount(accountMapper.toAccount(transactionSchema.getTransferAccount()));
+        transaction.setExchangeRate(transactionSchema.getExchangeRate());
 
         return transaction;
     }
@@ -79,6 +80,8 @@ public class TransactionMapper {
         if (transaction.getTransferAccount() != null && transaction.getTransferAccount().getId() != null) {
             transactionSchema.setTransferAccount(accountMapper.toAccountSchema(transaction.getTransferAccount()));
         }
+
+        transactionSchema.setExchangeRate(transaction.getExchangeRate());
 
         return transactionSchema;
 

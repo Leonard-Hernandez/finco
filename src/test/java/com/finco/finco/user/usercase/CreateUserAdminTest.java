@@ -24,6 +24,7 @@ import com.finco.finco.usecase.user.CreateUserAdminUseCase;
 import com.finco.finco.usecase.user.dto.IUserRegistrationData;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Create user admin test")
 public class CreateUserAdminTest {
 
     @Mock

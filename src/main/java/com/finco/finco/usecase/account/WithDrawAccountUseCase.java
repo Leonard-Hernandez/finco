@@ -33,11 +33,11 @@ public class WithDrawAccountUseCase {
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
 
         BigDecimal fee = data.amount().multiply(new BigDecimal(account.getWithdrawFee()));
-
-        if (accountGateway.getTotalBalanceInGoalsByAccount(account.getId()).add(data.amount()).add(fee).compareTo(account.getBalance()) > 0) {
+        
+        if (accountGateway.getTotalBalanceInGoalsByAccount(account.getId()).subtract(account.getBalance()).compareTo(data.amount().add(fee)) > 0) {
             throw new BalanceInGoalException();
         }
-
+        
         account.withdraw(data.amount());
 
         Transaction transaction = new Transaction();
