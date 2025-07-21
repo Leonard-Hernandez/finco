@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,6 +24,7 @@ import com.finco.finco.entity.user.model.User;
 import com.finco.finco.usecase.account.GetAllAccountUseCase;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Get all accounts test")
 public class GetAllAccountUseCaseTest {
 
     @Mock
@@ -31,6 +33,7 @@ public class GetAllAccountUseCaseTest {
     @Mock
     private AuthGateway authGateway;
 
+    @InjectMocks
     private GetAllAccountUseCase getAllAccountUseCase;
     private PageRequest pageRequest;
     private Account account1, account2;
@@ -38,25 +41,24 @@ public class GetAllAccountUseCaseTest {
 
     @BeforeEach
     public void setUp() {
-        getAllAccountUseCase = new GetAllAccountUseCase(accountGateway, authGateway);
         pageRequest = new PageRequest(0, 10, "name", "asc");
-        
+
         User user1 = new User();
         user1.setId(1L);
         user1.setName("User One");
-        
+
         account1 = new Account();
         account1.setId(1L);
         account1.setName("Account One");
         account1.setBalance(BigDecimal.valueOf(1000));
         account1.setUser(user1);
-        
+
         account2 = new Account();
         account2.setId(2L);
         account2.setName("Account Two");
         account2.setBalance(BigDecimal.valueOf(2000));
         account2.setUser(user1);
-        
+
         pagedResult = new PagedResult<>(List.of(account1, account2), 2, 1, 0, 10, true, false, false, false);
     }
 

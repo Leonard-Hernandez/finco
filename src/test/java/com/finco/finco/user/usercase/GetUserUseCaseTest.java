@@ -20,6 +20,7 @@ import com.finco.finco.entity.user.model.User;
 import com.finco.finco.usecase.user.GetUserUseCase;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Get user test")
 public class GetUserUseCaseTest {
 
     @Mock

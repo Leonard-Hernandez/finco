@@ -12,21 +12,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.account.dto.AccountRegistrationData;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
-import com.finco.finco.usecase.account.dto.IAccountRegistrationData;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Create account test")
 public class CreateAccountUseCaseTest {
 
     @Mock
@@ -38,17 +41,25 @@ public class CreateAccountUseCaseTest {
     @Mock
     private AuthGateway authGateway;
 
-    @Mock
-    private IAccountRegistrationData accountData;
-
+    @InjectMocks
     private CreateAccountUseCase createAccountUseCase;
+    
     private User testUser;
     private Account testAccount;
+    private AccountRegistrationData accountData;
     private final Long userId = 1L;
 
     @BeforeEach
     public void setUp() {
-        createAccountUseCase = new CreateAccountUseCase(accountGateway, userGateway, authGateway);
+        accountData = new AccountRegistrationData(
+                userId,
+                "Test Account",
+                AccountType.CHECKING,
+                BigDecimal.valueOf(1000),
+                CurrencyEnum.USD,
+                "Test Description",
+                0.0,
+                0.0);
 
         testUser = new User();
         testUser.setId(userId);
@@ -57,23 +68,18 @@ public class CreateAccountUseCaseTest {
         testUser.setAccounts(Collections.emptyList());
 
         testAccount = new Account();
-        testAccount.setId(1L);
+        testAccount.setId(userId);
         testAccount.setUser(testUser);
         testAccount.setName("Test Account");
         testAccount.setBalance(BigDecimal.valueOf(1000));
         testAccount.setEnable(true);
-        
+
     }
 
     @Test
     @DisplayName("Create account successfully")
     public void createAccountSuccess() {
         // Arrange
-        when(accountData.name()).thenReturn("Test Account");
-        when(accountData.balance()).thenReturn(BigDecimal.valueOf(1000));
-        when(accountData.currency()).thenReturn(CurrencyEnum.USD);
-        when(accountData.description()).thenReturn("Test Description");
-        
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
         when(userGateway.findById(userId)).thenReturn(Optional.of(testUser));
         when(accountGateway.create(any(Account.class))).thenAnswer(invocation -> {
@@ -87,11 +93,15 @@ public class CreateAccountUseCaseTest {
 
         // Assert
         assertNotNull(result);
+        assertEquals(userId, result.getUser().getId());
         assertEquals("Test Account", result.getName());
         assertEquals(BigDecimal.valueOf(1000), result.getBalance());
         assertEquals(CurrencyEnum.USD, result.getCurrency());
         assertTrue(result.isEnable());
         assertTrue(result.isDefault()); // First account should be default
+        assertEquals(0.0, result.getWithdrawFee());
+        assertEquals(0.0, result.getDepositFee());
+
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
         verify(userGateway, times(1)).findById(userId);
         verify(accountGateway, times(1)).create(any(Account.class));

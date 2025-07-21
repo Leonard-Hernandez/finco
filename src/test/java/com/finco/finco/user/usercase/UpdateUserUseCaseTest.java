@@ -22,6 +22,7 @@ import com.finco.finco.usecase.user.UpdateUserUseCase;
 import com.finco.finco.usecase.user.dto.IUserUpdateData;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Update user test")
 public class UpdateUserUseCaseTest {
 
     @Mock

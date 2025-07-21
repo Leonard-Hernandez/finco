@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,6 +25,7 @@ import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
+import com.finco.finco.entity.transaction.model.TransactionType;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.account.dto.AccountTransactionData;
 import com.finco.finco.usecase.account.WithDrawAccountUseCase;
@@ -39,21 +42,20 @@ public class WithDrawAccountUseCaseTest {
     @Mock
     private TransactionGateway transactionGateway;
 
+    @InjectMocks
     private WithDrawAccountUseCase withDrawAccountUseCase;
-    private Account testAccount;
+    
     private User testUser;
+    private Account testAccount;
     private AccountTransactionData transactionData;
     private final Long accountId = 1L;
     private final Long userId = 1L;
     private final BigDecimal initialBalance = BigDecimal.valueOf(1000);
     private final BigDecimal withdrawAmount = BigDecimal.valueOf(500);
     private final BigDecimal expectedAccountBalance = BigDecimal.valueOf(475);
-    private final BigDecimal excessiveWithdrawAmount = BigDecimal.valueOf(1500);
 
     @BeforeEach
     public void setUp() {
-        withDrawAccountUseCase = new WithDrawAccountUseCase(accountGateway, authGateway, transactionGateway);
-
         testUser = new User();
         testUser.setId(userId);
         testUser.setName("Test User");
@@ -75,7 +77,6 @@ public class WithDrawAccountUseCaseTest {
         // Arrange
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
-        when(transactionGateway.create(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(accountGateway.getTotalBalanceInGoalsByAccount(accountId)).thenReturn(BigDecimal.ZERO);
 
@@ -88,6 +89,21 @@ public class WithDrawAccountUseCaseTest {
         verify(accountGateway, times(1)).findById(accountId);
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, times(1)).update(any(Account.class));
+
+        // Assert transaction
+        ArgumentCaptor<Transaction> transactionCaptor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionGateway, times(1)).create(transactionCaptor.capture());
+
+        Transaction transaction = transactionCaptor.getValue();
+        assertNotNull(transaction);
+        assertEquals(accountId, transaction.getAccount().getId());
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(withdrawAmount, transaction.getAmount().setScale(0, RoundingMode.HALF_UP));
+        assertEquals(TransactionType.WITHDRAW, transaction.getType());
+        assertEquals("Withdraw", transaction.getCategory());
+        assertEquals("Withdrawal", transaction.getDescription());
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(BigDecimal.valueOf(25), transaction.getFee().setScale(0, RoundingMode.HALF_UP));
     }
 
     @Test
@@ -127,7 +143,7 @@ public class WithDrawAccountUseCaseTest {
     @DisplayName("Withdraw more than account balance should throw InsufficientFundsException")
     public void withdrawMoreThanBalanceShouldThrowException() {
         // Arrange
-        transactionData = new AccountTransactionData(excessiveWithdrawAmount, "Withdraw", "Withdrawal");
+        transactionData = new AccountTransactionData(BigDecimal.valueOf(1001), "Withdraw", "Withdrawal");
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
         when(accountGateway.getTotalBalanceInGoalsByAccount(accountId)).thenReturn(BigDecimal.ZERO);
@@ -143,13 +159,13 @@ public class WithDrawAccountUseCaseTest {
     }
 
     @Test
-    @DisplayName("Withdraw more than account balance should throw InsufficientFundsException")
+    @DisplayName("Withdraw account in goals should throw BalanceInGoalException")
     public void withdrawAccountInGoalsShouldThrowException() {
         // Arrange
-        transactionData = new AccountTransactionData(BigDecimal.valueOf(300), "Withdraw", "Withdrawal");
+        transactionData = new AccountTransactionData(BigDecimal.valueOf(501), "Withdraw", "Withdrawal");
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
-        when(accountGateway.getTotalBalanceInGoalsByAccount(accountId)).thenReturn(BigDecimal.valueOf(1800));
+        when(accountGateway.getTotalBalanceInGoalsByAccount(accountId)).thenReturn(BigDecimal.valueOf(500));
 
         // Act & Assert
         assertThrows(BalanceInGoalException.class, () -> {

@@ -24,6 +24,7 @@ import com.finco.finco.entity.user.model.User;
 import com.finco.finco.usecase.account.DeleteAccountUseCase;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Delete account test")
 public class DeleteAccountUseCaseTest {
 
     @Mock
@@ -40,7 +41,6 @@ public class DeleteAccountUseCaseTest {
 
     @BeforeEach
     public void setUp() {
-        deleteAccountUseCase = new DeleteAccountUseCase(accountGateway, authGateway);
         user = new User();
         user.setId(1L);
         user.setEnable(true);
@@ -113,6 +113,7 @@ public class DeleteAccountUseCaseTest {
     }
 
     @Test
+    @DisplayName("Deactivate default account should throw CannotDeactivateDefaultAccountException")
     public void deactivateDefaultAccount() {
 
         // Arrange

@@ -20,6 +20,7 @@ import com.finco.finco.entity.user.model.User;
 import com.finco.finco.usecase.user.DeleteUserUseCase;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Delete user test")
 public class DeleteUserUseCaseTest {
 
     @Mock

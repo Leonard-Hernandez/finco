@@ -44,12 +44,12 @@ public class TransferAccountUseCase {
 
             fromAccount.transfer(data.amount(), transferAccount, data.exchangeRate());
             depositAmount = data.amount()
-                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getDepositFee())))
+                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getWithdrawFee())))
                     .multiply(data.exchangeRate());
         } else {
             fromAccount.transfer(data.amount(), transferAccount);
             depositAmount = data.amount()
-                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getDepositFee())));
+                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getWithdrawFee())));
         }
 
         // account transaction
@@ -72,10 +72,10 @@ public class TransferAccountUseCase {
         transaction.setTransferAccount(transferAccount);
         transaction.setType(type);
         if (type.equals(TransactionType.WITHDRAW)) {
-            transaction.setAmount(amount.subtract(amount.multiply(new BigDecimal(account.getWithdrawFee()))));
+            transaction.setAmount(amount);
             transaction.setFee(amount.multiply(new BigDecimal(account.getWithdrawFee())));
         } else if (type.equals(TransactionType.DEPOSIT)) {
-            transaction.setAmount(amount);
+            transaction.setAmount(amount.subtract(amount.multiply(new BigDecimal(account.getDepositFee()))));
             transaction.setFee(amount.multiply(new BigDecimal(account.getDepositFee())));
         }
         if (data.exchangeRate() != null) {

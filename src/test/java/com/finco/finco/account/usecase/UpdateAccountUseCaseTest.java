@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -24,6 +25,7 @@ import com.finco.finco.usecase.account.UpdateAccountUseCase;
 import com.finco.finco.usecase.account.dto.IAccountUpdateData;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Update account test")
 public class UpdateAccountUseCaseTest {
 
     @Mock
@@ -35,6 +37,7 @@ public class UpdateAccountUseCaseTest {
     @Mock
     private IAccountUpdateData updateData;
 
+    @InjectMocks
     private UpdateAccountUseCase updateAccountUseCase;
     private Account testAccount;
     private Account defaultAccount;
@@ -43,9 +46,7 @@ public class UpdateAccountUseCaseTest {
     private final Long userId = 1L;
 
     @BeforeEach
-    public void setUp() {
-        updateAccountUseCase = new UpdateAccountUseCase(accountGateway, authGateway);
-        
+    public void setUp() {        
         testUser = new User();
         testUser.setId(userId);
         testUser.setName("Test User");

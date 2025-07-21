@@ -20,6 +20,7 @@ import com.finco.finco.usecase.user.GetAllUserUseCase;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Get all user test")
 public class GetAllUserUseCaseTest {
 
     @Mock

@@ -2,6 +2,7 @@ package com.finco.finco.account.usecase;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -24,11 +27,13 @@ import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
+import com.finco.finco.entity.transaction.model.TransactionType;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.account.dto.AccountTransferData;
 import com.finco.finco.usecase.account.TransferAccountUseCase;
-import com.finco.finco.usecase.account.dto.IAccountTransferData;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Transfer account test")
 public class TransferAccountUseCaseTest {
 
     @Mock
@@ -40,25 +45,26 @@ public class TransferAccountUseCaseTest {
     @Mock
     private TransactionGateway transactionGateway;
 
-    @Mock
-    private IAccountTransferData transferData;
-
+    @InjectMocks
     private TransferAccountUseCase transferAccountUseCase;
-    private Account testAccount;
-    private Account testAccount2;
-    private User testUser;
-    private final Long accountId = 1L;
-    private final Long transferAccountId = 2L;
+
     private final Long userId = 1L;
+    private User testUser;
+
+    private final Long accountId = 1L;
+    private Account testAccount;
+    private final BigDecimal expectedTransferAccountBalance = BigDecimal.valueOf(475.00);
+    
+    private final Long transferAccountId = 2L;
+    private Account testAccount2;
+    private final BigDecimal expectedAccountBalance = BigDecimal.valueOf(1451.25);
+    
     private final BigDecimal initialBalance = BigDecimal.valueOf(1000);
     private final BigDecimal transferAmount = BigDecimal.valueOf(500);
-    private final BigDecimal expectedTransferAccountBalance = BigDecimal.valueOf(475.00);
-    private final BigDecimal expectedAccountBalance = BigDecimal.valueOf(1451.25);
+    private AccountTransferData transferData;
 
     @BeforeEach
-    public void setUp() {
-        transferAccountUseCase = new TransferAccountUseCase(accountGateway, authGateway, transactionGateway);
-        
+    public void setUp() {        
         testUser = new User();
         testUser.setId(userId);
         testUser.setName("Test User");
@@ -70,6 +76,7 @@ public class TransferAccountUseCaseTest {
         testAccount.setUser(testUser);
         testAccount.setEnable(true);
         testAccount.setWithdrawFee(0.05);
+        testAccount.setCurrency(CurrencyEnum.USD);
 
         testAccount2 = new Account();
         testAccount2.setId(transferAccountId);
@@ -77,24 +84,23 @@ public class TransferAccountUseCaseTest {
         testAccount2.setBalance(initialBalance);
         testAccount2.setUser(testUser);
         testAccount2.setEnable(true);
-        testAccount2.setDepositFee(0.05);    
+        testAccount2.setDepositFee(0.05);  
+        testAccount2.setCurrency(CurrencyEnum.USD);
+        
+        transferData = new AccountTransferData(transferAccountId, transferAmount, "Test Category", "Test Description", null);
     }
 
     @Test
     @DisplayName("Transfer to account successfully")
     public void transferToAccountSuccess() {
         // Arrange
-        when(transferData.amount()).thenReturn(transferAmount);
-        when(transferData.transferAccountId()).thenReturn(transferAccountId);
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
-        when(transactionGateway.create(any(Transaction.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
         Account result = transferAccountUseCase.execute(accountId, transferData);
-
 
         // Assert
         assertNotNull(result);
@@ -103,16 +109,43 @@ public class TransferAccountUseCaseTest {
         verify(accountGateway, times(1)).findById(accountId);
         verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, times(2)).update(any(Account.class));
+
+        // Assert transaction
+        ArgumentCaptor<Transaction> transactionCaptor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionGateway, times(2)).create(transactionCaptor.capture());
+
+
+        // account 1 transaction
+        Transaction transaction = transactionCaptor.getAllValues().get(0);
+        assertNotNull(transaction);
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(accountId, transaction.getAccount().getId());
+        assertEquals(testAccount2.getId(), transaction.getTransferAccount().getId());
+        assertEquals(BigDecimal.valueOf(500), transaction.getAmount().setScale(0, RoundingMode.HALF_UP));
+        assertEquals(TransactionType.WITHDRAW, transaction.getType());
+        assertEquals("Test Description", transaction.getDescription());
+        assertEquals("Test Category", transaction.getCategory());
+        assertEquals(BigDecimal.valueOf(25), transaction.getFee().setScale(0, RoundingMode.HALF_UP));
+
+        // transfer account transaction
+        transaction = transactionCaptor.getAllValues().get(1);
+        assertNotNull(transaction);
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(transferAccountId, transaction.getAccount().getId());
+        assertEquals(accountId, transaction.getTransferAccount().getId());
+        assertEquals(BigDecimal.valueOf(451.25), transaction.getAmount().setScale(2, RoundingMode.HALF_UP));
+        assertEquals(TransactionType.DEPOSIT, transaction.getType());
+        assertEquals("Test Description", transaction.getDescription());
+        assertEquals("Test Category", transaction.getCategory());
+        assertEquals(BigDecimal.valueOf(23.75), transaction.getFee().setScale(2, RoundingMode.HALF_UP));
     }
 
     @Test
-    @DisplayName("Transfer to account with incompatible currency and exchange rate")
-    public void transferToAccountWithIncompatibleCurrencySuccess() {
+    @DisplayName("Transfer to account successfully with incompatible currency")
+    public void transferToAccountSuccessWithIncompatibleCurrency() {
         // Arrange
-        testAccount2.setCurrency(CurrencyEnum.USD);
-        when(transferData.transferAccountId()).thenReturn(transferAccountId);
-        when(transferData.exchangeRate()).thenReturn(new BigDecimal(4000));
-        when(transferData.amount()).thenReturn(transferAmount);
+        testAccount.setCurrency(CurrencyEnum.COP);
+        transferData = new AccountTransferData(transferAccountId, transferAmount, "Test Category", "Test Description", BigDecimal.valueOf(4000));
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
@@ -124,8 +157,60 @@ public class TransferAccountUseCaseTest {
         // Assert
         assertNotNull(result);
         assertEquals(expectedTransferAccountBalance, result.getBalance().setScale(1, RoundingMode.HALF_UP));
-        assertEquals(new BigDecimal(1806000), testAccount2.getBalance().setScale(0, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(1806000.0), testAccount2.getBalance().setScale(1  , RoundingMode.HALF_UP));
         verify(accountGateway, times(1)).findById(accountId);
+        verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
+        verify(accountGateway, times(2)).update(any(Account.class));
+
+        // Assert transaction
+        ArgumentCaptor<Transaction> transactionCaptor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionGateway, times(2)).create(transactionCaptor.capture());
+
+
+        // account 1 transaction
+        Transaction transaction = transactionCaptor.getAllValues().get(0);
+        assertNotNull(transaction);
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(accountId, transaction.getAccount().getId());
+        assertEquals(testAccount2.getId(), transaction.getTransferAccount().getId());
+        assertEquals(BigDecimal.valueOf(500), transaction.getAmount().setScale(0, RoundingMode.HALF_UP));
+        assertEquals(TransactionType.WITHDRAW, transaction.getType());
+        assertEquals("Test Description", transaction.getDescription());
+        assertEquals("Test Category", transaction.getCategory());
+        assertEquals(BigDecimal.valueOf(25), transaction.getFee().setScale(0, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(4000), transaction.getExchangeRate());
+
+        // transfer account transaction
+        transaction = transactionCaptor.getAllValues().get(1);
+        assertNotNull(transaction);
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(transferAccountId, transaction.getAccount().getId());
+        assertEquals(accountId, transaction.getTransferAccount().getId());
+        assertEquals(BigDecimal.valueOf(1805000.0), transaction.getAmount().setScale(1, RoundingMode.HALF_UP));
+        assertEquals(TransactionType.DEPOSIT, transaction.getType());
+        assertEquals("Test Description", transaction.getDescription());
+        assertEquals("Test Category", transaction.getCategory());
+        assertEquals(BigDecimal.valueOf(95000.0), transaction.getFee().setScale(1, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(4000), transaction.getExchangeRate());
+    }
+
+    @Test
+    @DisplayName("transfer to account with incompatible currency and exchange rate null should throw ExchangeRateNotFound")
+    public void transferToAccountWithIncompatibleCurrencyAndExchangeRateNullShouldThrowException() {
+        // Arrange
+        testAccount2.setCurrency(CurrencyEnum.COP);
+        when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
+        when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
+        doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
+
+        // Act
+        assertThrows(ExchangeRateNotFound.class, () -> {
+            transferAccountUseCase.execute(accountId, transferData);
+        });
+
+        // Assert
+        verify(accountGateway, times(1)).findById(accountId);
+        verify(accountGateway, times(1)).findById(transferAccountId);
         verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
     }
 
@@ -149,8 +234,7 @@ public class TransferAccountUseCaseTest {
     @DisplayName("Transfer to account with insufficient balance should throw InsufficientBalanceException")
     public void transferToAccountWithInsufficientBalanceShouldThrowException() {
         // Arrange
-        when(transferData.amount()).thenReturn(BigDecimal.valueOf(1500));
-        when(transferData.transferAccountId()).thenReturn(transferAccountId);
+        AccountTransferData transferData = new AccountTransferData(transferAccountId, BigDecimal.valueOf(953), "Test Category", "Test Description", null);
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
@@ -169,9 +253,7 @@ public class TransferAccountUseCaseTest {
     @DisplayName("Transfer to account with incompatible currency and exchange rate null should throw ExchangeRateNotFound")
     public void transferToAccountWithIncompatibleCurrencyShouldThrowException() {
         // Arrange
-        testAccount.setCurrency(CurrencyEnum.USD);
-        when(transferData.transferAccountId()).thenReturn(transferAccountId);
-        when(transferData.exchangeRate()).thenReturn(null);
+        testAccount.setCurrency(CurrencyEnum.COP);
         when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
         when(accountGateway.findById(transferAccountId)).thenReturn(Optional.of(testAccount2));
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
