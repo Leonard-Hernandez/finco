@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.exception.InsufficientBalanceException;
 import com.finco.finco.entity.goal.exception.BalanceInGoalException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
@@ -105,6 +106,43 @@ public class WithDrawAccountUseCaseTest {
         assertEquals(userId, transaction.getUser().getId());
         assertEquals(BigDecimal.valueOf(25), transaction.getFee().setScale(0, RoundingMode.HALF_UP));
     }
+
+    @Test
+    @DisplayName("Withdraw from credit account successfully")
+    public void withdrawFromCreditAccountSuccess() {
+        // Arrange
+        testAccount.setType(AccountType.CREDIT);
+        testAccount.setBalance(BigDecimal.ZERO);
+        when(accountGateway.findById(accountId)).thenReturn(Optional.of(testAccount));
+        doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
+        when(accountGateway.update(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        Account result = withDrawAccountUseCase.execute(accountId, transactionData);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(new BigDecimal(-525), result.getBalance().setScale(0, RoundingMode.HALF_UP));
+        verify(accountGateway, times(1)).findById(accountId);
+        verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
+        verify(accountGateway, times(1)).update(any(Account.class));
+
+        // Assert transaction
+        ArgumentCaptor<Transaction> transactionCaptor = ArgumentCaptor.forClass(Transaction.class);
+        verify(transactionGateway, times(1)).create(transactionCaptor.capture());
+
+        Transaction transaction = transactionCaptor.getValue();
+        assertNotNull(transaction);
+        assertEquals(accountId, transaction.getAccount().getId());
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(new BigDecimal(500), transaction.getAmount().setScale(0, RoundingMode.HALF_UP));
+        assertEquals(TransactionType.WITHDRAW, transaction.getType());
+        assertEquals("Withdraw", transaction.getCategory());
+        assertEquals("Withdrawal", transaction.getDescription());
+        assertEquals(userId, transaction.getUser().getId());
+        assertEquals(BigDecimal.valueOf(25), transaction.getFee().setScale(0, RoundingMode.HALF_UP));
+    }
+    
 
     @Test
     @DisplayName("Withdraw from non-existing account should throw AccessDeniedBusinessException")

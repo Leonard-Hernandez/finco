@@ -53,7 +53,8 @@ public class GoalAccountBalanceDatabaseGateway implements GoalAccountBalanceGate
 
     @Override
     public BigDecimal getTotalBalanceInGoalsByAccount(Long accountId) {
-        return goalAccountBalanceRepository.getTotalBalanceInGoalsByAccount(accountId);
+        BigDecimal totalBalanceInGoalsByAccount = goalAccountBalanceRepository.getTotalBalanceInGoalsByAccount(accountId);
+        return totalBalanceInGoalsByAccount != null ? totalBalanceInGoalsByAccount : BigDecimal.ZERO;
     }
 
 }

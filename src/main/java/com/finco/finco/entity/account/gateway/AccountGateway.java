@@ -1,6 +1,7 @@
 package com.finco.finco.entity.account.gateway;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import com.finco.finco.entity.account.model.Account;
@@ -20,6 +21,8 @@ public interface AccountGateway {
     PagedResult<Account> findAll(PageRequest page);
 
     PagedResult<Account> findAllByUser(PageRequest page, Long userId);
+
+    List<Account> findAllByUser(Long userId);
 
     Long getTotalByUser(Long userId);
 

@@ -1,7 +1,9 @@
 package com.finco.finco.infrastructure.account.gateway;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -72,6 +74,11 @@ public class AccountDatabaseGateway implements AccountGateway {
     }
 
     @Override
+    public List<Account> findAllByUser(Long userId) {
+        return accountRepository.findAllByUserId(userId).stream().map(accountMapper::toAccount).collect(Collectors.toList());
+    }
+
+    @Override
     public Long getTotalByUser(Long userId) {
         return accountRepository.getTotalByUserId(userId);
     }
@@ -83,7 +90,8 @@ public class AccountDatabaseGateway implements AccountGateway {
 
     @Override
     public BigDecimal getTotalBalanceInGoalsByAccount(Long accountId) {
-        return accountRepository.getTotalBalanceInGoalsByAccount(accountId);
+        BigDecimal totalBalanceInGoalsByAccount = accountRepository.getTotalBalanceInGoalsByAccount(accountId);
+        return totalBalanceInGoalsByAccount != null ? totalBalanceInGoalsByAccount : BigDecimal.ZERO;
     }
 
 }

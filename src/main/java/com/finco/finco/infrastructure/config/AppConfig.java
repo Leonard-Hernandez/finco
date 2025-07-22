@@ -37,6 +37,7 @@ import com.finco.finco.usecase.user.CreateUserAdminUseCase;
 import com.finco.finco.usecase.user.CreateUserUseCase;
 import com.finco.finco.usecase.user.DeleteUserUseCase;
 import com.finco.finco.usecase.user.GetAllUserUseCase;
+import com.finco.finco.usecase.user.GetTotalBalanceByUserUseCase;
 import com.finco.finco.usecase.user.GetUserUseCase;
 import com.finco.finco.usecase.user.UpdateUserUseCase;
 
@@ -72,6 +73,11 @@ public class AppConfig {
     @Bean
     GetUserUseCase getUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
         return new GetUserUseCase(userGateway, authGateway);
+    }
+
+    @Bean
+    GetTotalBalanceByUserUseCase getTotalBalanceByUser(AuthGateway authGateway, AccountGateway accountGateway) {
+        return new GetTotalBalanceByUserUseCase(authGateway, accountGateway);
     }
 
     @Bean
