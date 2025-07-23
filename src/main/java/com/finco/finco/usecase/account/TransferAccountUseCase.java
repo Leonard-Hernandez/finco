@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import com.finco.finco.entity.account.exception.ExchangeRateNotFound;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
@@ -26,6 +27,7 @@ public class TransferAccountUseCase {
         this.transactionGateway = transactionGateway;
     }
 
+    @LogExecution
     public Account execute(Long id, IAccountTransferData data) {
         Account fromAccount = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(fromAccount.getUser().getId());

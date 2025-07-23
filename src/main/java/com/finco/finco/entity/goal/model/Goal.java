@@ -137,4 +137,11 @@ public class Goal {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Goal {id=" + id + ", user=" + user + ", name=" + name + ", targetAmount=" + targetAmount + ", deadLine="
+                + deadLine + ", description=" + description + ", creationDate=" + creationDate + ", enable=" + enable
+                + ", goalAccountBalances=" + goalAccountBalances + "}";
+    }
+
 }

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.exception.InsufficientBalanceException;
 import com.finco.finco.entity.goal.exception.AccountNotAssociatedWithGoalException;
@@ -37,6 +38,7 @@ public class WithDrawGoalUseCase {
     }
 
     @TransactionalDomainAnnotation
+    @LogExecution
     public Goal execute(Long goalId, IGoalTransactionData data) {
 
         Goal goal = goalGateway.findById(goalId).orElseThrow(AccessDeniedBusinessException::new);

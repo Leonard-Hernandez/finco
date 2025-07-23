@@ -2,6 +2,7 @@ package com.finco.finco.usecase.account;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
@@ -18,6 +19,7 @@ public class GetAllAccountsByUserUseCase {
     }
     
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false) 
     public PagedResult<Account> execute(PageRequest page, Long userId) {
         
         authGateway.verifyOwnershipOrAdmin(userId);

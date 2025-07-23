@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.user;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
@@ -20,6 +21,7 @@ public class GetAllUserUseCase {
 
 
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false) // Avoid logging potentially large user lists
     public PagedResult<User> execute(PageRequest page) {
 
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {

@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.goal;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
@@ -17,6 +18,7 @@ public class GetGoalUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution
     public Goal execute(Long goalId) {
 
         Goal goal = goalGateway.findById(goalId).orElseThrow(AccessDeniedBusinessException::new);

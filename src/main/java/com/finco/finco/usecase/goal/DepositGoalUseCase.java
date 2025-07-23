@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
@@ -37,6 +38,7 @@ public class DepositGoalUseCase {
     }
 
     @TransactionalDomainAnnotation
+    @LogExecution
     public Goal execute(Long goalId, IGoalTransactionData data) {
 
         // validate ownership

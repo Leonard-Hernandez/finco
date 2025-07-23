@@ -58,7 +58,7 @@ public class DeleteUserUseCaseTest {
         });
 
         // Act
-        User result = deleteUserUseCase.excute(userId);
+        User result = deleteUserUseCase.execute(userId);
 
         // Assert
         assertNotNull(result);
@@ -78,7 +78,7 @@ public class DeleteUserUseCaseTest {
 
         // Act & Assert
         assertThrows(UserNotFoundException.class, () -> {
-            deleteUserUseCase.excute(userId);
+            deleteUserUseCase.execute(userId);
         });
 
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
@@ -94,7 +94,7 @@ public class DeleteUserUseCaseTest {
 
         // Act & Assert
         assertThrows(AccessDeniedBusinessException.class, () -> {
-            deleteUserUseCase.excute(userId);
+            deleteUserUseCase.execute(userId);
         });
 
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);

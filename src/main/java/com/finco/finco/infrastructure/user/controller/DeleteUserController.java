@@ -21,7 +21,7 @@ public class DeleteUserController {
     @DeleteMapping("/user/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserPublicData deleteUser(@PathVariable Long id) {
-        return new UserPublicData(deleteUserUseCase.excute(id));
+        return new UserPublicData(deleteUserUseCase.execute(id));
     }
 
 }

@@ -111,4 +111,10 @@ public class GoalAccountBalance {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "GoalAccountBalance {id=" + id + ", goal=" + goal + ", account=" + account + ", balance=" + balance
+                + ", lastUpdated=" + lastUpdated + ", createdAt=" + createdAt + "}";
+    }
+
 }

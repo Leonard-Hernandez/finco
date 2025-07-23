@@ -199,4 +199,12 @@ public class Account {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Account {id=" + id + ", user=" + user + ", name=" + name + ", type=" + type + ", balance=" + balance
+                + ", currency=" + currency + ", creationDate=" + creationDate + ", description=" + description
+                + ", isDefault=" + isDefault + ", enable=" + enable + ", depositFee=" + depositFee + ", withdrawFee="
+                + withdrawFee + "}";
+    }
+
 }

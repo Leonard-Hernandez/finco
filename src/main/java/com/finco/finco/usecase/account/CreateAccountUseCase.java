@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
@@ -24,6 +25,7 @@ public class CreateAccountUseCase {
     }
 
     @TransactionalDomainAnnotation
+    @LogExecution
     public Account execute(Long userId, IAccountRegistrationData data) {
 
         authGateway.verifyOwnershipOrAdmin(userId);

@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.goal;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
@@ -18,6 +19,7 @@ public class GetAllGoalsByUserUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false)
     public PagedResult<Goal> execute(Long userId, PageRequest pageRequest) {
 
         authGateway.verifyOwnershipOrAdmin(userId);

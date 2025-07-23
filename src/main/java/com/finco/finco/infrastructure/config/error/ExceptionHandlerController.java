@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,19 +25,24 @@ import com.finco.finco.entity.user.exception.UserNotFoundException;
 @RestControllerAdvice
 public class ExceptionHandlerController {
 
+    private final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
+
     @ExceptionHandler({ EbusinessException.class })
     private ResponseEntity<Map<String, String>> ebussinessException(EbusinessException ex) {
+        logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ UserNotFoundException.class, AccountNotFoundException.class, GoalNotFoundException.class,
             RoleNotFoundException.class })
     private ResponseEntity<Map<String, String>> balanceInGoalException(EbusinessException ex) {
+        logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccessDeniedBusinessException.class)
     private ResponseEntity<Map<String, String>> accessDeniedBusinessException(AccessDeniedBusinessException ex) {
+        logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.FORBIDDEN);
     }
 
@@ -58,6 +65,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> exceptionHandler(Exception e) {
+        logger.error("Business Exception: {}", e.getMessage());
         return buildResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

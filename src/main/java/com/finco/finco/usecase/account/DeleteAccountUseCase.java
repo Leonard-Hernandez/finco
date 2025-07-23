@@ -3,6 +3,7 @@ package com.finco.finco.usecase.account;
 import com.finco.finco.entity.account.exception.CannotDeactivateDefaultAccountException;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 
@@ -16,6 +17,7 @@ public class DeleteAccountUseCase {
         this.authGateway = authGateway;
     }
 
+    @LogExecution
     public Account execute(Long accountId) {
 
         Account account = accountGateway.findById(accountId).orElseThrow(AccessDeniedBusinessException::new);

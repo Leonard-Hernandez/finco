@@ -174,4 +174,10 @@ public class User {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "User {id=" + id + ", name=" + name + ", email=" + email + ", password=" + password
+                + ", registrationDate=" + registrationDate + ", enable=" + enable + "}";
+    }
+
 }

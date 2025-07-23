@@ -2,6 +2,7 @@ package com.finco.finco.usecase.user;
 
 import java.time.LocalDateTime;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.role.exception.RoleNotFoundException;
 import com.finco.finco.entity.role.gateway.RoleGateway;
@@ -21,6 +22,7 @@ public class CreateUserUseCase {
     }
 
     @TransactionalDomainAnnotation()
+    @LogExecution
     public User execute(IUserRegistrationData userData) {
         User user = new User();
         user.setName(userData.name());

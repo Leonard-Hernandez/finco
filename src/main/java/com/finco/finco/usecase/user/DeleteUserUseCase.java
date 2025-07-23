@@ -1,5 +1,6 @@
 package com.finco.finco.usecase.user;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
@@ -17,13 +18,13 @@ public class DeleteUserUseCase {
     }
 
     @TransactionalDomainAnnotation()
-    public User excute(Long id) {
-        authGateway.verifyOwnershipOrAdmin(id);
+    @LogExecution
+    public User execute(Long userId) {
+        authGateway.verifyOwnershipOrAdmin(userId);
 
-        User user = userGateway.findById(id).orElseThrow(UserNotFoundException::new);
+        User user = userGateway.findById(userId).orElseThrow(UserNotFoundException::new);
 
         return userGateway.delete(user);
-
     }
 
 }
