@@ -1,0 +1,30 @@
+server:
+  port: 8080
+  serverlet:
+    context-path: /finco-api/v1
+
+spring:
+  application:
+    name: finco
+  datasource:
+    url: ${DbUrl}
+    username: ${UserDb}
+    password: ${password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+# configuracion de logging
+logging:
+  level:
+    com.finco.finco: INFO
+    org.springframework.web: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
