@@ -68,6 +68,7 @@ public class WithDrawAccountUseCaseTest {
         testAccount.setUser(testUser);
         testAccount.setEnable(true);
         testAccount.setWithdrawFee(0.05);
+        testAccount.setType(AccountType.CASH);
 
         transactionData = new AccountTransactionData(withdrawAmount, "Withdraw", "Withdrawal");
     }
