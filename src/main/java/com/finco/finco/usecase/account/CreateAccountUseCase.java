@@ -25,7 +25,7 @@ public class CreateAccountUseCase {
     }
 
     @TransactionalDomainAnnotation
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account execute(Long userId, IAccountRegistrationData data) {
 
         authGateway.verifyOwnershipOrAdmin(userId);

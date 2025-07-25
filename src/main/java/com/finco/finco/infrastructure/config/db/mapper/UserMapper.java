@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.asset.model.Asset;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
@@ -43,6 +44,7 @@ public class UserMapper {
                 this.transactionMapper = transactionMapper;
         }
 
+        @LogExecution(logReturnValue = false, logArguments = false)
         public User toUser(UserSchema userSchema) {
                 if (userSchema == null) {
                         return null;
@@ -95,6 +97,7 @@ public class UserMapper {
 
         }
 
+        @LogExecution(logReturnValue = false, logArguments = false)
         public User toLigthUser(UserSchema userSchema) {
                 if (userSchema == null) {
                         return null;
@@ -112,6 +115,7 @@ public class UserMapper {
                 return user;
         }
 
+        @LogExecution(logReturnValue = false, logArguments = false)
         public UserSchema toUserSchema(User user) {
                 if (user == null) {
                         return null;
@@ -174,6 +178,7 @@ public class UserMapper {
                 return userSchema;
         }
 
+        @LogExecution(logReturnValue = false, logArguments = false)
         public UserSchema toLightUserSchema(User user) {
                 if (user == null) {
                         return null;
@@ -190,6 +195,7 @@ public class UserMapper {
                 return userSchema;
         }
 
+        @LogExecution(logReturnValue = false, logArguments = false)
         public PagedResult<User> toUserPagedResult(Page<UserSchema> userSchemaPage, PageRequest pageRequest) {
                 if (userSchemaPage == null) {
                         return PagedResult.empty(pageRequest);

@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
@@ -20,6 +21,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false)
     public Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -34,6 +36,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
     }
 
     @Override
+    @LogExecution()
     public boolean isAuthenticatedUserInRole(String roleName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -47,6 +50,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false)
     public void verifyOwnershipOrAdmin(Long ownerId) {
         Long authenticatedUserId = getAuthenticatedUserId();
 

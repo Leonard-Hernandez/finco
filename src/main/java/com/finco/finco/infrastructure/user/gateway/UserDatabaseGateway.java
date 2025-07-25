@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.user.gateway.UserGateway;
@@ -30,6 +31,7 @@ public class UserDatabaseGateway implements UserGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public User create(User user) {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -39,22 +41,26 @@ public class UserDatabaseGateway implements UserGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public User update(User user) {
         return userMapper.toUser(userRepository.save(userMapper.toUserSchema(user)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public User delete(User user) {
         user.setEnable(false);
         return userMapper.toUser(userRepository.save(userMapper.toUserSchema(user)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<User> findById(Long id) {
         return userRepository.findById(id).map(userMapper::toUser);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<User> findAll(PageRequest pageRequest) {
         Sort sort = pageRequest.getSortBy()
                 .map(sortBy -> {
