@@ -20,6 +20,7 @@ public class GetUserController {
 
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @LogExecution()
     public UserPublicData getUser(@PathVariable long id) {
 
         return new UserPublicData(getUserUserCase.execute(id));

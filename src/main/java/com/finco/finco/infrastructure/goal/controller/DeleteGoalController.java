@@ -20,6 +20,7 @@ public class DeleteGoalController {
 
     @DeleteMapping("/goals/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @LogExecution()
     public GoalPublicData deleteGoal(@PathVariable Long id) {
         return new GoalPublicData(deleteGoalUseCase.execute(id));  
     }

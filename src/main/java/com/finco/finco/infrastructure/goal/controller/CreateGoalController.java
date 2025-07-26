@@ -24,6 +24,7 @@ public class CreateGoalController {
 
     @PostMapping("/users/{userId}/goals")
     @ResponseStatus(HttpStatus.CREATED)
+    @LogExecution()
     public GoalPublicData deposit(@PathVariable Long userId, @Valid @RequestBody GoalRegistrationData goalRegistrationData) {
         return new GoalPublicData(createGoalUseCase.execute(userId, goalRegistrationData));
     }

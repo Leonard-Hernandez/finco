@@ -20,7 +20,7 @@ public class GetAllAccountUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
-    @LogExecution(logReturnValue = false)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Account> execute(PageRequest page) {
 
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {

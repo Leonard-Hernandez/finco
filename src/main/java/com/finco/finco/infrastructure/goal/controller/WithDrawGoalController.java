@@ -21,6 +21,7 @@ public class WithDrawGoalController {
     }
 
     @PostMapping("/goals/{id}/withdraw")
+    @LogExecution()
     public GoalPublicData withdraw(@PathVariable Long id, @Valid @RequestBody GoalTransactionData data) {
         return new GoalPublicData(withDrawGoalUseCase.execute(id, data));
     }

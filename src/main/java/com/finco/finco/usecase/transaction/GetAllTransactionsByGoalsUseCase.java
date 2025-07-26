@@ -24,6 +24,7 @@ public class GetAllTransactionsByGoalsUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> execute(PageRequest page, Long goalId) {
 
         Goal goal = goalGateway.findById(goalId).orElseThrow(AccessDeniedBusinessException::new);

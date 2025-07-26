@@ -24,6 +24,7 @@ public class UpdateUserController {
     @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Validated
+    @LogExecution()
     public UserPublicData updateUser(@Valid @RequestBody UserUpdateData data, @PathVariable Long id) {
         return new UserPublicData(updateUserUseCase.execute(id, data));
     }

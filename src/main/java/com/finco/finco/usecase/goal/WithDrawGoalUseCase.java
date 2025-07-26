@@ -38,7 +38,7 @@ public class WithDrawGoalUseCase {
     }
 
     @TransactionalDomainAnnotation
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal execute(Long goalId, IGoalTransactionData data) {
 
         Goal goal = goalGateway.findById(goalId).orElseThrow(AccessDeniedBusinessException::new);

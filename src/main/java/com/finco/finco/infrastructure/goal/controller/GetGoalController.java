@@ -17,6 +17,7 @@ public class GetGoalController {
     }
 
     @GetMapping("/goals/{id}")
+    @LogExecution()
     public GoalPublicData getGoal(@PathVariable Long id) {
         return new GoalPublicData(getGoalUseCase.execute(id));
     }

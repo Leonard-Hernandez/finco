@@ -21,6 +21,7 @@ public class TransferAccountController {
     }
 
     @PostMapping("/accounts/{id}/transfer")
+    @LogExecution()
     public AccountPublicData transfer(@PathVariable Long id, @Valid @RequestBody AccountTransferData data) {
         return new AccountPublicData(transferAccountUseCase.execute(id, data));
     }

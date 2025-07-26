@@ -21,6 +21,7 @@ public class DepositAccountController {
     }
 
     @PostMapping("/accounts/{id}/deposit")
+    @LogExecution()
     public AccountPublicData deposit(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(depositAccountUseCase.execute(id, data));
     }

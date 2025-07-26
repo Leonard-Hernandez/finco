@@ -18,6 +18,7 @@ public class GetAllTransactionsByUserUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> execute(PageRequest page, Long userId) {
         authGateway.verifyOwnershipOrAdmin(userId);
         return transactionGateway.findAllByUserId(userId, page);

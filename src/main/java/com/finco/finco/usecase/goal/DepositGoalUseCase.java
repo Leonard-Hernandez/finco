@@ -38,7 +38,7 @@ public class DepositGoalUseCase {
     }
 
     @TransactionalDomainAnnotation
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal execute(Long goalId, IGoalTransactionData data) {
 
         // validate ownership

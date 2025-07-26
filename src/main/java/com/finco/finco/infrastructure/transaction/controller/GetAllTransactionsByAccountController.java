@@ -27,6 +27,7 @@ public class GetAllTransactionsByAccountController {
     }
 
     @GetMapping("/accounts/{accountId}/transactions")
+    @LogExecution()
     public Page<TransactionPublicData> getAllTransactionsByAccount(
             @PageableDefault(page = 0, size = 20, sort = "date", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long accountId) {
         PageRequest domainPageRequest = toPageRequest(pageable);

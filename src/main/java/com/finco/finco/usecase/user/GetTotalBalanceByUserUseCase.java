@@ -20,7 +20,7 @@ public class GetTotalBalanceByUserUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
-    @LogExecution(logArguments = true, logReturnValue = true)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public BigDecimal execute(Long userId) {
         authGateway.verifyOwnershipOrAdmin(userId);
 

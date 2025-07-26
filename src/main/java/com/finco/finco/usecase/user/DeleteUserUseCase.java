@@ -18,7 +18,7 @@ public class DeleteUserUseCase {
     }
 
     @TransactionalDomainAnnotation()
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public User execute(Long userId) {
         authGateway.verifyOwnershipOrAdmin(userId);
 

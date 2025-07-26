@@ -21,6 +21,7 @@ public class WithDrawAccountController {
     }
 
     @PostMapping("/accounts/{id}/withdraw")
+    @LogExecution()
     public AccountPublicData withdraw(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(withDrawAccountUseCase.execute(id, data));
     }

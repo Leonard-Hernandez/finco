@@ -30,7 +30,7 @@ public class WithDrawAccountUseCase {
     }
 
     @TransactionalDomainAnnotation
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account execute(Long id, AccountTransactionData data) {
         Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());

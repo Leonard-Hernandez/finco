@@ -8,10 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.config.db.mapper.AccountMapper;
@@ -32,28 +31,32 @@ public class AccountDatabaseGateway implements AccountGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account create(Account account) {
         return accountMapper.toAccount(accountRepository.save(accountMapper.toAccountSchema(account)));
     }
 
     @Override
-    @Transactional
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account update(Account account) {
         return accountMapper.toAccount(accountRepository.save(accountMapper.toAccountSchema(account)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account delete(Account account) {
         account.setEnable(false);
         return accountMapper.toAccount(accountRepository.save(accountMapper.toAccountSchema(account)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<Account> findById(Long id) {
         return accountRepository.findById(id).map(accountMapper::toAccount);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Account> findAll(PageRequest page) {
 
         Pageable springPageable = toPageable(page);
@@ -64,6 +67,7 @@ public class AccountDatabaseGateway implements AccountGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Account> findAllByUser(PageRequest page, Long userId) {
 
         Pageable springPageable = toPageable(page);
@@ -74,21 +78,25 @@ public class AccountDatabaseGateway implements AccountGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public List<Account> findAllByUser(Long userId) {
         return accountRepository.findAllByUserId(userId).stream().map(accountMapper::toAccount).collect(Collectors.toList());
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Long getTotalByUser(Long userId) {
         return accountRepository.getTotalByUserId(userId);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<Account> findDefaultByUserId(Long userId) {
         return accountRepository.findByIsDefaultTrueAndUserId(userId).map(accountMapper::toAccount);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public BigDecimal getTotalBalanceInGoalsByAccount(Long accountId) {
         BigDecimal totalBalanceInGoalsByAccount = accountRepository.getTotalBalanceInGoalsByAccount(accountId);
         return totalBalanceInGoalsByAccount != null ? totalBalanceInGoalsByAccount : BigDecimal.ZERO;

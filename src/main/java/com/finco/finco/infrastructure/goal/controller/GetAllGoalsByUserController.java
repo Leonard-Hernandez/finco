@@ -24,6 +24,7 @@ public class GetAllGoalsByUserController {
     }
 
     @GetMapping("/users/{userId}/goals")
+    @LogExecution()
     public Page<GoalPublicData> getAllGoalsByUser(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable, @PathVariable Long userId) {
 
         PageRequest domainPageRequest = toPageRequest(pageable);

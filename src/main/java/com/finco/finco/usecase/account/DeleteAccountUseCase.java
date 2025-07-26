@@ -17,7 +17,7 @@ public class DeleteAccountUseCase {
         this.authGateway = authGateway;
     }
 
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account execute(Long accountId) {
 
         Account account = accountGateway.findById(accountId).orElseThrow(AccessDeniedBusinessException::new);

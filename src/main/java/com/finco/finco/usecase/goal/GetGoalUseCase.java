@@ -18,7 +18,7 @@ public class GetGoalUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal execute(Long goalId) {
 
         Goal goal = goalGateway.findById(goalId).orElseThrow(AccessDeniedBusinessException::new);

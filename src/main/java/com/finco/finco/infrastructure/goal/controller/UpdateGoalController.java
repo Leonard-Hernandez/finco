@@ -21,6 +21,7 @@ public class UpdateGoalController {
     }
 
     @PutMapping("/goals/{id}")
+    @LogExecution()
     public GoalPublicData updateGoal(@PathVariable Long id, @Valid @RequestBody GoalUpdateData data) {
         return new GoalPublicData(updateGoalUseCase.execute(id, data));
     }

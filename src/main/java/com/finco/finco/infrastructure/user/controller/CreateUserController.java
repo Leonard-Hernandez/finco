@@ -23,6 +23,7 @@ public class CreateUserController {
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
+    @LogExecution()
     public UserPublicData createUser(@RequestBody @Valid UserRegistrationData data) {
 
         return new UserPublicData(createUserUseCase.execute(data));

@@ -17,6 +17,7 @@ public class DeleteAccountController {
     }
 
     @DeleteMapping("/accounts/{id}")
+    @LogExecution()
     public AccountPublicData deleteAccount(@PathVariable Long id) {
         return new AccountPublicData(deleteAccountUseCase.execute(id));
     }

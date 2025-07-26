@@ -19,7 +19,7 @@ public class GetAllGoalsByUserUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
-    @LogExecution(logReturnValue = false)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Goal> execute(Long userId, PageRequest pageRequest) {
 
         authGateway.verifyOwnershipOrAdmin(userId);

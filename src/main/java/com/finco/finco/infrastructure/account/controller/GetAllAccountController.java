@@ -23,6 +23,7 @@ public class GetAllAccountController {
     }
 
     @GetMapping("/admin/accounts")
+    @LogExecution()
     public Page<AccountPublicData> getAllAccounts(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable) {
         PageRequest domainPageRequest = toPageRequest(pageable);
 

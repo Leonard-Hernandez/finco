@@ -17,6 +17,7 @@ public class GetUserUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public User execute(Long id) {
         authGateway.verifyOwnershipOrAdmin(id);
         return userGateway.findById(id).orElseThrow(UserNotFoundException::new);

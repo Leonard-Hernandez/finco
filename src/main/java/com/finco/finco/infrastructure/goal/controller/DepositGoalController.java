@@ -21,6 +21,7 @@ public class DepositGoalController {
     }
 
     @PostMapping("/goals/{id}/deposit")
+    @LogExecution()
     public GoalPublicData deposit(@PathVariable Long id, @Valid @RequestBody GoalTransactionData data) {
         return new GoalPublicData(depositGoalUseCase.execute(id, data));
     }

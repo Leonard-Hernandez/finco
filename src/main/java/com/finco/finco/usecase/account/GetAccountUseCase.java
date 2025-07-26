@@ -18,7 +18,7 @@ public class GetAccountUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account execute(Long id) {
         Account account = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());

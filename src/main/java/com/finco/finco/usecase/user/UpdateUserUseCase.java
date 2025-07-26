@@ -18,6 +18,7 @@ public class UpdateUserUseCase {
     }
 
     @TransactionalDomainAnnotation
+    @LogExecution(logReturnValue = false, logArguments = false)
     public User execute(Long id, IUserUpdateData userData) {
 
         authGateway.verifyOwnershipOrAdmin(id);

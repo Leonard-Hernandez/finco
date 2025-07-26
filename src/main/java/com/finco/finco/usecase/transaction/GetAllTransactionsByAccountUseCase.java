@@ -24,6 +24,7 @@ public class GetAllTransactionsByAccountUseCase {
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> execute(PageRequest page, Long accountId) {
 
         Account account = accountGateway.findById(accountId).orElseThrow(AccessDeniedBusinessException::new);

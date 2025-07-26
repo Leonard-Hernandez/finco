@@ -21,6 +21,7 @@ public class GetTotalBalanceByUserController {
 
     @GetMapping("/users/{id}/total-balance")
     @ResponseStatus(HttpStatus.OK)
+    @LogExecution()
     public BigDecimal getTotalBalanceByUser(@PathVariable Long id) {
         return getTotalBalanceByUser.execute(id);
     }

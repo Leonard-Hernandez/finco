@@ -20,6 +20,7 @@ public class GetAccountController {
 
     @GetMapping("/accounts/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @LogExecution()
     public AccountPublicData getAccount(@PathVariable Long id) {
         return new AccountPublicData(getAccountUseCase.execute(id));
     }

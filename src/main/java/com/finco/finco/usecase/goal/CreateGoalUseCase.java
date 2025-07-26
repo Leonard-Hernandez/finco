@@ -25,7 +25,7 @@ public class CreateGoalUseCase {
     }
 
     @TransactionalDomainAnnotation
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal execute(Long userId, IGoalRegistrationData data) {
 
         authGateway.verifyOwnershipOrAdmin(userId);

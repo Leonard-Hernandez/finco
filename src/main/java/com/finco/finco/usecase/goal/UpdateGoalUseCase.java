@@ -19,7 +19,7 @@ public class UpdateGoalUseCase {
     }
 
     @TransactionalDomainAnnotation
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal execute(Long goalId, IGoalUpdateData data) {
 
         Goal goal = goalGateway.findById(goalId).orElseThrow(AccessDeniedBusinessException::new);

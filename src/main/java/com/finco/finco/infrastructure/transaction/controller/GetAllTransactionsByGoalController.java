@@ -29,6 +29,7 @@ public class GetAllTransactionsByGoalController {
     }
 
     @GetMapping("/goals/{goalId}/transactions")
+    @LogExecution()
     public Page<TransactionPublicData> getAllTransactionsByGoal(
             @PageableDefault(page = 0, size = 20, sort = "date", direction = Sort.Direction.DESC) Pageable pageable,
             @PathVariable Long goalId) {

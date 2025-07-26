@@ -27,6 +27,7 @@ public class GetAllUserController {
 
     @GetMapping("/admin/users")
     @ResponseStatus(HttpStatus.OK)
+    @LogExecution()
     private Page<UserPublicData> findAllUsers(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable) {
         PageRequest domainPageRequest = new PageRequest(
             pageable.getPageNumber(),

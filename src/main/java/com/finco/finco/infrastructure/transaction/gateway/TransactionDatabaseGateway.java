@@ -26,45 +26,53 @@ public class TransactionDatabaseGateway implements TransactionGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Transaction create(Transaction transaction) {
         return transactionMapper.toTransaction(transactionRepository.save(transactionMapper.toTransactionSchema(transaction)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Transaction update(Transaction transaction) {
         return transactionMapper.toTransaction(transactionRepository.save(transactionMapper.toTransactionSchema(transaction)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<Transaction> findById(Long id) {
         return transactionRepository.findById(id).map(transactionMapper::toTransaction);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> findAllByUserId(Long userId, PageRequest page) {
         Pageable springPageable = toPageable(page);
         return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByUserId(userId, springPageable), page);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> findAllByAccountId(Long accountId, PageRequest page) {
         Pageable springPageable = toPageable(page);
         return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByAccountId(accountId, springPageable), page);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> findAllByGoalId(Long goalId, PageRequest page) {
         Pageable springPageable = toPageable(page);
         return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByGoalId(goalId, springPageable), page);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId, PageRequest page) {
         Pageable springPageable = toPageable(page);
         return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByUserIdAndTransferAccountId(userId, TransferedId, springPageable), page);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public List<String> findAllCategoriesByUserId(Long userId) {
         return transactionRepository.findAllCategoriesByUserId(userId);
     }

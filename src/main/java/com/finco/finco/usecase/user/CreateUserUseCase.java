@@ -22,7 +22,7 @@ public class CreateUserUseCase {
     }
 
     @TransactionalDomainAnnotation()
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public User execute(IUserRegistrationData userData) {
         User user = new User();
         user.setName(userData.name());

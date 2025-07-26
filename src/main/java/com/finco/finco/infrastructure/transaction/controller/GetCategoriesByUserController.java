@@ -18,6 +18,7 @@ public class GetCategoriesByUserController {
     }
 
     @GetMapping("/transactions/categories/{userId}")
+    @LogExecution()
     public List<String> getCategoriesByUser(@PathVariable Long userId) {
         return getCategoriesByUserUseCase.execute(userId);
     }

@@ -21,6 +21,7 @@ public class PatchUserController {
 
     @PatchMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @LogExecution()
     public UserPublicData patchUser(@RequestBody UserUpdateData data, @PathVariable Long id) {
         return new UserPublicData(updateUserUseCase.execute(id, data));
     }

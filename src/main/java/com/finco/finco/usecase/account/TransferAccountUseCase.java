@@ -27,7 +27,7 @@ public class TransferAccountUseCase {
         this.transactionGateway = transactionGateway;
     }
 
-    @LogExecution
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Account execute(Long id, IAccountTransferData data) {
         Account fromAccount = accountGateway.findById(id).orElseThrow(AccessDeniedBusinessException::new);
         authGateway.verifyOwnershipOrAdmin(fromAccount.getUser().getId());

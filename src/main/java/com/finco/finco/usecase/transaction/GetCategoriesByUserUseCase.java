@@ -15,6 +15,8 @@ public class GetCategoriesByUserUseCase {
         this.authGateway = authGateway;
     }
 
+    @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false, logArguments = false)
     public List<String> execute(Long userId) {
         authGateway.verifyOwnershipOrAdmin(userId);
         return transactionGateway.findAllCategoriesByUserId(userId);

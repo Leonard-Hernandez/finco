@@ -24,6 +24,7 @@ public class UpdateAccountController {
     @PutMapping("/accounts/{id}")
     @Validated
     @ResponseStatus(HttpStatus.OK)
+    @LogExecution()
     public AccountPublicData updateAccount(@PathVariable Long id, @Valid @RequestBody AccountUpdateData data) {
         return new AccountPublicData(updateAccountUseCase.execute(id, data));
     }

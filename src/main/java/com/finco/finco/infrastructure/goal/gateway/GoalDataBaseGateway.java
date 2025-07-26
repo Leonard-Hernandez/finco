@@ -28,27 +28,32 @@ public class GoalDataBaseGateway implements GoalGateway {
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal create(Goal goal) {
         return goalMapper.toGoal(goalRepository.save(goalMapper.toGoalSchema(goal)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal update(Goal goal) {
         return goalMapper.toGoal(goalRepository.save(goalMapper.toGoalSchema(goal)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Goal delete(Goal goal) {
         goal.setEnable(false);
         return goalMapper.toGoal(goalRepository.save(goalMapper.toGoalSchema(goal)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<Goal> findById(Long id) {
         return goalRepository.findById(id).map(goalMapper::toGoal);
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Goal> findAllByUserId(Long userId, PageRequest pageRequest) {
 
         Pageable springPageable = toPageable(pageRequest);

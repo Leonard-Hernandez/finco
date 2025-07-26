@@ -23,6 +23,7 @@ public class CreateUserAdminController {
 
     @PostMapping("/admin/user")
     @ResponseStatus(HttpStatus.CREATED)
+    @LogExecution()
     public UserPublicData createUserAdmin(@RequestBody @Valid UserRegistrationData data) {
 
         return new UserPublicData(createUserAdminUseCase.execute(data));
