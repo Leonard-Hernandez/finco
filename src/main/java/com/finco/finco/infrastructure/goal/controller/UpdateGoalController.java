@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.infrastructure.goal.dto.GoalPublicData;
 import com.finco.finco.infrastructure.goal.dto.GoalUpdateData;
 import com.finco.finco.usecase.goal.UpdateGoalUseCase;

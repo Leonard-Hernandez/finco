@@ -12,6 +12,8 @@ import com.finco.finco.infrastructure.account.dto.AccountPublicData;
 import com.finco.finco.infrastructure.account.dto.AccountRegistrationData;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class CreateAccountController {
 
@@ -24,9 +26,9 @@ public class CreateAccountController {
     @PostMapping("/users/{userId}/accounts")
     @ResponseStatus(HttpStatus.CREATED)
     @LogExecution()
-    public AccountPublicData createAccountForUser(
+    public AccountPublicData createAccount(
             @PathVariable Long userId,
-            @RequestBody AccountRegistrationData data) {
+            @Valid @RequestBody AccountRegistrationData data) {
         return new AccountPublicData(createAccountUseCase.execute(userId, data));
     }
 

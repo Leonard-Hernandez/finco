@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finco.finco.infrastructure.goal.dto.GoalTransactionData;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.infrastructure.goal.dto.GoalPublicData;
 import com.finco.finco.usecase.goal.DepositGoalUseCase;
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.goalAccountBalance.gateway.GoalAccountBalanceGateway;
 import com.finco.finco.entity.goalAccountBalance.model.GoalAccountBalance;
 import com.finco.finco.infrastructure.config.db.mapper.GoalAccountBalanceMapper;
@@ -23,35 +24,41 @@ public class GoalAccountBalanceDatabaseGateway implements GoalAccountBalanceGate
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public GoalAccountBalance create(GoalAccountBalance goalAccountBalance) {
         return goalAccountBalanceMapper.toGoalAccountBalance(goalAccountBalanceRepository
                 .save(goalAccountBalanceMapper.toGoalAccountBalanceSchema(goalAccountBalance)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public GoalAccountBalance update(GoalAccountBalance goalAccountBalance) {
         return goalAccountBalanceMapper.toGoalAccountBalance(goalAccountBalanceRepository
                 .save(goalAccountBalanceMapper.toGoalAccountBalanceSchema(goalAccountBalance)));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public GoalAccountBalance findById(Long id) {
         return goalAccountBalanceMapper.toGoalAccountBalance(goalAccountBalanceRepository.findById(id).orElse(null));
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public List<GoalAccountBalance> findAllByGoalId(Long goalId) {
         return goalAccountBalanceRepository.findAllByGoalId(goalId).stream()
                 .map(goalAccountBalanceMapper::toGoalAccountBalance).toList();
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public List<GoalAccountBalance> findAllByAccountId(Long accountId) {
         return goalAccountBalanceRepository.findAllByAccountId(accountId).stream()
                 .map(goalAccountBalanceMapper::toGoalAccountBalance).toList();
     }
 
     @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public BigDecimal getTotalBalanceInGoalsByAccount(Long accountId) {
         BigDecimal totalBalanceInGoalsByAccount = goalAccountBalanceRepository.getTotalBalanceInGoalsByAccount(accountId);
         return totalBalanceInGoalsByAccount != null ? totalBalanceInGoalsByAccount : BigDecimal.ZERO;

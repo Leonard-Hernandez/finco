@@ -1,7 +1,7 @@
 server:
   port: 8080
-  serverlet:
-    context-path: /finco-api/v1
+  servlet:
+    contextPath: /finco-api/v1
 
 spring:
   application:

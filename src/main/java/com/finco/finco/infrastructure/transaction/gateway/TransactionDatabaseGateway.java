@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
@@ -26,7 +27,7 @@ public class TransactionDatabaseGateway implements TransactionGateway {
     }
 
     @Override
-    @LogExecution(logReturnValue = false, logArguments = false)
+    @LogExecution(logArguments = false)
     public Transaction create(Transaction transaction) {
         return transactionMapper.toTransaction(transactionRepository.save(transactionMapper.toTransactionSchema(transaction)));
     }

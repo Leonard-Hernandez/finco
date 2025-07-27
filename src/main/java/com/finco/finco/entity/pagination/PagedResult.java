@@ -18,7 +18,7 @@ public class PagedResult<T> {
     public PagedResult(List<T> content, long totalElements, int totalPages,
                        int pageNumber, int pageSize, boolean isFirst,
                        boolean isLast, boolean hasNext, boolean hasPrevious) {
-        this.content = Collections.unmodifiableList(content); // Lista inmutable
+        this.content = Collections.unmodifiableList(content);
         this.totalElements = totalElements;
         this.totalPages = totalPages;
         this.pageNumber = pageNumber;

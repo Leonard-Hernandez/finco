@@ -168,4 +168,40 @@ public class Transaction {
         return true;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Transaction{");
+        sb.append("id=").append(id);
+        
+        if (user != null && user.getId() != null) {
+            sb.append(", userId=").append(user.getId());
+        }
+        
+        if (account != null && account.getId() != null) {
+            sb.append(", accountId=").append(account.getId());
+        }
+        
+        sb.append(", type=").append(type)
+        .append(", amount=").append(amount)
+        .append(", fee=").append(fee)
+        .append(", date=").append(date)
+        .append(", description=").append(description)
+        .append(", category=").append(category);
+        
+        if (goal != null && goal.getId() != null) {
+            sb.append(", goalId=").append(goal.getId());
+        }
+        
+        if (transferAccount != null && transferAccount.getId() != null) {
+            sb.append(", transferAccountId=").append(transferAccount.getId());
+        }
+        
+        sb.append(", exchangeRate=").append(exchangeRate)
+        .append('}');
+        
+        return sb.toString();
+    }
+
+    
+
 }

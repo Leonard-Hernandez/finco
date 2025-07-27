@@ -21,7 +21,7 @@ public class GetAllUserUseCase {
 
 
     @TransactionalDomainAnnotation(readOnly = true)
-    @LogExecution(logReturnValue = false, logArguments = false) // Avoid logging potentially large user lists and arguments
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<User> execute(PageRequest page) {
 
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {

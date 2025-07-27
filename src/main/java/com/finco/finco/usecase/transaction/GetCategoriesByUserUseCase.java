@@ -2,6 +2,8 @@ package com.finco.finco.usecase.transaction;
 
 import java.util.List;
 
+import com.finco.finco.entity.annotation.LogExecution;
+import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 

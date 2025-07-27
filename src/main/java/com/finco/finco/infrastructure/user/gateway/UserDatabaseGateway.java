@@ -43,14 +43,14 @@ public class UserDatabaseGateway implements UserGateway {
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
     public User update(User user) {
-        return userMapper.toUser(userRepository.save(userMapper.toUserSchema(user)));
+        return userMapper.toUser(userRepository.save(userMapper.toLightUserSchema(user)));
     }
 
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
     public User delete(User user) {
         user.setEnable(false);
-        return userMapper.toUser(userRepository.save(userMapper.toUserSchema(user)));
+        return userMapper.toUser(userRepository.save(userMapper.toLightUserSchema(user)));
     }
 
     @Override
@@ -79,8 +79,7 @@ public class UserDatabaseGateway implements UserGateway {
 
         Page<UserSchema> userSchemaPage = userRepository.findAllByEnableTrue(springPageable);
 
-        return userMapper.toUserPagedResult(userSchemaPage, pageRequest); // Nuevo método en mapper
-
+        return userMapper.toUserPagedResult(userSchemaPage, pageRequest);
     }
 
 }

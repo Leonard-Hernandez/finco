@@ -52,7 +52,6 @@ public class CreateAccountUseCaseTest {
     @BeforeEach
     public void setUp() {
         accountData = new AccountRegistrationData(
-                userId,
                 "Test Account",
                 AccountType.CHECKING,
                 BigDecimal.valueOf(1000),

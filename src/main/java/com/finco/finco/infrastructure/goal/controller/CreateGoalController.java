@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.infrastructure.goal.dto.GoalPublicData;
 import com.finco.finco.infrastructure.goal.dto.GoalRegistrationData;
 import com.finco.finco.usecase.goal.CreateGoalUseCase;
@@ -25,7 +26,7 @@ public class CreateGoalController {
     @PostMapping("/users/{userId}/goals")
     @ResponseStatus(HttpStatus.CREATED)
     @LogExecution()
-    public GoalPublicData deposit(@PathVariable Long userId, @Valid @RequestBody GoalRegistrationData goalRegistrationData) {
+    public GoalPublicData createGoal(@PathVariable Long userId, @Valid @RequestBody GoalRegistrationData goalRegistrationData) {
         return new GoalPublicData(createGoalUseCase.execute(userId, goalRegistrationData));
     }
 

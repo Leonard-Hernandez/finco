@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.infrastructure.user.dto.UserPublicData;
 import com.finco.finco.infrastructure.user.dto.UserRegistrationData;
 import com.finco.finco.usecase.user.CreateUserUseCase;
@@ -23,7 +24,7 @@ public class CreateUserController {
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
-    @LogExecution()
+    @LogExecution(logArguments = false)
     public UserPublicData createUser(@RequestBody @Valid UserRegistrationData data) {
 
         return new UserPublicData(createUserUseCase.execute(data));

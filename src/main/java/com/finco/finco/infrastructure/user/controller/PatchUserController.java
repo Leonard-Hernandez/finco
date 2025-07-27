@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.user.controller;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.infrastructure.user.dto.UserPublicData;
 import com.finco.finco.infrastructure.user.dto.UserUpdateData;
 import com.finco.finco.usecase.user.UpdateUserUseCase;

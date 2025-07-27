@@ -13,8 +13,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 public record AccountRegistrationData(
-        @NotNull(message = "User ID is required")
-        Long userId,
         @NotBlank(message = "Account name is required")
         @Size(min = 2, max = 100, message = "Account name must be between 2 and 100 characters")
         String name,

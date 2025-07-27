@@ -1,6 +1,8 @@
 package com.finco.finco.infrastructure.config.aop;
 
 import com.finco.finco.entity.annotation.LogExecution;
+import com.finco.finco.entity.exception.EbusinessException;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,35 +17,36 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
     
     private static final Logger log = LoggerFactory.getLogger(LoggingAspect.class);
-    @Pointcut("within(com.finco.finco.usecase..*)")
-    public void useCaseMethods() {}
 
+    
     @Pointcut("within(com.finco.finco.infrastructure..controller..*)")
     public void controllerMethods() {}
     
-    // Punto de corte para mappers
-    @Pointcut("within(com.finco.finco.infrastructure..mapper..*)")
-    public void mapperMethods() {}
+    @Pointcut("within(com.finco.finco.usecase..*)")
+    public void useCaseMethods() {}
+
+    @Pointcut("within(com.finco.finco.infrastructure..gateway..*)")
+    public void gatewayMethods() {}
 
     @Pointcut("@annotation(com.finco.finco.entity.annotation.LogExecution)")
     public void logExecutionPointcut() {}
     
-    @Around("useCaseMethods() && logExecutionPointcut()")
-    public Object logUseCaseExecution(ProceedingJoinPoint joinPoint) throws Throwable {
-        return logMethodExecution(joinPoint, "USECASE");
-    }
-    
     @Around("controllerMethods() && logExecutionPointcut()")
     public Object logControllerExecution(ProceedingJoinPoint joinPoint) throws Throwable {
-        return logMethodExecution(joinPoint, "CONTROLLER");
-    }
-    
-    @Around("mapperMethods() && logExecutionPointcut()")
-    public Object logMapperExecution(ProceedingJoinPoint joinPoint) throws Throwable {
-        return logMethodExecution(joinPoint, "MAPPER");
+        return logMethodExecution(joinPoint);
     }
 
-    public Object logMethodExecution(ProceedingJoinPoint joinPoint, String type) throws Throwable {
+    @Around("useCaseMethods() && logExecutionPointcut()")
+    public Object logUseCaseExecution(ProceedingJoinPoint joinPoint) throws Throwable {
+        return logMethodExecution(joinPoint);
+    }
+    
+    @Around("gatewayMethods() && logExecutionPointcut()")
+    public Object logGatewayExecution(ProceedingJoinPoint joinPoint) throws Throwable {
+        return logMethodExecution(joinPoint);
+    }
+
+    public Object logMethodExecution(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String className = signature.getDeclaringType().getSimpleName();
         String methodName = signature.getName();
@@ -73,10 +76,14 @@ public class LoggingAspect {
             
             return result;
             
+        } catch (EbusinessException e) {
+            log.error("Error in execution of {}.{}() with arguments: {}", 
+                    className, methodName, joinPoint.getArgs());
+            throw e;            
         } catch (Exception e) {
             log.error("Error in execution of {}.{}() with arguments: {}", 
                     className, methodName, joinPoint.getArgs(), e);
             throw e;
-        }
+        } 
     }
 }

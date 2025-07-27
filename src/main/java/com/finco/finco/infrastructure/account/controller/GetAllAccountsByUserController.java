@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.account.dto.AccountPublicData;
@@ -25,6 +26,7 @@ public class GetAllAccountsByUserController {
     }
 
     @GetMapping("/users/{userId}/accounts")
+    @LogExecution()
     public Page<AccountPublicData> getAllAccountsByUser(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable, @PathVariable Long userId) {
         PageRequest domainPageRequest = toPageRequest(pageable);
         PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest, userId);
