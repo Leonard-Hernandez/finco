@@ -35,7 +35,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler({ UserNotFoundException.class, AccountNotFoundException.class, GoalNotFoundException.class,
             RoleNotFoundException.class })
-    private ResponseEntity<Map<String, String>> balanceInGoalException(EbusinessException ex) {
+    private ResponseEntity<Map<String, String>> notFoundException(EbusinessException ex) {
         logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.NOT_FOUND);
     }
@@ -65,7 +65,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> exceptionHandler(Exception e) {
-        logger.error("Business Exception: {}", e.getMessage());
+        logger.error("Exception: {}", e.getMessage());
         return buildResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

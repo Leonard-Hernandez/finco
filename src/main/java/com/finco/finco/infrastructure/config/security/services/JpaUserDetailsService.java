@@ -27,7 +27,7 @@ public class JpaUserDetailsService implements UserDetailsService {
 
         Optional<UserSchema> userDb = userRepository.findByEmail(username);
 
-        if (!userDb.isPresent()) {
+        if (userDb.isEmpty()) {
             throw new UsernameNotFoundException("usename: "+ username);
         }
 

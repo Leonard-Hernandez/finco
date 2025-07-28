@@ -1,33 +1,33 @@
-package com.finco.finco.usecase.user;
+package com.finco.finco.usecase.goal;
 
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
+import com.finco.finco.entity.goal.gateway.GoalGateway;
+import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
-import com.finco.finco.entity.user.gateway.UserGateway;
-import com.finco.finco.entity.user.model.User;
 
-public class GetAllUserUseCase {
+public class GetAllGoalsUseCase {
 
-    private final UserGateway userGateway;
+    private final GoalGateway goalGateway;
     private final AuthGateway authGateway;
 
-    public GetAllUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
-        this.userGateway = userGateway;
+    public GetAllGoalsUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
+        this.goalGateway = goalGateway;
         this.authGateway = authGateway;
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<User> execute(PageRequest page) {
+    public PagedResult<Goal> execute(PageRequest pageRequest) {
 
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
             throw new AccessDeniedBusinessException();
         }
 
-        return userGateway.findAll(page);
+        return goalGateway.findAll(pageRequest);
 
     }
 

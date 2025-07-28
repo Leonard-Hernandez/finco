@@ -2,6 +2,7 @@ package com.finco.finco.infrastructure.account.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,7 @@ public class GetAllAccountsByUserController {
 
     @GetMapping("/users/{userId}/accounts")
     @LogExecution()
-    public Page<AccountPublicData> getAllAccountsByUser(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable, @PathVariable Long userId) {
+    public Page<AccountPublicData> getAllAccountsByUser(@PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC) Pageable pageable, @PathVariable Long userId) {
         PageRequest domainPageRequest = toPageRequest(pageable);
         PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest, userId);
 

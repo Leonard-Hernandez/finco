@@ -16,6 +16,6 @@ public interface GoalRepository extends JpaRepository<GoalSchema, Long> {
 
     List<GoalSchema> findByUserIdAndNameLike(Long userId, String search);
 
-    Page<GoalSchema> findAllByUserId(Pageable pageable, Long userId);
+    Page<GoalSchema> findAllByUserIdAndEnableTrue(Pageable pageable, Long userId);
 
 }

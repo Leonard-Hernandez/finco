@@ -57,10 +57,8 @@ public class UserMapper {
                 user.setRegistrationDate(userSchema.getRegistrationDate());
                 user.setEnable(userSchema.getEnable());
 
-                List<Account> accounts = userSchema.getAccounts() != null
-                                ? userSchema.getAccounts().stream().map(accountMapper::toAccount)
-                                                .collect(Collectors.toList())
-                                : List.of();
+                List<Account> accounts = userSchema.getAccounts() != null ? userSchema.getAccounts().stream()
+                                .map(accountMapper::toAccount).collect(Collectors.toList()) : List.of();
 
                 List<Goal> goals = userSchema.getGoals() != null
                                 ? userSchema.getGoals().stream().map(goalMapper::toGoal).collect(Collectors.toList())
@@ -70,18 +68,15 @@ public class UserMapper {
                                 ? userSchema.getAssets().stream().map(assetMapper::toAsset).collect(Collectors.toList())
                                 : List.of();
 
-                List<Liabilitie> liabilities = userSchema.getLiabilities() != null
-                                ? userSchema.getLiabilities().stream().map(liabilitieMapper::toLiabilitie)
-                                                .collect(Collectors.toList())
-                                : List.of();
+                List<Liabilitie> liabilities = userSchema.getLiabilities() != null ? userSchema.getLiabilities()
+                                .stream().map(liabilitieMapper::toLiabilitie).collect(Collectors.toList()) : List.of();
 
                 List<Role> roles = userSchema.getRoles() != null
                                 ? userSchema.getRoles().stream().map(roleMapper::toRole).collect(Collectors.toList())
                                 : List.of();
 
-                List<Transaction> transactions = userSchema.getTransactions() != null
-                                ? userSchema.getTransactions().stream().map(transactionMapper::toTransaction)
-                                                .collect(Collectors.toList())
+                List<Transaction> transactions = userSchema.getTransactions() != null ? userSchema.getTransactions()
+                                .stream().map(transactionMapper::toTransaction).collect(Collectors.toList())
                                 : List.of();
 
                 user.setAccounts(accounts);
@@ -95,7 +90,7 @@ public class UserMapper {
 
         }
 
-        public User toLigthUser(UserSchema userSchema) {
+        public User toLightUser(UserSchema userSchema) {
                 if (userSchema == null) {
                         return null;
                 }
@@ -126,21 +121,8 @@ public class UserMapper {
                 userSchema.setRegistrationDate(user.getRegistrationDate());
                 userSchema.setEnable(user.isEnable());
 
-                // Create minimal account schemas with just the IDs to prevent circular
-                // references
-                List<AccountSchema> accounts = user.getAccounts() != null
-                                ? user.getAccounts().stream().map(account -> {
-                                        AccountSchema accountSchema = new AccountSchema();
-                                        accountSchema.setId(account.getId());
-                                        accountSchema.setName(account.getName());
-                                        accountSchema.setType(account.getType());
-                                        accountSchema.setBalance(account.getBalance());
-                                        accountSchema.setCurrency(account.getCurrency());
-                                        accountSchema.setDefault(account.isDefault());
-                                        accountSchema.setEnable(account.isEnable());
-                                        return accountSchema;
-                                }).collect(Collectors.toList())
-                                : List.of();
+                List<AccountSchema> accounts = user.getAccounts() != null ? user.getAccounts().stream()
+                                .map(accountMapper::toAccountSchema).collect(Collectors.toList()) : List.of();
 
                 List<GoalSchema> goals = user.getGoals() != null
                                 ? user.getGoals().stream().map(goalMapper::toGoalSchema).collect(Collectors.toList())
@@ -150,19 +132,15 @@ public class UserMapper {
                                 ? user.getAssets().stream().map(assetMapper::toAssetSchema).collect(Collectors.toList())
                                 : List.of();
 
-                List<LiabilitieSchema> liabilities = user.getLiabilities() != null
-                                ? user.getLiabilities().stream().map(liabilitieMapper::toLiabilitieSchema)
-                                                .collect(Collectors.toList())
-                                : List.of();
+                List<LiabilitieSchema> liabilities = user.getLiabilities() != null ? user.getLiabilities().stream()
+                                .map(liabilitieMapper::toLiabilitieSchema).collect(Collectors.toList()) : List.of();
 
                 List<RoleSchema> roles = user.getRoles() != null
                                 ? user.getRoles().stream().map(roleMapper::toRoleSchema).collect(Collectors.toList())
                                 : List.of();
 
-                List<TransactionSchema> transactions = user.getTransactions() != null
-                                ? user.getTransactions().stream().map(transactionMapper::toTransactionSchema)
-                                                .collect(Collectors.toList())
-                                : List.of();
+                List<TransactionSchema> transactions = user.getTransactions() != null ? user.getTransactions().stream()
+                                .map(transactionMapper::toTransactionSchema).collect(Collectors.toList()) : List.of();
 
                 userSchema.setAccounts(accounts);
                 userSchema.setGoals(goals);
@@ -195,20 +173,12 @@ public class UserMapper {
                         return PagedResult.empty(pageRequest);
                 }
 
-                List<User> userList = userSchemaPage.getContent().stream()
-                                .map(this::toLigthUser)
+                List<User> userList = userSchemaPage.getContent().stream().map(this::toLightUser)
                                 .collect(Collectors.toList());
 
-                return new PagedResult<>(
-                                userList,
-                                userSchemaPage.getTotalElements(),
-                                userSchemaPage.getTotalPages(),
-                                userSchemaPage.getNumber(),
-                                userSchemaPage.getSize(),
-                                userSchemaPage.isFirst(),
-                                userSchemaPage.isLast(),
-                                userSchemaPage.hasNext(),
-                                userSchemaPage.hasPrevious());
+                return new PagedResult<>(userList, userSchemaPage.getTotalElements(), userSchemaPage.getTotalPages(),
+                                userSchemaPage.getNumber(), userSchemaPage.getSize(), userSchemaPage.isFirst(),
+                                userSchemaPage.isLast(), userSchemaPage.hasNext(), userSchemaPage.hasPrevious());
         }
 
 }

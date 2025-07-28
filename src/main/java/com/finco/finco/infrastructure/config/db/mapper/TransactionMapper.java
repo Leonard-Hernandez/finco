@@ -33,7 +33,7 @@ public class TransactionMapper {
         Transaction transaction = new Transaction();
 
         transaction.setId(transactionSchema.getId());
-        transaction.setUser(userMapper.toLigthUser(transactionSchema.getUser()));
+        transaction.setUser(userMapper.toLightUser(transactionSchema.getUser()));
         transaction.setAccount(accountMapper.toAccount(transactionSchema.getAccount()));
         transaction.setType(transactionSchema.getType());
         transaction.setGoal(goalMapper.toGoal(transactionSchema.getGoal()));

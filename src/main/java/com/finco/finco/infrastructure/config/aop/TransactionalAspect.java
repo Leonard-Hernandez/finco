@@ -3,6 +3,7 @@ package com.finco.finco.infrastructure.config.aop;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
@@ -32,12 +33,12 @@ public class TransactionalAspect {
 
         return transactionTemplate.execute(new TransactionCallback<Object>() {
             @Override
-            public Object doInTransaction(org.springframework.transaction.TransactionStatus status) {
+            public Object doInTransaction(@NonNull org.springframework.transaction.TransactionStatus status) {
                 try {
                     return joinPoint.proceed();
                 } catch (Throwable e) {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
+                    if (e instanceof RuntimeException exception) {
+                        throw exception;
                     }
                     throw new RuntimeException(e);
                 }

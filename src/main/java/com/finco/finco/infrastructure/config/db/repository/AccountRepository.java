@@ -15,7 +15,7 @@ import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 @Repository
 public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
 
-    Page<AccountSchema> findAllByUserId(Pageable pageable, Long userId);
+    Page<AccountSchema> findAllByUserIdAndEnableTrue(Pageable pageable, Long userId);
 
     @Query("SELECT SUM(a.balance) as total FROM AccountSchema a WHERE a.user.id = :userId and a.enable = true and a.type != 'CREDIT'")
     Long getTotalByUserId(Long userId);

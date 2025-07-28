@@ -49,6 +49,14 @@ public class GoalDataBaseGateway implements GoalGateway {
 
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
+    public PagedResult<Goal> findAll(PageRequest pageRequest) {
+        Pageable springPageable = toPageable(pageRequest);
+        Page<GoalSchema> goalSchemaPage = goalRepository.findAll(springPageable);
+        return goalMapper.toGoalPagedResult(goalSchemaPage, pageRequest);
+    }
+
+    @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<Goal> findById(Long id) {
         return goalRepository.findById(id).map(goalMapper::toGoal);
     }
@@ -59,7 +67,7 @@ public class GoalDataBaseGateway implements GoalGateway {
 
         Pageable springPageable = toPageable(pageRequest);
 
-        Page<GoalSchema> goalSchemaPage = goalRepository.findAllByUserId(springPageable, userId);
+        Page<GoalSchema> goalSchemaPage = goalRepository.findAllByUserIdAndEnableTrue(springPageable, userId);
 
         return goalMapper.toGoalPagedResult(goalSchemaPage, pageRequest);
     }

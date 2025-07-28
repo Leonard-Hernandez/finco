@@ -14,6 +14,8 @@ public interface GoalGateway {
 
     Optional<Goal> findById(Long id);
 
+    PagedResult<Goal> findAll(PageRequest pageRequest);
+
     PagedResult<Goal> findAllByUserId(Long userId, PageRequest pageRequest);
 
 }

@@ -2,7 +2,7 @@ package com.finco.finco.infrastructure.transaction.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +29,7 @@ public class GetAllTransactionsByUserController {
     @GetMapping("/users/{userId}/transactions")
     @LogExecution()
     public Page<TransactionPublicData> getAllTransactionsByUser(
-            @PageableDefault(page = 0, size = 20, sort = "date", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long userId) {
+            @PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC) Pageable pageable, @PathVariable Long userId) {
         PageRequest domainPageRequest = toPageRequest(pageable);
         PagedResult<Transaction> transactionsPagedResult = getAllTransactionsByUserUseCase.execute(domainPageRequest,
                 userId);

@@ -1,9 +1,8 @@
 package com.finco.finco.infrastructure.user.controller;
 
-import java.util.stream.Collectors;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,36 +15,26 @@ import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.user.dto.UserPublicData;
 import com.finco.finco.usecase.user.GetAllUserUseCase;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @RestController
 public class GetAllUserController {
 
-    private final GetAllUserUseCase findAllUserUseCase;
+    private final GetAllUserUseCase getAllUserUseCase;
 
-    public GetAllUserController(GetAllUserUseCase findAllUserUseCase) {
-        this.findAllUserUseCase = findAllUserUseCase;
+    public GetAllUserController(GetAllUserUseCase getAllUserUseCase) {
+        this.getAllUserUseCase = getAllUserUseCase;
     }
 
     @GetMapping("/admin/users")
     @ResponseStatus(HttpStatus.OK)
     @LogExecution()
-    private Page<UserPublicData> findAllUsers(@PageableDefault(page = 0, size = 20, sort = "name") Pageable pageable) {
-        PageRequest domainPageRequest = new PageRequest(
-            pageable.getPageNumber(),
-            pageable.getPageSize(),
-            pageable.getSort().isSorted() ? pageable.getSort().iterator().next().getProperty() : null,
-            pageable.getSort().isSorted() ? pageable.getSort().iterator().next().getDirection().name().toLowerCase() : null
-        );
+    public Page<UserPublicData> findAllUsers(@PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.ASC) Pageable pageable) {
+        PageRequest domainPageRequest = toPageRequest(pageable);
 
-        PagedResult<User> usersPagedResult = findAllUserUseCase.execute(domainPageRequest);
+        PagedResult<User> usersPagedResult = getAllUserUseCase.execute(domainPageRequest);
 
-        Page<UserPublicData> responsePage = new org.springframework.data.domain.PageImpl<>(
-            usersPagedResult.getContent().stream().map(UserPublicData::new).collect(Collectors.toList()),
-            pageable,
-            usersPagedResult.getTotalElements()
-        );
-
-        return responsePage;
+        return toPage(usersPagedResult, pageable).map(UserPublicData::new);
     }
 
 }

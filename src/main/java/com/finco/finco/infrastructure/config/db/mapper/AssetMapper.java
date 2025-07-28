@@ -22,7 +22,7 @@ public class AssetMapper {
 
         Asset asset = new Asset();
         asset.setId(assetSchema.getId());
-        asset.setUser(userMapper.toLigthUser(assetSchema.getUser()));
+        asset.setUser(userMapper.toLightUser(assetSchema.getUser()));
         asset.setName(assetSchema.getName());
         asset.setEstimatedValue(assetSchema.getEstimatedValue());
         asset.setEstimatedValue(assetSchema.getEstimatedValue());

@@ -31,7 +31,7 @@ public class AccountMapper {
 
         Account account = new Account();
         account.setId(accountSchema.getId());
-        account.setUser(userMapper.toLigthUser(accountSchema.getUser()));
+        account.setUser(userMapper.toLightUser(accountSchema.getUser()));
         account.setName(accountSchema.getName());
         account.setType(accountSchema.getType());
         account.setBalance(accountSchema.getBalance());

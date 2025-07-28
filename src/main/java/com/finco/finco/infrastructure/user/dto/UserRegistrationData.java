@@ -11,6 +11,7 @@ public record UserRegistrationData(
     String name,
     @Email
     @UniqueEmail
+    @NotBlank
     String email,
     @NotBlank
     String password

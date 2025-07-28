@@ -26,6 +26,7 @@ import com.finco.finco.usecase.goal.CreateGoalUseCase;
 import com.finco.finco.usecase.goal.DeleteGoalUseCase;
 import com.finco.finco.usecase.goal.DepositGoalUseCase;
 import com.finco.finco.usecase.goal.GetAllGoalsByUserUseCase;
+import com.finco.finco.usecase.goal.GetAllGoalsUseCase;
 import com.finco.finco.usecase.goal.GetGoalUseCase;
 import com.finco.finco.usecase.goal.UpdateGoalUseCase;
 import com.finco.finco.usecase.goal.WithDrawGoalUseCase;
@@ -76,13 +77,13 @@ public class AppConfig {
     }
 
     @Bean
-    GetTotalBalanceByUserUseCase getTotalBalanceByUser(AuthGateway authGateway, AccountGateway accountGateway) {
-        return new GetTotalBalanceByUserUseCase(authGateway, accountGateway);
+    GetAllUserUseCase getAllUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
+        return new GetAllUserUseCase(userGateway, authGateway);
     }
 
     @Bean
-    GetAllUserUseCase getAllUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
-        return new GetAllUserUseCase(userGateway, authGateway);
+    GetTotalBalanceByUserUseCase getTotalBalanceByUser(AuthGateway authGateway, AccountGateway accountGateway) {
+        return new GetTotalBalanceByUserUseCase(authGateway, accountGateway);
     }
 
     @Bean
@@ -182,6 +183,11 @@ public class AppConfig {
     @Bean
     GetGoalUseCase getGoalUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
         return new GetGoalUseCase(goalGateway, authGateway);
+    }
+
+    @Bean
+    GetAllGoalsUseCase getAllGoalsUseCase(GoalGateway goalGateway, AuthGateway authGateway) {
+        return new GetAllGoalsUseCase(goalGateway, authGateway);
     }
 
     @Bean

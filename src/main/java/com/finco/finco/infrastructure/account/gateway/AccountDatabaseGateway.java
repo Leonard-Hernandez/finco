@@ -58,11 +58,8 @@ public class AccountDatabaseGateway implements AccountGateway {
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Account> findAll(PageRequest page) {
-
         Pageable springPageable = toPageable(page);
-
         Page<AccountSchema> accountSchemaPage = accountRepository.findAllByEnableTrue(springPageable);
-
         return accountMapper.toAccountPagedResult(accountSchemaPage, page);
     }
 
@@ -72,7 +69,7 @@ public class AccountDatabaseGateway implements AccountGateway {
 
         Pageable springPageable = toPageable(page);
 
-        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByUserId(springPageable, userId);
+        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByUserIdAndEnableTrue(springPageable, userId);
 
         return accountMapper.toAccountPagedResult(accountSchemaPage, page);
     }
@@ -80,7 +77,8 @@ public class AccountDatabaseGateway implements AccountGateway {
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
     public List<Account> findAllByUser(Long userId) {
-        return accountRepository.findAllByUserId(userId).stream().map(accountMapper::toAccount).collect(Collectors.toList());
+        return accountRepository.findAllByUserId(userId).stream().map(accountMapper::toAccount)
+                .collect(Collectors.toList());
     }
 
     @Override

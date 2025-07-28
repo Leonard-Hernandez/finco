@@ -31,7 +31,7 @@ public class GoalMapper {
         Goal goal = new Goal();
 
         goal.setId(goalSchema.getId());
-        goal.setUser(userMapper.toLigthUser(goalSchema.getUser()));
+        goal.setUser(userMapper.toLightUser(goalSchema.getUser()));
         goal.setName(goalSchema.getName());
         goal.setTargetAmount(goalSchema.getTargetAmount());
         goal.setDeadLine(goalSchema.getDeadLine());
@@ -57,7 +57,7 @@ public class GoalMapper {
         Goal goal = new Goal();
 
         goal.setId(goalSchema.getId());
-        goal.setUser(userMapper.toLigthUser(goalSchema.getUser()));
+        goal.setUser(userMapper.toLightUser(goalSchema.getUser()));
         goal.setName(goalSchema.getName());
         goal.setTargetAmount(goalSchema.getTargetAmount());
         goal.setDeadLine(goalSchema.getDeadLine());

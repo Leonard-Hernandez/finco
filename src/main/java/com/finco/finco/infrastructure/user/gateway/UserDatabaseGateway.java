@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +15,8 @@ import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.mapper.UserMapper;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
+
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @Component
 public class UserDatabaseGateway implements UserGateway {
@@ -36,7 +37,7 @@ public class UserDatabaseGateway implements UserGateway {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        return userMapper.toUser(userRepository.save(userMapper.toUserSchema(user)));
+        return userMapper.toUser(userRepository.save(userMapper.toLightUserSchema(user)));
 
     }
 
@@ -62,23 +63,8 @@ public class UserDatabaseGateway implements UserGateway {
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<User> findAll(PageRequest pageRequest) {
-        Sort sort = pageRequest.getSortBy()
-                .map(sortBy -> {
-                    Sort.Direction direction = pageRequest.getSortDirection()
-                            .filter(d -> d.equalsIgnoreCase("desc"))
-                            .map(d -> Sort.Direction.DESC)
-                            .orElse(Sort.Direction.ASC);
-                    return Sort.by(direction, sortBy);
-                })
-                .orElse(Sort.unsorted());
-
-        Pageable springPageable = org.springframework.data.domain.PageRequest.of(
-                pageRequest.getPageNumber(),
-                pageRequest.getPageSize(),
-                sort);
-
+        Pageable springPageable = toPageable(pageRequest);
         Page<UserSchema> userSchemaPage = userRepository.findAllByEnableTrue(springPageable);
-
         return userMapper.toUserPagedResult(userSchemaPage, pageRequest);
     }
 
