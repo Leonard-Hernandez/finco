@@ -6,8 +6,22 @@ import java.time.LocalDateTime;
 import com.finco.finco.entity.goalAccountBalance.model.GoalAccountBalance;
 import com.finco.finco.usecase.goalaccountbalance.dto.IGoalAccountBalanceData;
 
-public record GoalAccountBalanceData(Long id, Long goalId, Long accountId, BigDecimal balance,
-        LocalDateTime lastUpdated, LocalDateTime createdAt) implements IGoalAccountBalanceData {
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Goal account balance data")
+public record GoalAccountBalanceData(
+    @Schema(description = "Goal account balance id")
+    Long id,
+    @Schema(description = "Goal id")
+    Long goalId,
+    @Schema(description = "Account id")
+    Long accountId,
+    @Schema(description = "Goal account balance")
+    BigDecimal balance,
+    @Schema(description = "Goal account balance last updated")
+    LocalDateTime lastUpdated,
+    @Schema(description = "Goal account balance created at")
+    LocalDateTime createdAt) implements IGoalAccountBalanceData {
 
     public GoalAccountBalanceData(GoalAccountBalance goalAccountBalance) {
         this(goalAccountBalance.getId(), goalAccountBalance.getGoal().getId(), goalAccountBalance.getAccount().getId(),

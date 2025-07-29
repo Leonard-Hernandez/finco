@@ -28,20 +28,20 @@ public class ExceptionHandlerController {
     private final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
     @ExceptionHandler({ EbusinessException.class })
-    private ResponseEntity<Map<String, String>> ebussinessException(EbusinessException ex) {
+    private ResponseEntity<ErrorResponse> ebussinessException(EbusinessException ex) {
         logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ UserNotFoundException.class, AccountNotFoundException.class, GoalNotFoundException.class,
             RoleNotFoundException.class })
-    private ResponseEntity<Map<String, String>> notFoundException(EbusinessException ex) {
+    private ResponseEntity<ErrorResponse> notFoundException(EbusinessException ex) {
         logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccessDeniedBusinessException.class)
-    private ResponseEntity<Map<String, String>> accessDeniedBusinessException(AccessDeniedBusinessException ex) {
+    private ResponseEntity<ErrorResponse> accessDeniedBusinessException(AccessDeniedBusinessException ex) {
         logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.FORBIDDEN);
     }
@@ -59,21 +59,18 @@ public class ExceptionHandlerController {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> httpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public ResponseEntity<ErrorResponse> httpMessageNotReadableException(HttpMessageNotReadableException e) {
         return buildResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> exceptionHandler(Exception e) {
+    public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
         logger.error("Exception: {}", e.getMessage());
         return buildResponse(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public ResponseEntity<Map<String, String>> buildResponse(Exception e, HttpStatus status) {
-        Map<String, String> response = new HashMap<>();
-        response.put("error", e.getClass().getSimpleName());
-        response.put("message", e.getMessage());
-        response.put("datetime", LocalDateTime.now().toString());
+    public ResponseEntity<ErrorResponse> buildResponse(Exception e, HttpStatus status) {
+        ErrorResponse response = new ErrorResponse(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(status.value()).body(response);
     }
 

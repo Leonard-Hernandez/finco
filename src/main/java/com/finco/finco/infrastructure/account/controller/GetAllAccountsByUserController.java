@@ -13,11 +13,21 @@ import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.account.dto.AccountPublicData;
+import com.finco.finco.infrastructure.config.error.ErrorResponse;
 import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @RestController
+@Tag(name = "User", description = "User management endpoints")
 public class GetAllAccountsByUserController {
 
     private final GetAllAccountsByUserUseCase getAllAccountsByUserUseCase;
@@ -28,6 +38,16 @@ public class GetAllAccountsByUserController {
 
     @GetMapping("/users/{userId}/accounts")
     @LogExecution()
+    @Operation(summary = "Get all accounts by user", description = "Get all accounts by user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Accounts found successfully", 
+                content = @Content(schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden: You need to be owner to get all accounts by user", 
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", 
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @SecurityRequirement(name = "bearerAuth")
     public Page<AccountPublicData> getAllAccountsByUser(@PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC) Pageable pageable, @PathVariable Long userId) {
         PageRequest domainPageRequest = toPageRequest(pageable);
         PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest, userId);
