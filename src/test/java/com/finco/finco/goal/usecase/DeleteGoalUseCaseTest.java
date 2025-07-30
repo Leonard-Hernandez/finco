@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.goal.exception.GoalHasBalanceException;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
+import com.finco.finco.entity.goalAccountBalance.model.GoalAccountBalance;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.model.User;
@@ -38,6 +42,7 @@ public class DeleteGoalUseCaseTest {
 
     private User testUser;
     private Goal testGoal;
+    private GoalAccountBalance goalAccountBalance;
     private final Long goalId = 1L;
     private final Long userId = 1L;
 
@@ -55,6 +60,15 @@ public class DeleteGoalUseCaseTest {
         testGoal.setDeadLine(LocalDate.now().plusMonths(6));
         testGoal.setUser(testUser);
         testGoal.setEnable(true);
+
+        goalAccountBalance = new GoalAccountBalance();
+        goalAccountBalance.setGoal(testGoal);
+        Account account = new Account();
+        account.setId(1L);
+        goalAccountBalance.setAccount(account);
+        goalAccountBalance.setBalance(BigDecimal.valueOf(0));
+
+        testGoal.setGoalAccountBalances(List.of(goalAccountBalance));
     }
 
     @Test
@@ -106,6 +120,24 @@ public class DeleteGoalUseCaseTest {
 
         // Act & Assert
         assertThrows(AccessDeniedBusinessException.class, () -> {
+            deleteGoalUseCase.execute(goalId);
+        });
+
+        verify(goalGateway, times(1)).findById(goalId);
+        verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
+        verify(goalGateway, never()).delete(any(Goal.class));
+    }
+
+    @Test
+    @DisplayName("Delete goal with balance in goals should throw GoalHasBalanceException")
+    public void deleteGoalWithBalanceInGoalsShouldThrowException() {
+        // Arrange
+        goalAccountBalance.setBalance(BigDecimal.valueOf(100));
+        when(goalGateway.findById(goalId)).thenReturn(Optional.of(testGoal));
+        doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
+
+        // Act & Assert
+        assertThrows(GoalHasBalanceException.class, () -> {
             deleteGoalUseCase.execute(goalId);
         });
 

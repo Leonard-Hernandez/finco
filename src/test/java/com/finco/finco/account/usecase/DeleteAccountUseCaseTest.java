@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.finco.finco.entity.account.exception.CannotDeactivateDefaultAccountException;
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.goal.exception.BalanceInGoalException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.model.User;
@@ -58,6 +60,7 @@ public class DeleteAccountUseCaseTest {
 
         // Arrange
         when(accountGateway.findById(1L)).thenReturn(Optional.of(account));
+        when(accountGateway.getTotalBalanceInGoalsByAccount(account.getId())).thenReturn(BigDecimal.ZERO);
         when(accountGateway.delete(account)).thenAnswer(invocation -> {
             Account acc = invocation.getArgument(0);
             acc.setEnable(false);
@@ -118,11 +121,30 @@ public class DeleteAccountUseCaseTest {
 
         // Arrange
         when(accountGateway.findById(1L)).thenReturn(Optional.of(account));
+        when(accountGateway.getTotalBalanceInGoalsByAccount(account.getId())).thenReturn(BigDecimal.ZERO);
         doThrow(CannotDeactivateDefaultAccountException.class).when(accountGateway).delete(account);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(account.getUser().getId());
 
         // Act & Assert
         assertThrows(CannotDeactivateDefaultAccountException.class, () -> {
+            deleteAccountUseCase.execute(1L);
+        });
+
+        verify(accountGateway, times(1)).findById(1L);
+        verify(authGateway, times(1)).verifyOwnershipOrAdmin(account.getUser().getId());
+    }
+
+    @Test
+    @DisplayName("Delete account with balance in goals should throw BalanceInGoalException")
+    public void deleteAccountWithBalanceInGoals() {
+
+        // Arrange
+        when(accountGateway.findById(1L)).thenReturn(Optional.of(account));
+        when(accountGateway.getTotalBalanceInGoalsByAccount(account.getId())).thenReturn(new BigDecimal(100));
+        doNothing().when(authGateway).verifyOwnershipOrAdmin(account.getUser().getId());
+
+        // Act & Assert
+        assertThrows(BalanceInGoalException.class, () -> {
             deleteAccountUseCase.execute(1L);
         });
 

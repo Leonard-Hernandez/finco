@@ -1,7 +1,10 @@
 package com.finco.finco.usecase.goal;
 
+import java.math.BigDecimal;
+
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
+import com.finco.finco.entity.goal.exception.GoalHasBalanceException;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
@@ -24,6 +27,10 @@ public class DeleteGoalUseCase {
         Goal goal = goalGateway.findById(goalId).orElseThrow(AccessDeniedBusinessException::new);
 
         authGateway.verifyOwnershipOrAdmin(goal.getUser().getId());
+
+        if (goal.getGoalAccountBalances().stream().anyMatch(goalAccountBalance -> goalAccountBalance.getBalance().compareTo(BigDecimal.ZERO) > 0)) {
+            throw new GoalHasBalanceException();
+        }
 
         return goalGateway.delete(goal);
 

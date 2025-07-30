@@ -16,6 +16,6 @@ public interface IGoalPublicData {
     String description();
     LocalDateTime creationDate();
     boolean enable();
-    List<IGoalAccountBalanceData> goalAccountBalances();
+    List<? extends IGoalAccountBalanceData> goalAccountBalances();
 
 }
