@@ -7,7 +7,7 @@ spring:
   application:
     name: finco
   datasource:
-    url: ${DbUrl}
+    url: jdbc:mysql://${DbUrl}/Finco?createDatabaseIfNotExist=true
     username: ${UserDb}
     password: ${password}
     driver-class-name: com.mysql.cj.jdbc.Driver

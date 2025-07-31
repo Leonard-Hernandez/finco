@@ -66,7 +66,7 @@ public class Goal {
     }
 
     public void setTargetAmount(BigDecimal targetAmount) {
-        if (targetAmount == null || targetAmount.compareTo(BigDecimal.ZERO) <= 0) {
+        if (targetAmount == null || targetAmount.compareTo(BigDecimal.ZERO) < 0) {
             throw new AmountMustBeGreaterThanZeroException();
         }
         this.targetAmount = targetAmount;

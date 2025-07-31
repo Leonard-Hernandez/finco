@@ -49,7 +49,7 @@ public class UpdateAccountUseCase {
         }
 
         if (data.isDefault() != null) {
-            if (data.isDefault() == false) {
+            if (!data.isDefault() && account.isDefault()) {
                 throw new CannotDeactivateDefaultAccountException();
             }
 
