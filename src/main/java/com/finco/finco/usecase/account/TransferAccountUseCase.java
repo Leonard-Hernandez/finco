@@ -45,13 +45,10 @@ public class TransferAccountUseCase {
             }
 
             fromAccount.transfer(data.amount(), transferAccount, data.exchangeRate());
-            depositAmount = data.amount()
-                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getWithdrawFee())))
-                    .multiply(data.exchangeRate());
+            depositAmount = data.amount().multiply(data.exchangeRate());
         } else {
             fromAccount.transfer(data.amount(), transferAccount);
-            depositAmount = data.amount()
-                    .subtract(data.amount().multiply(new BigDecimal(fromAccount.getWithdrawFee())));
+            depositAmount = data.amount();
         }
 
         // account transaction

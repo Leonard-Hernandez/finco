@@ -133,11 +133,11 @@ public class TransferAccountUseCaseTest {
         assertEquals(userId, transaction.getUser().getId());
         assertEquals(transferAccountId, transaction.getAccount().getId());
         assertEquals(accountId, transaction.getTransferAccount().getId());
-        assertEquals(BigDecimal.valueOf(451.25), transaction.getAmount().setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(475.00), transaction.getAmount().setScale(1, RoundingMode.HALF_UP));
         assertEquals(TransactionType.DEPOSIT, transaction.getType());
         assertEquals("Test Description", transaction.getDescription());
         assertEquals("Test Category", transaction.getCategory());
-        assertEquals(BigDecimal.valueOf(23.75), transaction.getFee().setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(25.0), transaction.getFee().setScale(1, RoundingMode.HALF_UP));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class TransferAccountUseCaseTest {
         // Assert
         assertNotNull(result);
         assertEquals(expectedTransferAccountBalance, result.getBalance().setScale(1, RoundingMode.HALF_UP));
-        assertEquals(BigDecimal.valueOf(1806000.0), testAccount2.getBalance().setScale(1  , RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(1901000.0), testAccount2.getBalance().setScale(1  , RoundingMode.HALF_UP));
         verify(accountGateway, times(1)).findById(accountId);
         verify(authGateway, times(2)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, times(2)).update(any(Account.class));
@@ -186,11 +186,11 @@ public class TransferAccountUseCaseTest {
         assertEquals(userId, transaction.getUser().getId());
         assertEquals(transferAccountId, transaction.getAccount().getId());
         assertEquals(accountId, transaction.getTransferAccount().getId());
-        assertEquals(BigDecimal.valueOf(1805000.0), transaction.getAmount().setScale(1, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(1900000.0), transaction.getAmount().setScale(1, RoundingMode.HALF_UP));
         assertEquals(TransactionType.DEPOSIT, transaction.getType());
         assertEquals("Test Description", transaction.getDescription());
         assertEquals("Test Category", transaction.getCategory());
-        assertEquals(BigDecimal.valueOf(95000.0), transaction.getFee().setScale(1, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(100000.0), transaction.getFee().setScale(1, RoundingMode.HALF_UP));
         assertEquals(BigDecimal.valueOf(4000), transaction.getExchangeRate());
     }
 

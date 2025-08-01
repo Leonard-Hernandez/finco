@@ -169,9 +169,7 @@ public class Account {
 
     public void transfer(BigDecimal amount, Account transferAccount, BigDecimal exchageRate) {
         this.withdraw(amount);
-        BigDecimal fee = amount.multiply(new BigDecimal(this.withdrawFee));
-        BigDecimal amountToTransfer = amount.subtract(fee);
-        transferAccount.deposit(amountToTransfer.multiply(exchageRate));
+        transferAccount.deposit(amount.multiply(exchageRate));
     }
 
     @Override
