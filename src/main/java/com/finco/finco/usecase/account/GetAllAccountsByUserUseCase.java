@@ -20,11 +20,11 @@ public class GetAllAccountsByUserUseCase {
     
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false) 
-    public PagedResult<Account> execute(PageRequest page, Long userId) {
+    public PagedResult<Account> execute(PageRequest page, com.finco.finco.entity.pagination.filter.IAccountFilterData filterData) {
         
-        authGateway.verifyOwnershipOrAdmin(userId);
+        authGateway.verifyOwnershipOrAdmin(filterData.userId());
 
-        return accountGateway.findAllByUser(page, userId);
+        return accountGateway.findByFilterData(page, filterData);
     }
 
 }

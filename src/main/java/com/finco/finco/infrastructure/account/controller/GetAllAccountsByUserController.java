@@ -1,17 +1,18 @@
 package com.finco.finco.infrastructure.account.controller;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.account.model.AccountType;
+import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.infrastructure.account.dto.AccountFilterData;
 import com.finco.finco.infrastructure.account.dto.AccountPublicData;
 import com.finco.finco.infrastructure.config.error.ErrorResponse;
 import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
@@ -40,21 +41,32 @@ public class GetAllAccountsByUserController {
     @LogExecution()
     @Operation(summary = "Get all accounts by user", description = "Get all accounts by user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Accounts found successfully", 
+            @ApiResponse(
+                responseCode = "200", description = "Accounts found successfully", 
                 content = @Content(schema = @Schema(implementation = Page.class))),
-            @ApiResponse(responseCode = "403", description = "Forbidden: You need to be owner to get all accounts by user", 
+            @ApiResponse(
+                responseCode = "403", description = "Forbidden: You need to be owner to get all accounts by user", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error", 
+            @ApiResponse(
+                responseCode = "500", description = "Internal server error", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @SecurityRequirement(name = "bearerAuth")
-    public Page<AccountPublicData> getAllAccountsByUser(@PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC) Pageable pageable, @PathVariable Long userId) {
-        PageRequest domainPageRequest = toPageRequest(pageable);
-        PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest, userId);
+    public Page<AccountPublicData> getAllAccountsByUser(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "20") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
+            @RequestParam(name = "currency", required = false) CurrencyEnum currency,
+            @RequestParam(name = "type", required = false) AccountType type,
+            @PathVariable Long userId) {
 
-        Page<AccountPublicData> responsePage = toPage(accountsPagedResult, pageable).map(AccountPublicData::new);
+        PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
+        AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type);
 
-        return responsePage;
+        PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest, accountFilterData);
+        
+        return toPage(accountsPagedResult, toPageable(domainPageRequest)).map(AccountPublicData::new);
     }
 
 }

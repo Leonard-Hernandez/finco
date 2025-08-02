@@ -9,7 +9,7 @@ import com.finco.finco.infrastructure.config.pagination.SimplePage;
 
 public class PageMapper {
 
-    public static PageRequest toPageRequest(org.springframework.data.domain.Pageable pageable) {
+    public static PageRequest toPageRequest(Pageable pageable) {
         return new PageRequest(
             pageable.getPageNumber(),
             pageable.getPageSize(),
@@ -18,7 +18,16 @@ public class PageMapper {
         );
     }
 
-    public static org.springframework.data.domain.Pageable toPageable(PageRequest pageRequest) {
+    public static PageRequest toPageRequest(Integer Page, Integer size, String sortBy, String sortDirection) {
+        return new PageRequest(
+            Page,
+            size,
+            sortBy,
+            sortDirection
+        );
+    }
+
+    public static Pageable toPageable(PageRequest pageRequest) {
         Sort sort = pageRequest.getSortBy()
         .map(sortBy -> {
             Sort.Direction direction = pageRequest.getSortDirection()
