@@ -45,6 +45,9 @@ public class GetAllAccountsByUserController {
                 responseCode = "200", description = "Accounts found successfully", 
                 content = @Content(schema = @Schema(implementation = Page.class))),
             @ApiResponse(
+                responseCode = "400", description = "Bad request: Invalid parameters", 
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(
                 responseCode = "403", description = "Forbidden: You need to be owner to get all accounts by user", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(
