@@ -6,6 +6,7 @@ import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 
 public class GetAllGoalsByUserUseCase {
@@ -20,11 +21,11 @@ public class GetAllGoalsByUserUseCase {
 
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<Goal> execute(Long userId, PageRequest pageRequest) {
+    public PagedResult<Goal> execute(PageRequest pageRequest, IGoalFilterData goalFilterData) {
 
-        authGateway.verifyOwnershipOrAdmin(userId);
+        authGateway.verifyOwnershipOrAdmin(goalFilterData.userId());
 
-        return goalGateway.findAllByUserId(userId, pageRequest);
+        return goalGateway.findAllByFilterData(goalFilterData, pageRequest);
     }
 
 }

@@ -6,6 +6,7 @@ import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 
@@ -21,13 +22,13 @@ public class GetAllGoalsUseCase {
 
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<Goal> execute(PageRequest pageRequest) {
+    public PagedResult<Goal> execute(PageRequest pageRequest, IGoalFilterData goalFilterData) {
 
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
             throw new AccessDeniedBusinessException();
         }
 
-        return goalGateway.findAll(pageRequest);
+        return goalGateway.findAllByFilterData(goalFilterData, pageRequest);
 
     }
 

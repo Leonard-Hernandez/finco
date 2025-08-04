@@ -59,8 +59,8 @@ The application will be available at `http://localhost:8080`
 
 Once the application is running, you can access:
 
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
+- **Swagger UI**: `http://localhost:8086/finco-api/v1/swagger-ui.html`
+- **OpenAPI JSON**: `http://localhost:8086/finco-api/v1/v3/api-docs`
 
 ## 🏗️ Project Structure
 
