@@ -8,5 +8,6 @@ public interface IAccountFilterData {
     public Long userId();
     public CurrencyEnum currency();
     public AccountType type();
+    public Boolean enable();
 
 }

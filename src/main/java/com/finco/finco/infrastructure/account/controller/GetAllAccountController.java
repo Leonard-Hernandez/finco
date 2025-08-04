@@ -54,10 +54,11 @@ public class GetAllAccountController {
         @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
         @RequestParam(name = "userId", required = false) Long userId,
         @RequestParam(name = "currency", required = false) CurrencyEnum currency,
-        @RequestParam(name = "type", required = false) AccountType type) {
+        @RequestParam(name = "type", required = false) AccountType type,
+        @RequestParam(name = "enable", required = false) Boolean enable) {
 
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
-        AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type);
+        AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, enable);
 
         PagedResult<Account> accountsPagedResult = getAllAccountUseCase.execute(domainPageRequest, accountFilterData);
 

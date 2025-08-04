@@ -29,6 +29,10 @@ public class AccountSchemeSpecification {
                 predicates.add(criteriaBuilder.equal(root.get("user").get("id"), filterData.userId()));
             }
 
+            if (filterData.enable() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("enable"), filterData.enable()));
+            }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 
         };

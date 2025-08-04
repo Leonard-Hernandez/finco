@@ -65,7 +65,7 @@ public class GetAllAccountsByUserController {
             @PathVariable Long userId) {
 
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
-        AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type);
+        AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, true);
 
         PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest, accountFilterData);
         
