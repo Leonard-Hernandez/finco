@@ -4,16 +4,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.ITransactionFilterData;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
-import com.finco.finco.infrastructure.config.db.repository.TransactionRepository;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
 import com.finco.finco.infrastructure.config.db.mapper.TransactionMapper;
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
+import com.finco.finco.infrastructure.config.db.repository.TransactionRepository;
+import com.finco.finco.infrastructure.config.db.schema.TransactionSchema;
+import com.finco.finco.infrastructure.config.db.specification.TransactionSchemeSpecification;
 
 @Component
 public class TransactionDatabaseGateway implements TransactionGateway {
@@ -45,31 +49,10 @@ public class TransactionDatabaseGateway implements TransactionGateway {
     }
 
     @Override
-    @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<Transaction> findAllByUserId(Long userId, PageRequest page) {
+    public PagedResult<Transaction> findAllByFilterData(ITransactionFilterData filterData, PageRequest page) {
         Pageable springPageable = toPageable(page);
-        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByUserId(userId, springPageable), page);
-    }
-
-    @Override
-    @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<Transaction> findAllByAccountId(Long accountId, PageRequest page) {
-        Pageable springPageable = toPageable(page);
-        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByAccountId(accountId, springPageable), page);
-    }
-
-    @Override
-    @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<Transaction> findAllByGoalId(Long goalId, PageRequest page) {
-        Pageable springPageable = toPageable(page);
-        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByGoalId(goalId, springPageable), page);
-    }
-
-    @Override
-    @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId, PageRequest page) {
-        Pageable springPageable = toPageable(page);
-        return transactionMapper.toTransactionPagedResult(transactionRepository.findAllByUserIdAndTransferAccountId(userId, TransferedId, springPageable), page);
+        Specification<TransactionSchema> specification = TransactionSchemeSpecification.getSpecification(filterData);
+        return transactionMapper.toTransactionPagedResult(transactionRepository.findAll(specification, springPageable), page);
     }
 
     @Override
@@ -77,5 +60,7 @@ public class TransactionDatabaseGateway implements TransactionGateway {
     public List<String> findAllCategoriesByUserId(Long userId) {
         return transactionRepository.findAllCategoriesByUserId(userId);
     }
+
+   
 
 }

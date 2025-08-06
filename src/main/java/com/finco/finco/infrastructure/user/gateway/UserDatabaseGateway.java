@@ -10,13 +10,14 @@ import org.springframework.stereotype.Component;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IUserFilterData;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
 import com.finco.finco.infrastructure.config.db.mapper.UserMapper;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
-
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
+import com.finco.finco.infrastructure.config.db.specification.UserSchemeSpecificacion;
 
 @Component
 public class UserDatabaseGateway implements UserGateway {
@@ -58,6 +59,14 @@ public class UserDatabaseGateway implements UserGateway {
     @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<User> findById(Long id) {
         return userRepository.findById(id).map(userMapper::toUser);
+    }
+
+    @Override
+    public PagedResult<User> findAllByFilterData(PageRequest pageRequest, IUserFilterData filterData) {
+        Pageable springPageable = toPageable(pageRequest);
+        Page<UserSchema> userSchemaPage = userRepository
+                .findAll(UserSchemeSpecificacion.getSpecification(filterData), springPageable);
+        return userMapper.toUserPagedResult(userSchemaPage, pageRequest);
     }
 
     @Override

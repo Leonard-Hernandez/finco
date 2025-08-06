@@ -14,11 +14,10 @@ import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.infrastructure.config.db.mapper.GoalMapper;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
 import com.finco.finco.infrastructure.config.db.repository.GoalRepository;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
 import com.finco.finco.infrastructure.config.db.specification.GoalSchemeSpecification;
-
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @Component
 public class GoalDataBaseGateway implements GoalGateway {

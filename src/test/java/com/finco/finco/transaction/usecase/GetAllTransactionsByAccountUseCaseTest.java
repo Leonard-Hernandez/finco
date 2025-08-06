@@ -28,7 +28,7 @@ import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.transaction.model.TransactionType;
 import com.finco.finco.entity.user.model.User;
-import com.finco.finco.usecase.transaction.GetAllTransactionsByAccountUseCase;
+import com.finco.finco.usecase.transaction.GetAllTransactionUseCase;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Get All Transactions By Account Test")
@@ -44,7 +44,7 @@ public class GetAllTransactionsByAccountUseCaseTest {
     private AuthGateway authGateway;
 
     @InjectMocks
-    private GetAllTransactionsByAccountUseCase getAllTransactionsByAccountUseCase;
+    private GetAllTransactionUseCase getAllTransactionsByAccountUseCase;
 
     private User testUser;
     private Account testAccount;

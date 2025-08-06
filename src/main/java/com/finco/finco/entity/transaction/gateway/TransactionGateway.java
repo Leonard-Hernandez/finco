@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.ITransactionFilterData;
 import com.finco.finco.entity.transaction.model.Transaction;
 
 public interface TransactionGateway {
@@ -14,14 +15,8 @@ public interface TransactionGateway {
     
     Optional<Transaction> findById(Long id);
 
-    PagedResult<Transaction> findAllByUserId(Long userId, PageRequest page);
-
-    PagedResult<Transaction> findAllByAccountId(Long accountId, PageRequest page);
-
-    PagedResult<Transaction> findAllByGoalId(Long goalId, PageRequest page);
-
-    PagedResult<Transaction> findAllByUserIdAndTransferAccountId(Long userId, Long TransferedId, PageRequest page);
-
+    PagedResult<Transaction> findAllByFilterData(ITransactionFilterData filterData, PageRequest page);
+    
     List<String> findAllCategoriesByUserId(Long userId);
 
 }

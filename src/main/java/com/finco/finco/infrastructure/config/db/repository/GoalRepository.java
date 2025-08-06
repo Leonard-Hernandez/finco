@@ -23,6 +23,7 @@ public interface GoalRepository extends JpaRepository<GoalSchema, Long>, JpaSpec
     Page<GoalSchema> findAllByUserIdAndEnableTrue(Pageable pageable, Long userId);
 
     @NonNull
+    @Override
     Page<GoalSchema> findAll(@Nullable Specification<GoalSchema> specification, @Nullable Pageable pageable);
 
 }

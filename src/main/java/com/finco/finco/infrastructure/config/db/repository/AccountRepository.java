@@ -37,6 +37,7 @@ public interface AccountRepository extends JpaRepository<AccountSchema,Long>, Jp
     BigDecimal getTotalBalanceInGoalsByAccount(Long accountId);
 
     @NonNull
+    @Override
     Page<AccountSchema> findAll(@Nullable Specification<AccountSchema> spec, @Nullable Pageable pageable);
 
 }

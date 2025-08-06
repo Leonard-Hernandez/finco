@@ -34,7 +34,7 @@ public class GoalSchemeSpecification {
 
             }
 
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 
         };
     }

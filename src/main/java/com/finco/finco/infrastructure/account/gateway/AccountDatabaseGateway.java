@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.annotation.LogExecution;
@@ -16,11 +17,10 @@ import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.pagination.filter.IAccountFilterData;
 import com.finco.finco.infrastructure.config.db.mapper.AccountMapper;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 import com.finco.finco.infrastructure.config.db.specification.AccountSchemeSpecification;
-
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @Component
 public class AccountDatabaseGateway implements AccountGateway {

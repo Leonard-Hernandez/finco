@@ -1,11 +1,9 @@
 package com.finco.finco.infrastructure.user.controller;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,19 +11,21 @@ import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.user.model.User;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPage;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
 import com.finco.finco.infrastructure.config.error.ErrorResponse;
+import com.finco.finco.infrastructure.user.dto.UserFilterData;
 import com.finco.finco.infrastructure.user.dto.UserPublicData;
 import com.finco.finco.usecase.user.GetAllUserUseCase;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 @RestController
 @Tag(name = "User", description = "User management endpoints")
@@ -49,12 +49,23 @@ public class GetAllUserController {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
-    public Page<UserPublicData> findAllUsers(@PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.ASC) Pageable pageable) {
-        PageRequest domainPageRequest = toPageRequest(pageable);
+    public Page<UserPublicData> findAllUsers(
+        @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "20") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
+            @RequestParam(name = "userId", required = false) Long userId,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "enable", required = false) Boolean enable
+    ) {
 
-        PagedResult<User> usersPagedResult = getAllUserUseCase.execute(domainPageRequest);
+        UserFilterData userFilterData = new UserFilterData(userId, name, email, enable);
+        PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
 
-        return toPage(usersPagedResult, pageable).map(UserPublicData::new);
+        PagedResult<User> usersPagedResult = getAllUserUseCase.execute(domainPageRequest, userFilterData);
+
+        return toPage(usersPagedResult, toPageable(domainPageRequest)).map(UserPublicData::new);
     }
 
 }

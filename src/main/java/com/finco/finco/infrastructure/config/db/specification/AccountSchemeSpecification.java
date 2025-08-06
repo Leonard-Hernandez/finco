@@ -33,7 +33,7 @@ public class AccountSchemeSpecification {
                 predicates.add(criteriaBuilder.equal(root.get("enable"), filterData.enable()));
             }
 
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 
         };
     }
