@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -56,6 +57,15 @@ public class ExceptionHandlerController {
             response.put(field.getField(), field.getDefaultMessage());
         }
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ErrorResponse> propertyReferenceException(PropertyReferenceException e) {
+        logger.error("PropertyReferenceException: {}", e.getMessage());
+        String propertyName = e.getPropertyName();
+        String message = "Property " + propertyName + " not found";
+        ErrorResponse errorResponse = new ErrorResponse("PropertyReferenceException", message, LocalDateTime.now());
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

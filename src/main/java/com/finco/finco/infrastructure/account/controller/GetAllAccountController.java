@@ -1,16 +1,17 @@
 package com.finco.finco.infrastructure.account.controller;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.account.model.AccountType;
+import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.infrastructure.account.dto.AccountFilterData;
 import com.finco.finco.infrastructure.account.dto.AccountPublicData;
 import com.finco.finco.usecase.account.GetAllAccountUseCase;
 
@@ -47,12 +48,21 @@ public class GetAllAccountController {
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
     public Page<AccountPublicData> getAllAccounts(
-            @PageableDefault(page = 0, size = 20, sort = "id", direction = Direction.DESC) Pageable pageable) {
-        PageRequest domainPageRequest = toPageRequest(pageable);
+        @RequestParam(name = "page", defaultValue = "0") Integer page,
+        @RequestParam(name = "size", defaultValue = "20") Integer size,
+        @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+        @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
+        @RequestParam(name = "userId", required = false) Long userId,
+        @RequestParam(name = "currency", required = false) CurrencyEnum currency,
+        @RequestParam(name = "type", required = false) AccountType type,
+        @RequestParam(name = "enable", required = false) Boolean enable) {
 
-        PagedResult<Account> accountsPagedResult = getAllAccountUseCase.execute(domainPageRequest);
+        PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
+        AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, enable);
 
-        return toPage(accountsPagedResult, pageable).map(AccountPublicData::new);
+        PagedResult<Account> accountsPagedResult = getAllAccountUseCase.execute(domainPageRequest, accountFilterData);
+
+        return toPage(accountsPagedResult, toPageable(domainPageRequest)).map(AccountPublicData::new);
     }
 
 }

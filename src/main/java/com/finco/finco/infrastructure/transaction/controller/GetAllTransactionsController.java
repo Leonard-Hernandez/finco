@@ -2,7 +2,6 @@ package com.finco.finco.infrastructure.transaction.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +16,7 @@ import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPagea
 import com.finco.finco.infrastructure.config.error.ErrorResponse;
 import com.finco.finco.infrastructure.transaction.dto.TransactionFilterData;
 import com.finco.finco.infrastructure.transaction.dto.TransactionPublicData;
-import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
+import com.finco.finco.usecase.transaction.GetAllTransactionUseCase;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,51 +27,53 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@Tag(name = "User", description = "User management endpoints")
-public class GetAllTransactionsByUserController {
+@Tag(name = "Transaction", description = "Transaction management endpoints")
+public class GetAllTransactionsController {
 
-    private final GetAllTransactionsByUserUseCase getAllTransactionsByUserUseCase;
+    private final GetAllTransactionUseCase getAllTransactionsUseCase;
 
-    public GetAllTransactionsByUserController(GetAllTransactionsByUserUseCase getAllTransactionsByUserUseCase) {
-        this.getAllTransactionsByUserUseCase = getAllTransactionsByUserUseCase;
+    public GetAllTransactionsController(GetAllTransactionUseCase getAllTransactionsUseCase) {
+        this.getAllTransactionsUseCase = getAllTransactionsUseCase;
     }
 
-    @GetMapping("/users/{userId}/transactions")
+    @GetMapping("/admin/transactions/")
     @LogExecution()
-    @Operation(summary = "Get all transactions by user", description = "Get all transactions by user")
+    @Operation(summary = "Get all transactions by goal", description = "Get all transactions by goal")
     @ApiResponses(value = {
             @ApiResponse(
-                responseCode = "200", description = "Transactions found successfully", 
-                content = @Content(schema = @Schema(implementation = Page.class))),
+                responseCode = "200", description = "Transactions retrieved successfully", 
+                content = @Content(schema = @Schema(implementation = TransactionPublicData.class))),
             @ApiResponse(
-                responseCode = "403", description = "Forbidden: You need to be owner to get all transactions by user", 
+                responseCode = "400", description = "Invalid input", 
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(
+                responseCode = "403", description = "Forbidden: You need to be admin to get all transactions", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(
                 responseCode = "500", description = "Internal server error", 
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
-    public Page<TransactionPublicData> getAllTransactionsByUser(
+    public Page<TransactionPublicData> getAllTransactionsByGoal(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "20") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
+            @RequestParam(name = "userId", required = false) Long userId,
             @RequestParam(name = "accountId", required = false) Long accountId,
             @RequestParam(name = "goalId", required = false) Long goalId,
             @RequestParam(name = "transferAccountId", required = false) Long transferAccountId,
             @RequestParam(name = "category", required = false) String category,
-            @RequestParam(name = "type", required = false) TransactionType type,
-            @PathVariable Long userId) {
+            @RequestParam(name = "type", required = false) TransactionType type) {
+
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
+
         TransactionFilterData transactionFilterData = new TransactionFilterData(userId, accountId, goalId,
                 transferAccountId, category, type);
-        PagedResult<Transaction> transactionsPagedResult = getAllTransactionsByUserUseCase.execute(domainPageRequest,
+
+        PagedResult<Transaction> transactionsPagedResult = getAllTransactionsUseCase.execute(domainPageRequest,
                 transactionFilterData);
 
-        Page<TransactionPublicData> responsePage = toPage(transactionsPagedResult, toPageable(domainPageRequest))
-                .map(TransactionPublicData::new);
-
-        return responsePage;
+        return toPage(transactionsPagedResult, toPageable(domainPageRequest)).map(TransactionPublicData::new);
     }
 
 }

@@ -20,9 +20,11 @@ import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.goal.dto.GoalFilterData;
 import com.finco.finco.usecase.goal.GetAllGoalsUseCase;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,11 +79,12 @@ public class GetAllGoalsUseCaseTest {
     @DisplayName("Get all goals successfully when user is admin")
     void getAllGoalsSuccess() {
         // Arrange
+        IGoalFilterData filterData = new GoalFilterData(null, null);
         when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
-        when(goalGateway.findAll(pageRequest)).thenReturn(pagedResult);
+        when(goalGateway.findAllByFilterData(filterData, pageRequest)).thenReturn(pagedResult);
 
         // Act
-        PagedResult<Goal> result = getAllGoalsUseCase.execute(pageRequest);
+        PagedResult<Goal> result = getAllGoalsUseCase.execute(pageRequest, filterData);
 
         // Assert
         assertNotNull(result);
@@ -90,19 +93,20 @@ public class GetAllGoalsUseCaseTest {
         assertEquals("Test Goal", result.getContent().get(0).getName());
         
         verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
-        verify(goalGateway, times(1)).findAll(pageRequest);
+        verify(goalGateway, times(1)).findAllByFilterData(filterData, pageRequest);
     }
 
     @Test
     @DisplayName("Throw AccessDeniedBusinessException when user is not admin")
     void throwExceptionWhenUserIsNotAdmin() {
         // Arrange
+        IGoalFilterData filterData = new GoalFilterData(null, null);
         when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
 
         // Act & Assert
         AccessDeniedBusinessException exception = assertThrows(
             AccessDeniedBusinessException.class, 
-            () -> getAllGoalsUseCase.execute(pageRequest)
+            () -> getAllGoalsUseCase.execute(pageRequest, filterData)
         );
         
         assertNotNull(exception);

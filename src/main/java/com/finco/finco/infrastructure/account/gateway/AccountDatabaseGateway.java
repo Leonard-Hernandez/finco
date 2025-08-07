@@ -7,17 +7,20 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IAccountFilterData;
 import com.finco.finco.infrastructure.config.db.mapper.AccountMapper;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
 import com.finco.finco.infrastructure.config.db.repository.AccountRepository;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
-
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
+import com.finco.finco.infrastructure.config.db.specification.AccountSchemeSpecification;
 
 @Component
 public class AccountDatabaseGateway implements AccountGateway {
@@ -65,13 +68,28 @@ public class AccountDatabaseGateway implements AccountGateway {
 
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
+    public PagedResult<Account> findByFilterData(PageRequest page, IAccountFilterData filterData) {
+
+        Pageable springPageable = toPageable(page);
+
+        Specification<AccountSchema> specification = AccountSchemeSpecification.getSpecification(filterData);
+
+        Page<AccountSchema> accountSchemaPage = accountRepository.findAll(specification, springPageable);
+
+        return accountMapper.toAccountPagedResult(accountSchemaPage, page);
+
+    }
+
+    @Override
+    @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Account> findAllByUser(PageRequest page, Long userId) {
 
         Pageable springPageable = toPageable(page);
 
-        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByUserIdAndEnableTrue(springPageable, userId);
+        Page<AccountSchema> accountSchemaPage = accountRepository.findAllByEnableTrue(springPageable);
 
         return accountMapper.toAccountPagedResult(accountSchemaPage, page);
+
     }
 
     @Override

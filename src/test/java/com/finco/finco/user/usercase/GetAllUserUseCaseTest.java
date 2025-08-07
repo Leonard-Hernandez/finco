@@ -11,13 +11,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.finco.finco.entity.pagination.PagedResult;
-import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
+import com.finco.finco.entity.pagination.filter.IUserFilterData;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.user.dto.UserFilterData;
 import com.finco.finco.usecase.user.GetAllUserUseCase;
 
 import java.util.List;
+
+import com.finco.finco.entity.exception.EbusinessException;
+import com.finco.finco.entity.pagination.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Get all user test")
@@ -30,14 +34,14 @@ public class GetAllUserUseCaseTest {
     private AuthGateway authGateway;
 
     private GetAllUserUseCase getAllUserUseCase;
-    private com.finco.finco.entity.pagination.PageRequest pageRequest;
-    private com.finco.finco.entity.pagination.PagedResult<User> pagedResult;
+    private PageRequest pageRequest;
+    private PagedResult<User> pagedResult;
     private User user1, user2;
 
     @BeforeEach
     public void setUp() {
         getAllUserUseCase = new GetAllUserUseCase(userGateway, authGateway);
-        pageRequest = new com.finco.finco.entity.pagination.PageRequest(0, 10, "name", "asc");
+        pageRequest = new PageRequest(0, 10, "name", "asc");
 
         user1 = new User();
         user1.setId(1L);
@@ -49,7 +53,7 @@ public class GetAllUserUseCaseTest {
         user2.setName("User Two");
         user2.setEmail("user2@example.com");
 
-        pagedResult = new com.finco.finco.entity.pagination.PagedResult<User>(List.of(user1, user2), 2, 1, 0, 10, true,
+        pagedResult = new PagedResult<>(List.of(user1, user2), 2, 1, 0, 10, true,
                 false, false, false);
     }
 
@@ -57,32 +61,38 @@ public class GetAllUserUseCaseTest {
     @DisplayName("Get all users successfully with admin role")
     public void getAllUsersSuccess() {
         // Arrange
+        IUserFilterData filterData = new UserFilterData(null, null, null, null);
         when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
-        when(userGateway.findAll(any(com.finco.finco.entity.pagination.PageRequest.class))).thenReturn(pagedResult);
+        when(userGateway.findAllByFilterData(any(com.finco.finco.entity.pagination.PageRequest.class), any(IUserFilterData.class)))
+            .thenReturn(pagedResult);
 
         // Act
-        PagedResult<User> result = getAllUserUseCase.execute(pageRequest);
+        PagedResult<User> result = getAllUserUseCase.execute(pageRequest, filterData);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
         verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
-        verify(userGateway, times(1)).findAll(any(com.finco.finco.entity.pagination.PageRequest.class));
+        verify(userGateway, times(1))
+            .findAllByFilterData(any(com.finco.finco.entity.pagination.PageRequest.class), any(IUserFilterData.class));
     }
 
     @Test
     @DisplayName("Get all users without admin role should throw AccessDeniedBusinessException")
     public void getAllUsersWithoutAdminRoleShouldThrowException() {
         // Arrange
+        IUserFilterData filterData = new UserFilterData(null, null, null, null);
         when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
 
         // Act & Assert
-        assertThrows(AccessDeniedBusinessException.class, () -> {
-            getAllUserUseCase.execute(pageRequest);
+        EbusinessException exception = assertThrows(EbusinessException.class, () -> {
+            getAllUserUseCase.execute(pageRequest, filterData);
         });
 
+        assertEquals("Access Denied for this resource", exception.getMessage());
         verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
-        verify(userGateway, never()).findAll(any(com.finco.finco.entity.pagination.PageRequest.class));
+        verify(userGateway, never())
+            .findAllByFilterData(any(com.finco.finco.entity.pagination.PageRequest.class), any(IUserFilterData.class));
     }
 
 }

@@ -6,14 +6,18 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 
 @Repository
-public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
+public interface AccountRepository extends JpaRepository<AccountSchema,Long>, JpaSpecificationExecutor<AccountSchema>{
 
     Page<AccountSchema> findAllByUserIdAndEnableTrue(Pageable pageable, Long userId);
 
@@ -31,5 +35,9 @@ public interface AccountRepository extends JpaRepository<AccountSchema,Long> {
 
     @Query("SELECT SUM(a.balance) as total FROM GoalAccountBalanceSchema a WHERE a.account.id = :accountId")
     BigDecimal getTotalBalanceInGoalsByAccount(Long accountId);
+
+    @NonNull
+    @Override
+    Page<AccountSchema> findAll(@Nullable Specification<AccountSchema> spec, @Nullable Pageable pageable);
 
 }

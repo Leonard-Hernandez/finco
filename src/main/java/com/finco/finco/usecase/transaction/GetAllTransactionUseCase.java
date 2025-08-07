@@ -1,34 +1,32 @@
-package com.finco.finco.usecase.account;
+package com.finco.finco.usecase.transaction;
 
-import com.finco.finco.entity.account.gateway.AccountGateway;
-import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
-import com.finco.finco.entity.pagination.filter.IAccountFilterData;
+import com.finco.finco.entity.pagination.filter.ITransactionFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.transaction.gateway.TransactionGateway;
+import com.finco.finco.entity.transaction.model.Transaction;
 
-public class GetAllAccountUseCase {
+public class GetAllTransactionUseCase {
 
-    private final AccountGateway accountGateway;
+    private final TransactionGateway transactionGateway;
     private final AuthGateway authGateway;
 
-    public GetAllAccountUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
-        this.accountGateway = accountGateway;
+    public GetAllTransactionUseCase(TransactionGateway transactionGateway, AuthGateway authGateway) {
+        this.transactionGateway = transactionGateway;
         this.authGateway = authGateway;
     }
 
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<Account> execute(PageRequest page, IAccountFilterData accountFilterData) {
-
+    public PagedResult<Transaction> execute(PageRequest page, ITransactionFilterData filterData) {
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
             throw new AccessDeniedBusinessException();
         }
-
-        return accountGateway.findByFilterData(page, accountFilterData);
+        return transactionGateway.findAllByFilterData(filterData, page);
     }
 
 }

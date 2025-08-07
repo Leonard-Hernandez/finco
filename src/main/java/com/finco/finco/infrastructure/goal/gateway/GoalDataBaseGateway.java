@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.annotation.LogExecution;
@@ -11,11 +12,12 @@ import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.infrastructure.config.db.mapper.GoalMapper;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
 import com.finco.finco.infrastructure.config.db.repository.GoalRepository;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
-
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
+import com.finco.finco.infrastructure.config.db.specification.GoalSchemeSpecification;
 
 @Component
 public class GoalDataBaseGateway implements GoalGateway {
@@ -56,6 +58,17 @@ public class GoalDataBaseGateway implements GoalGateway {
     }
 
     @Override
+    public PagedResult<Goal> findAllByFilterData(IGoalFilterData filterData, PageRequest pageRequest) {
+        Pageable springPageable = toPageable(pageRequest);
+
+        Specification<GoalSchema> specification = GoalSchemeSpecification.getSpecification(filterData);
+
+        Page<GoalSchema> goalSchemaPage = goalRepository.findAll(specification, springPageable);
+        
+        return goalMapper.toGoalPagedResult(goalSchemaPage, pageRequest);
+    }
+
+    @Override
     @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<Goal> findById(Long id) {
         return goalRepository.findById(id).map(goalMapper::toGoal);
@@ -71,7 +84,5 @@ public class GoalDataBaseGateway implements GoalGateway {
 
         return goalMapper.toGoalPagedResult(goalSchemaPage, pageRequest);
     }
-
-
 
 }

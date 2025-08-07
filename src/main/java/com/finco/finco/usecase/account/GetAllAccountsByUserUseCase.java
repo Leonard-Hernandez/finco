@@ -6,6 +6,7 @@ import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IAccountFilterData;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 
 public class GetAllAccountsByUserUseCase {
@@ -20,11 +21,11 @@ public class GetAllAccountsByUserUseCase {
     
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false) 
-    public PagedResult<Account> execute(PageRequest page, Long userId) {
+    public PagedResult<Account> execute(PageRequest page, IAccountFilterData filterData) {
         
-        authGateway.verifyOwnershipOrAdmin(userId);
+        authGateway.verifyOwnershipOrAdmin(filterData.userId());
 
-        return accountGateway.findAllByUser(page, userId);
+        return accountGateway.findByFilterData(page, filterData);
     }
 
 }

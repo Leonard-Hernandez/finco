@@ -4,6 +4,7 @@ import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.annotation.TransactionalDomainAnnotation;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IUserFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
@@ -21,13 +22,13 @@ public class GetAllUserUseCase {
 
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false, logArguments = false)
-    public PagedResult<User> execute(PageRequest page) {
+    public PagedResult<User> execute(PageRequest page, IUserFilterData filterData) {
 
         if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
             throw new AccessDeniedBusinessException();
         }
 
-        return userGateway.findAll(page);
+        return userGateway.findAllByFilterData(page, filterData);
 
     }
 

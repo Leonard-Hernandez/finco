@@ -3,7 +3,6 @@ package com.finco.finco.infrastructure.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
@@ -12,7 +11,6 @@ import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
-import com.finco.finco.infrastructure.config.aop.TransactionalAspect;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
 import com.finco.finco.usecase.account.DeleteAccountUseCase;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
@@ -30,8 +28,7 @@ import com.finco.finco.usecase.goal.GetAllGoalsUseCase;
 import com.finco.finco.usecase.goal.GetGoalUseCase;
 import com.finco.finco.usecase.goal.UpdateGoalUseCase;
 import com.finco.finco.usecase.goal.WithDrawGoalUseCase;
-import com.finco.finco.usecase.transaction.GetAllTransactionsByAccountUseCase;
-import com.finco.finco.usecase.transaction.GetAllTransactionsByGoalsUseCase;
+import com.finco.finco.usecase.transaction.GetAllTransactionUseCase;
 import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
 import com.finco.finco.usecase.transaction.GetCategoriesByUserUseCase;
 import com.finco.finco.usecase.user.CreateUserAdminUseCase;
@@ -45,13 +42,6 @@ import com.finco.finco.usecase.user.UpdateUserUseCase;
 @Configuration
 @EnableAspectJAutoProxy
 public class AppConfig {
-
-    // aop
-
-    @Bean
-    TransactionalAspect transactionalAspect(PlatformTransactionManager transactionManager) {
-        return new TransactionalAspect(transactionManager);
-    }
 
     // User Beans
 
@@ -157,15 +147,9 @@ public class AppConfig {
     }
 
     @Bean
-    GetAllTransactionsByGoalsUseCase getAllTransactionsByGoalsUseCase(TransactionGateway transactionGateway,
-            GoalGateway goalGateway, AuthGateway authGateway) {
-        return new GetAllTransactionsByGoalsUseCase(transactionGateway, goalGateway, authGateway);
-    }
-
-    @Bean
-    GetAllTransactionsByAccountUseCase getAllTransactionsByAccountUseCase(TransactionGateway transactionGateway,
-            AccountGateway accountGateway, AuthGateway authGateway) {
-        return new GetAllTransactionsByAccountUseCase(transactionGateway, accountGateway, authGateway);
+    GetAllTransactionUseCase getAllTransactionsByAccountUseCase(TransactionGateway transactionGateway,
+            AuthGateway authGateway) {
+        return new GetAllTransactionUseCase(transactionGateway, authGateway);
     }
 
     // goal beans

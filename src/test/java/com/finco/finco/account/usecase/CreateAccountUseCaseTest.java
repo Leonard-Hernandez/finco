@@ -53,7 +53,7 @@ public class CreateAccountUseCaseTest {
     public void setUp() {
         accountData = new AccountRegistrationData(
                 "Test Account",
-                AccountType.CHECKING,
+                AccountType.DEBIT,
                 BigDecimal.valueOf(1000),
                 CurrencyEnum.USD,
                 "Test Description",
