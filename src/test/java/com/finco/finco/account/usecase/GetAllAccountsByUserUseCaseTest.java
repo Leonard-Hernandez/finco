@@ -1,14 +1,8 @@
 package com.finco.finco.account.usecase;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,11 +17,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.exception.EbusinessException;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IAccountFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.account.dto.AccountFilterData;
 import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
 
 @ExtendWith(MockitoExtension.class)
@@ -97,11 +94,12 @@ public class GetAllAccountsByUserUseCaseTest {
     @DisplayName("Get all accounts by user successfully")
     public void getAllAccountsByUserSuccess() {
         // Arrange
-        when(accountGateway.findAllByUser(pageRequest, userId)).thenReturn(pagedResult);
+        IAccountFilterData filterData = new AccountFilterData(userId, null, null, null);
+        when(accountGateway.findByFilterData(any(PageRequest.class), any(IAccountFilterData.class))).thenReturn(pagedResult);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act
-        PagedResult<Account> result = getAllAccountsByUserUseCase.execute(pageRequest, userId);
+        PagedResult<Account> result = getAllAccountsByUserUseCase.execute(pageRequest, filterData);
 
         // Assert
         assertNotNull(result);
@@ -110,22 +108,24 @@ public class GetAllAccountsByUserUseCaseTest {
         assertEquals(0, result.getPageNumber());
         assertEquals(10, result.getPageSize());
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
-        verify(accountGateway, times(1)).findAllByUser(pageRequest, userId);
+        verify(accountGateway, times(1)).findByFilterData(any(PageRequest.class), any(IAccountFilterData.class));
     }
 
     @Test
     @DisplayName("Get all accounts by user without ownership throw AccessDeniedBusinessException")
     public void getAllAccountsByUserWithoutOwnershipShouldThrowException() {
         // Arrange
+        IAccountFilterData filterData = new AccountFilterData(userId, null, null, null);
         doThrow(AccessDeniedBusinessException.class).when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act & Assert
-        assertThrows(AccessDeniedBusinessException.class, () -> {
-            getAllAccountsByUserUseCase.execute(pageRequest, userId);
+        EbusinessException exception = assertThrows(EbusinessException.class, () -> {
+            getAllAccountsByUserUseCase.execute(pageRequest, filterData);
         });
 
+        assertEquals("Access Denied for this resource", exception.getMessage());
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
-        verify(accountGateway, never()).findAllByUser(pageRequest, userId);
+        verify(accountGateway, never()).findByFilterData(any(PageRequest.class), any(IAccountFilterData.class));
     }
 
 }

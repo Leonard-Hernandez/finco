@@ -16,11 +16,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.exception.EbusinessException;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IAccountFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.account.dto.AccountFilterData;
 import com.finco.finco.usecase.account.GetAllAccountUseCase;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,31 +69,34 @@ public class GetAllAccountUseCaseTest {
     @DisplayName("Get all accounts successfully with admin role")
     public void getAllAccountsSuccess() {
         // Arrange
+        IAccountFilterData filterData = new AccountFilterData(null, null, null, null);
         when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
-        when(accountGateway.findAll(any(PageRequest.class))).thenReturn(pagedResult);
+        when(accountGateway.findByFilterData(any(PageRequest.class), any(IAccountFilterData.class))).thenReturn(pagedResult);
 
         // Act
-        PagedResult<Account> result = getAllAccountUseCase.execute(pageRequest);
+        PagedResult<Account> result = getAllAccountUseCase.execute(pageRequest, filterData);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
         verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
-        verify(accountGateway, times(1)).findAll(any(PageRequest.class));
+        verify(accountGateway, times(1)).findByFilterData(any(PageRequest.class), any(IAccountFilterData.class));
     }
 
     @Test
     @DisplayName("Get all accounts without admin role should throw AccessDeniedBusinessException")
     public void getAllAccountsWithoutAdminRoleShouldThrowException() {
         // Arrange
+        IAccountFilterData filterData = new AccountFilterData(null, null, null, null);
         when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
 
         // Act & Assert
-        assertThrows(AccessDeniedBusinessException.class, () -> {
-            getAllAccountUseCase.execute(pageRequest);
+        EbusinessException exception = assertThrows(AccessDeniedBusinessException.class, () -> {
+            getAllAccountUseCase.execute(pageRequest, filterData);
         });
 
         verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
-        verify(accountGateway, never()).findAll(any(PageRequest.class));
+        assertEquals("Access Denied for this resource", exception.getMessage());
+        verify(accountGateway, never()).findByFilterData(any(PageRequest.class), any(IAccountFilterData.class));
     }
 }

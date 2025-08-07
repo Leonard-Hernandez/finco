@@ -2,6 +2,7 @@ package com.finco.finco.goal.usecase;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
@@ -16,13 +17,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.finco.finco.entity.exception.EbusinessException;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
+import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.model.User;
+import com.finco.finco.infrastructure.goal.dto.GoalFilterData;
 import com.finco.finco.usecase.goal.GetAllGoalsByUserUseCase;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,11 +73,12 @@ public class GetAllGoalsByUserUseCaseTest {
     @DisplayName("Get all goals by user successfully")
     public void getAllGoalsByUserSuccess() {
         // Arrange
-        when(goalGateway.findAllByUserId(userId, pageRequest)).thenReturn(pagedResult);
+        IGoalFilterData filterData = new GoalFilterData(userId, null);
+        when(goalGateway.findAllByFilterData(eq(filterData), any(PageRequest.class))).thenReturn(pagedResult);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act
-        PagedResult<Goal> result = getAllGoalsByUserUseCase.execute(userId, pageRequest);
+        PagedResult<Goal> result = getAllGoalsByUserUseCase.execute(pageRequest, filterData);
 
         // Assert
         assertNotNull(result);
@@ -82,19 +87,20 @@ public class GetAllGoalsByUserUseCaseTest {
         assertEquals("Test Goal", result.getContent().get(0).getName());
         
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
-        verify(goalGateway, times(1)).findAllByUserId(userId, pageRequest);
+        verify(goalGateway, times(1)).findAllByFilterData(eq(filterData), any(PageRequest.class));
     }
 
     @Test
     @DisplayName("Get empty goals list when user has no goals")
     public void getEmptyGoalsListWhenUserHasNoGoals() {
         // Arrange
+        IGoalFilterData filterData = new GoalFilterData(userId, null);
         PagedResult<Goal> emptyResult = new PagedResult<>(List.of(), 0, 0, 0, 10, true, false, false, false);
-        when(goalGateway.findAllByUserId(userId, pageRequest)).thenReturn(emptyResult);
+        when(goalGateway.findAllByFilterData(eq(filterData), any(PageRequest.class))).thenReturn(emptyResult);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act
-        PagedResult<Goal> result = getAllGoalsByUserUseCase.execute(userId, pageRequest);
+        PagedResult<Goal> result = getAllGoalsByUserUseCase.execute(pageRequest, filterData);
 
         // Assert
         assertNotNull(result);
@@ -102,38 +108,41 @@ public class GetAllGoalsByUserUseCaseTest {
         assertTrue(result.getContent().isEmpty());
         
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
-        verify(goalGateway, times(1)).findAllByUserId(userId, pageRequest);
+        verify(goalGateway, times(1)).findAllByFilterData(eq(filterData), any(PageRequest.class));
     }
 
     @Test
     @DisplayName("Get goals without permission should throw AccessDeniedBusinessException")
     public void getGoalsWithoutPermissionShouldThrowException() {
         // Arrange
+        IGoalFilterData filterData = new GoalFilterData(userId, null);
         doThrow(AccessDeniedBusinessException.class).when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act & Assert
-        assertThrows(AccessDeniedBusinessException.class, () -> {
-            getAllGoalsByUserUseCase.execute(userId, pageRequest);
+        EbusinessException exception = assertThrows(EbusinessException.class, () -> {
+            getAllGoalsByUserUseCase.execute(pageRequest, filterData);
         });
 
+        assertEquals("Access Denied for this resource", exception.getMessage());
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
-        verify(goalGateway, never()).findAllByUserId(any(), any());
+        verify(goalGateway, never()).findAllByFilterData(any(IGoalFilterData.class), any(PageRequest.class));
     }
 
     @Test
-    @DisplayName("Get goals with pagination")
-    public void getGoalsWithPagination() {
+    @DisplayName("Verify pagination parameters are passed correctly")
+    public void verifyPaginationParameters() {
         // Arrange
         PageRequest customPageRequest = new PageRequest(1, 5, "name", "ASC");
-        when(goalGateway.findAllByUserId(userId, customPageRequest)).thenReturn(pagedResult);
+        IGoalFilterData filterData = new GoalFilterData(userId, null);
+        when(goalGateway.findAllByFilterData(eq(filterData), eq(customPageRequest))).thenReturn(pagedResult);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act
-        PagedResult<Goal> result = getAllGoalsByUserUseCase.execute(userId, customPageRequest);
+        PagedResult<Goal> result = getAllGoalsByUserUseCase.execute(customPageRequest, filterData);
 
         // Assert
         assertNotNull(result);
-        verify(goalGateway, times(1)).findAllByUserId(userId, customPageRequest);
+        verify(goalGateway, times(1)).findAllByFilterData(eq(filterData), eq(customPageRequest));
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
     }
 }
