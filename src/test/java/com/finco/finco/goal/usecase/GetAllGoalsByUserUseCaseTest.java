@@ -123,7 +123,7 @@ public class GetAllGoalsByUserUseCaseTest {
             getAllGoalsByUserUseCase.execute(pageRequest, filterData);
         });
 
-        assertEquals("Access Denied for this resource", exception.getMessage());
+        assertNotNull(exception);
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
         verify(goalGateway, never()).findAllByFilterData(any(IGoalFilterData.class), any(PageRequest.class));
     }

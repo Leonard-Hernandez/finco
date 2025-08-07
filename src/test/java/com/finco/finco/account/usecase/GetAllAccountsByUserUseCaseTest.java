@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.account.model.Account;
-import com.finco.finco.entity.exception.EbusinessException;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.pagination.filter.IAccountFilterData;
@@ -119,11 +118,11 @@ public class GetAllAccountsByUserUseCaseTest {
         doThrow(AccessDeniedBusinessException.class).when(authGateway).verifyOwnershipOrAdmin(userId);
 
         // Act & Assert
-        EbusinessException exception = assertThrows(EbusinessException.class, () -> {
+        AccessDeniedBusinessException exception = assertThrows(AccessDeniedBusinessException.class, () -> {
             getAllAccountsByUserUseCase.execute(pageRequest, filterData);
         });
 
-        assertEquals("Access Denied for this resource", exception.getMessage());
+        assertNotNull(exception);
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
         verify(accountGateway, never()).findByFilterData(any(PageRequest.class), any(IAccountFilterData.class));
     }

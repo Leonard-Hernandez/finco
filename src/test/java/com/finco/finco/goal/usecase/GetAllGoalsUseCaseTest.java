@@ -81,7 +81,7 @@ public class GetAllGoalsUseCaseTest {
         // Arrange
         IGoalFilterData filterData = new GoalFilterData(null, null);
         when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
-        when(goalGateway.findAll(pageRequest)).thenReturn(pagedResult);
+        when(goalGateway.findAllByFilterData(filterData, pageRequest)).thenReturn(pagedResult);
 
         // Act
         PagedResult<Goal> result = getAllGoalsUseCase.execute(pageRequest, filterData);
@@ -93,7 +93,7 @@ public class GetAllGoalsUseCaseTest {
         assertEquals("Test Goal", result.getContent().get(0).getName());
         
         verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
-        verify(goalGateway, times(1)).findAll(pageRequest);
+        verify(goalGateway, times(1)).findAllByFilterData(filterData, pageRequest);
     }
 
     @Test

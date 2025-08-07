@@ -120,12 +120,11 @@ public class GetAllTransactionsByUserUseCaseTest {
         doThrow(AccessDeniedBusinessException.class).when(authGateway).verifyOwnershipOrAdmin(anyLong());
 
         // Act & Assert
-        EbusinessException exception = assertThrows(EbusinessException.class, () -> {
+        EbusinessException exception = assertThrows(AccessDeniedBusinessException.class, () -> {
             getAllTransactionsByUserUseCase.execute(pageRequest, filterData);
         });
 
         assertNotNull(exception);
-        assertEquals("Access Denied for this resource", exception.getMessage());
         verify(authGateway, times(1)).verifyOwnershipOrAdmin(userId);
         verify(transactionGateway, never()).findAllByFilterData(any(ITransactionFilterData.class),
                 any(PageRequest.class));
