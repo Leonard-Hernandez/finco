@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.transaction.model.TransactionType;
+import com.finco.finco.infrastructure.account.dto.AccountLightPublicData;
+import com.finco.finco.infrastructure.goal.dto.GoalLightPublicData;
 import com.finco.finco.usecase.transaction.dto.ITransactionPublicData;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,8 +15,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record TransactionPublicData(@Schema(description = "Transaction ID", example = "1") Long id,
         @Schema(description = "User ID", example = "1") 
         Long userId,
-        @Schema(description = "Account ID", example = "1") 
-        Long accountId,
+        @Schema(description = "Account") 
+        AccountLightPublicData account,
         @Schema(description = "Transaction type", example = "DEPOSIT") 
         TransactionType type,
         @Schema(description = "Transaction amount", example = "100") 
@@ -28,18 +30,18 @@ public record TransactionPublicData(@Schema(description = "Transaction ID", exam
         @Schema(description = "Transaction category", example = "Category") 
         String category,
         @Schema(description = "Goal ID", example = "1") 
-        Long goalId,
+        GoalLightPublicData goal,
         @Schema(description = "Transfer account ID", example = "1") 
-        Long transferAccountId,
+        AccountLightPublicData transferAccount,
         @Schema(description = "Exchange rate", example = "1.0") 
         BigDecimal exchangeRate) implements ITransactionPublicData {
 
     public TransactionPublicData(Transaction transaction) {
-        this(transaction.getId(), transaction.getUser().getId(), transaction.getAccount().getId(),
+        this(transaction.getId(), transaction.getUser().getId(), new AccountLightPublicData(transaction.getAccount()),
                 transaction.getType(), transaction.getAmount(), transaction.getFee(), transaction.getDate(),
                 transaction.getDescription(), transaction.getCategory(),
-                transaction.getGoal() != null ? transaction.getGoal().getId() : null,
-                transaction.getTransferAccount() != null ? transaction.getTransferAccount().getId() : null,
+                transaction.getGoal() != null ? new GoalLightPublicData(transaction.getGoal()) : null,
+                transaction.getTransferAccount() != null ? new AccountLightPublicData(transaction.getTransferAccount()) : null,
                 transaction.getExchangeRate());
     }
 
