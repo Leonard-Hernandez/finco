@@ -16,9 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
-import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -31,21 +29,15 @@ public class JwtService {
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String CONTEND_TYPE = "application/json";
 
-    private final UserRepository userRepository;
-
     public JwtService(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 
     public String generateToken(User user) throws JsonProcessingException {
 
         Collection<? extends GrantedAuthority> roles = user.getAuthorities();
 
-        UserSchema userSchema = userRepository.findByEmail(user.getUsername()).orElseThrow(UserNotFoundException::new);
-
         Claims claims = Jwts.claims().add(
-                "authorities", new ObjectMapper().writeValueAsString(roles)).add("id", userSchema.getId())
-                .build();
+                "authorities", new ObjectMapper().writeValueAsString(roles)).build();
 
         String token = Jwts.builder()
                 .subject(user.getUsername())
@@ -73,6 +65,14 @@ public class JwtService {
                 .readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class));
 
         return authorities;
+    }
+
+    public boolean isTokenValid(String token) {
+        return Jwts.parser().verifyWith(SECRECT_KEY).build().isSigned(token);
+    }
+
+    public boolean isTokenExpired(String token) {
+        return getClaims(token).getExpiration().before(new Date());
     }
 
 }

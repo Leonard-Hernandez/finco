@@ -45,6 +45,10 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         String token = header.replace(JwtService.PREFIX_TOKEN, "");
 
         try {
+            if (jwtService.isTokenExpired(token) || !jwtService.isTokenValid(token)) {
+                throw new JwtException("Token is invalid or expired");                
+            }
+
             Claims claims = jwtService.getClaims(token);
             String username = claims.getSubject();
     
@@ -57,7 +61,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         } catch (JwtException e) {
             Map<String, String> body = new HashMap<>();
             body.put("error", e.getMessage());
-            body.put("message", "Jwt Token is invalid");
+            body.put("message", "Jwt Token is invalid or expired");
 
             response.getWriter().write(new ObjectMapper().writeValueAsString(body));
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
