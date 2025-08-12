@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finco.finco.infrastructure.config.security.services.JwtService;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,9 +44,11 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         String token = header.replace(JwtService.PREFIX_TOKEN, "");
 
         try {
-            Claims claims = jwtService.getClaims(token);
-            String username = claims.getSubject();
-    
+            if (!jwtService.isTokenValid(token)) {
+                throw new JwtException("Token is invalid or expired");                
+            }
+
+            String username = jwtService.getUsername(token);
             Collection<? extends GrantedAuthority> authorities = jwtService.getAuthorities(token);
     
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
@@ -57,7 +58,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         } catch (JwtException e) {
             Map<String, String> body = new HashMap<>();
             body.put("error", e.getMessage());
-            body.put("message", "Jwt Token is invalid");
+            body.put("message", "Jwt Token is invalid or expired");
 
             response.getWriter().write(new ObjectMapper().writeValueAsString(body));
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
