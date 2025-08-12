@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.finco.finco.infrastructure.config.db.mapper.UserMapper;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
+import com.finco.finco.infrastructure.config.error.ErrorResponse;
 import com.finco.finco.infrastructure.config.security.dto.SecurityResponseDto;
 import com.finco.finco.infrastructure.config.security.services.JwtService;
 import com.finco.finco.infrastructure.user.dto.UserLoginData;
@@ -49,7 +50,7 @@ public class LoginController {
                 content = @Content(schema = @Schema(implementation = SecurityResponseDto.class))),
             @ApiResponse(
                 responseCode = "401", description = "Invalid credentials", 
-                content = @Content(schema = @Schema(implementation = SecurityResponseDto.class)))
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                         }
                 )
     @PostMapping("/auth/login")

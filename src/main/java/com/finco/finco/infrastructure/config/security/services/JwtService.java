@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
 @Service
@@ -30,6 +31,7 @@ public class JwtService {
     public static final String CONTEND_TYPE = "application/json";
 
     public JwtService(UserRepository userRepository) {
+
     }
 
     public String generateToken(User user) throws JsonProcessingException {
@@ -44,7 +46,7 @@ public class JwtService {
                 .claims(claims)
                 .signWith(SECRECT_KEY)
                 .issuedAt(new Date())
-                .issuedAt(new Date(System.currentTimeMillis() + 3600000))
+                .expiration(new Date(System.currentTimeMillis() + 7200000))
                 .compact();
 
         return token;
@@ -68,11 +70,21 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token) {
-        return Jwts.parser().verifyWith(SECRECT_KEY).build().isSigned(token);
+        try {
+
+            Jwts.parser()
+                    .verifyWith(SECRECT_KEY)
+                    .build()
+                    .parse(token);
+
+            return true;
+
+        } catch (JwtException ex) {
+            return false;
+        }
     }
 
-    public boolean isTokenExpired(String token) {
-        return getClaims(token).getExpiration().before(new Date());
+    public String getUsername(String token) {
+        return getClaims(token).getSubject();
     }
-
 }
