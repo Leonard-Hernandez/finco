@@ -27,8 +27,6 @@ public interface AccountGateway {
 
     List<Account> findAllByUser(Long userId);
 
-    Long getTotalByUser(Long userId);
-
     BigDecimal getTotalBalanceInGoalsByAccount(Long accountId);
 
 }

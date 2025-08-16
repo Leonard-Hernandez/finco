@@ -2,6 +2,7 @@ package com.finco.finco.infrastructure.config.db.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -21,8 +22,8 @@ public interface AccountRepository extends JpaRepository<AccountSchema,Long>, Jp
 
     Page<AccountSchema> findAllByUserIdAndEnableTrue(Pageable pageable, Long userId);
 
-    @Query("SELECT SUM(a.balance) as total FROM AccountSchema a WHERE a.user.id = :userId and a.enable = true and a.type != 'CREDIT'")
-    Long getTotalByUserId(Long userId);
+    @Query("SELECT SUM(a.balance) as total, a.currency FROM AccountSchema a WHERE a.user.id = :userId and a.enable = true GROUP BY a.currency")
+    List<Map<BigDecimal, String>> getTotalByUserId(Long userId);
 
     @Query("SELECT a.version FROM AccountSchema a WHERE a.id = :id")
     Long getVersionByAccountId(Long id);

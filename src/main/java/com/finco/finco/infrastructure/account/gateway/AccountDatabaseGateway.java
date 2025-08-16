@@ -101,12 +101,6 @@ public class AccountDatabaseGateway implements AccountGateway {
 
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
-    public Long getTotalByUser(Long userId) {
-        return accountRepository.getTotalByUserId(userId);
-    }
-
-    @Override
-    @LogExecution(logReturnValue = false, logArguments = false)
     public Optional<Account> findDefaultByUserId(Long userId) {
         return accountRepository.findByIsDefaultTrueAndUserId(userId).map(accountMapper::toAccount);
     }
