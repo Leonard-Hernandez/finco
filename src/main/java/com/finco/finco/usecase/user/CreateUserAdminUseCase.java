@@ -37,6 +37,7 @@ public class CreateUserAdminUseCase {
         user.setName(userData.name());
         user.setEmail(userData.email());
         user.setPassword(userData.password());
+        user.setDefaultCurrency(userData.defaultCurrency());
         user.setEnable(true);
         user.setRegistrationDate(LocalDateTime.now());
 

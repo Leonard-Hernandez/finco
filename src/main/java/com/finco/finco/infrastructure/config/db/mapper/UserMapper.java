@@ -55,6 +55,7 @@ public class UserMapper {
                 user.setEmail(userSchema.getEmail());
                 user.setPassword(userSchema.getPassword());
                 user.setRegistrationDate(userSchema.getRegistrationDate());
+                user.setDefaultCurrency(userSchema.getDefaultCurrency());
                 user.setEnable(userSchema.getEnable());
 
                 List<Account> accounts = userSchema.getAccounts() != null ? userSchema.getAccounts().stream()
@@ -102,6 +103,7 @@ public class UserMapper {
                 user.setEmail(userSchema.getEmail());
                 user.setPassword(userSchema.getPassword());
                 user.setRegistrationDate(userSchema.getRegistrationDate());
+                user.setDefaultCurrency(userSchema.getDefaultCurrency());
                 user.setEnable(userSchema.getEnable());
 
                 return user;
@@ -119,6 +121,7 @@ public class UserMapper {
                 userSchema.setEmail(user.getEmail());
                 userSchema.setPassword(user.getPassword());
                 userSchema.setRegistrationDate(user.getRegistrationDate());
+                userSchema.setDefaultCurrency(user.getDefaultCurrency());
                 userSchema.setEnable(user.isEnable());
 
                 List<AccountSchema> accounts = user.getAccounts() != null ? user.getAccounts().stream()
@@ -163,6 +166,7 @@ public class UserMapper {
                 userSchema.setEmail(user.getEmail());
                 userSchema.setPassword(user.getPassword());
                 userSchema.setRegistrationDate(user.getRegistrationDate());
+                userSchema.setDefaultCurrency(user.getDefaultCurrency());
                 userSchema.setEnable(user.isEnable());
 
                 return userSchema;

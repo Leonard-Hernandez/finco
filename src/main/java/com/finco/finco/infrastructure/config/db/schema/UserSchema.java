@@ -3,10 +3,13 @@ package com.finco.finco.infrastructure.config.db.schema;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.infrastructure.user.validation.unique.UniqueEmail;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -55,6 +58,10 @@ public class UserSchema {
 
     @Column(name = "registration_Date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime registrationDate;
+
+    @Column(name = "default_currency", columnDefinition = "DEFAULT 'USD'")
+    @Enumerated(EnumType.STRING)
+    private CurrencyEnum defaultCurrency;
 
     @Column(name = "enable", columnDefinition = "DEFAULT 1")
     private Boolean enable;

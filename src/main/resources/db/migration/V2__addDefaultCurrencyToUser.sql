@@ -1,0 +1,1 @@
+alter table users add column default_currency varchar(3) default 'USD';

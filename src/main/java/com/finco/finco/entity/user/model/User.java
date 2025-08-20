@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.finco.finco.entity.account.model.Account;
+import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.asset.model.Asset;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
@@ -17,6 +18,7 @@ public class User {
     private String email;
     private String password;
     private LocalDateTime registrationDate;
+    private CurrencyEnum defaultCurrency;
     private Boolean enable;
 
     private List<Account> accounts;
@@ -31,13 +33,14 @@ public class User {
     }
 
     public User(Long id, String name, String email, String password, LocalDateTime registrationDate,
-            Boolean enable, List<Account> accounts, List<Goal> goals, List<Asset> assets, 
+            CurrencyEnum defaultCurrency, Boolean enable, List<Account> accounts, List<Goal> goals, List<Asset> assets, 
             List<Liabilitie> liabilities, List<Role> roles, List<Transaction> transactions) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.registrationDate = registrationDate;
+        this.defaultCurrency = defaultCurrency;
         this.enable = enable;
         this.accounts = accounts;
         this.goals = goals;
@@ -85,6 +88,14 @@ public class User {
 
     public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public CurrencyEnum getDefaultCurrency() {
+        return defaultCurrency;
+    }
+
+    public void setDefaultCurrency(CurrencyEnum defaultCurrency) {
+        this.defaultCurrency = defaultCurrency;
     }
 
     public List<Account> getAccounts() {

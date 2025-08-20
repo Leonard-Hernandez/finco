@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.role.exception.RoleNotFoundException;
 import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.role.model.Role;
@@ -49,6 +50,11 @@ public class CreateUserUseCaseTest {
             @Override
             public String email() {
                 return "pepe@pepe.com";
+            }
+
+            @Override
+            public CurrencyEnum defaultCurrency() {
+                return CurrencyEnum.USD;
             }
 
             @Override
