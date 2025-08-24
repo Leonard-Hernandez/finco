@@ -8,7 +8,6 @@ import com.finco.finco.entity.account.model.CurrencyEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +21,6 @@ public class GetCurrenciesController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Currencies found successfully", 
                 content = @Content(schema = @Schema(implementation = CurrencyEnum[].class))) })
-    @SecurityRequirement(name = "bearerAuth")
     public CurrencyEnum[] getCurrencies() {
         return CurrencyEnum.values();
     }

@@ -1,9 +1,7 @@
 package com.finco.finco.infrastructure.config.error;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +47,15 @@ public class ExceptionHandlerController {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> argumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse> argumentNotValidException(MethodArgumentNotValidException e) {
         List<FieldError> erros = e.getFieldErrors();
-
-        Map<String, String> response = new HashMap<>();
+        
+        StringBuilder sb = new StringBuilder();
 
         for (FieldError field : erros) {
-            response.put(field.getField(), field.getDefaultMessage());
+            sb.append(field.getField()).append(" : ").append(field.getDefaultMessage()).append(" ");
         }
+        ErrorResponse response = new ErrorResponse(e.getClass().getSimpleName(), sb.toString(), LocalDateTime.now());
         return ResponseEntity.badRequest().body(response);
     }
 

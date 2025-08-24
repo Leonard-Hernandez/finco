@@ -41,11 +41,11 @@ public class SpringSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers(HttpMethod.GET, "accounts/currencies").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/*").hasRole("ADMIN")
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated())
-                //.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtService))
                 .addFilter(new JwtValidationFilter(authenticationManager(), jwtService))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
