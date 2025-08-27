@@ -14,6 +14,9 @@ import com.finco.finco.entity.transaction.model.TransactionType;
 import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPage;
 import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
 import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
+
+import java.time.LocalDate;
+
 import com.finco.finco.infrastructure.config.error.ErrorResponse;
 import com.finco.finco.infrastructure.transaction.dto.TransactionFilterData;
 import com.finco.finco.infrastructure.transaction.dto.TransactionPublicData;
@@ -62,10 +65,14 @@ public class GetAllTransactionsByUserController {
             @RequestParam(name = "transferAccountId", required = false) Long transferAccountId,
             @RequestParam(name = "category", required = false) String category,
             @RequestParam(name = "type", required = false) TransactionType type,
+            @RequestParam(name = "onlyAccountTransactions", required = false) Boolean onlyAccountTransactions,
+            @RequestParam(name = "onlyGoalTransactions", required = false) Boolean onlyGoalTransactions,
+            @RequestParam(name = "startDate", required = false) LocalDate startDate,
+            @RequestParam(name = "endDate", required = false) LocalDate endDate,
             @PathVariable Long userId) {
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
         TransactionFilterData transactionFilterData = new TransactionFilterData(userId, accountId, goalId,
-                transferAccountId, category, type);
+                transferAccountId, category, type, onlyAccountTransactions, onlyGoalTransactions, startDate, endDate);
         PagedResult<Transaction> transactionsPagedResult = getAllTransactionsByUserUseCase.execute(domainPageRequest,
                 transactionFilterData);
 

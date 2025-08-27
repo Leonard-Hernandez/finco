@@ -71,7 +71,7 @@ public class GetAllTransactionsByUserUseCaseTest {
     @DisplayName("Get all transactions by user successfully")
     public void getAllTransactionsByUserSuccess() {
         // Arrange
-        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null);
+        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null, null, null, null, null);
         when(transactionGateway.findAllByFilterData(any(ITransactionFilterData.class), any(PageRequest.class)))
                 .thenReturn(pagedResult);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
@@ -93,7 +93,7 @@ public class GetAllTransactionsByUserUseCaseTest {
     @DisplayName("Get empty transactions list when user has no transactions")
     public void getEmptyTransactionsListWhenUserHasNoTransactions() {
         // Arrange
-        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null);
+        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null, null, null, null, null);
         PagedResult<Transaction> emptyResult = new PagedResult<>(List.of(), 0, 0, 0, 10, true, false, false, false);
         when(transactionGateway.findAllByFilterData(any(ITransactionFilterData.class), any(PageRequest.class)))
                 .thenReturn(emptyResult);
@@ -116,7 +116,7 @@ public class GetAllTransactionsByUserUseCaseTest {
     @DisplayName("Get transactions without permission should throw AccessDeniedBusinessException")
     public void getTransactionsWithoutPermissionShouldThrowException() {
         // Arrange
-        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null);
+        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null, null, null, null, null);
         doThrow(AccessDeniedBusinessException.class).when(authGateway).verifyOwnershipOrAdmin(anyLong());
 
         // Act & Assert
@@ -135,7 +135,7 @@ public class GetAllTransactionsByUserUseCaseTest {
     public void getTransactionsWithPagination() {
         // Arrange
         PageRequest customPageRequest = new PageRequest(1, 5, "date", "DESC");
-        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null);
+        ITransactionFilterData filterData = new TransactionFilterData(userId, null, null, null, null, null, null, null, null, null);
         when(transactionGateway.findAllByFilterData(any(ITransactionFilterData.class), eq(customPageRequest)))
                 .thenReturn(pagedResult);
         doNothing().when(authGateway).verifyOwnershipOrAdmin(userId);
