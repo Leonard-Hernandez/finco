@@ -1,5 +1,5 @@
 # Finco - Personal Finance Management API
-try on https://www.fincoai.app/
+try on https://api.fincoai.app/finco-api/v1/swagger-ui.html
 
 Finco is a robust, scalable, and clean-architecture based API designed to help you manage your personal finances with support for multiple currencies. Built with Spring Boot and following clean architecture principles, Finco provides a solid foundation for personal financial management.
 
