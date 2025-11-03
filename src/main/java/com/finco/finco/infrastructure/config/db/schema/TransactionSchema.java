@@ -3,6 +3,8 @@ package com.finco.finco.infrastructure.config.db.schema;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import com.finco.finco.entity.transaction.model.TransactionType;
 
 import jakarta.persistence.Column;
@@ -23,6 +25,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@DynamicInsert
 @Table(name = "transactions")
 @Getter
 @Setter
@@ -60,6 +63,7 @@ public class TransactionSchema {
 
     private String description;
 
+    @Column(name = "category", columnDefinition = "Default 'Other'")
     private String category;
 
     @ManyToOne

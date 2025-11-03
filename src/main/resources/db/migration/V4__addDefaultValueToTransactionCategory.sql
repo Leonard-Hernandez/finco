@@ -1,0 +1,1 @@
+ALTER TABLE transactions MODIFY COLUMN category VARCHAR(100) DEFAULT 'Other';

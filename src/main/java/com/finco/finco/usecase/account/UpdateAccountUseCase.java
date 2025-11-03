@@ -28,32 +28,34 @@ public class UpdateAccountUseCase {
 
         authGateway.verifyOwnershipOrAdmin(account.getUser().getId());
 
-        if (data.name() != null && !data.name().isBlank()) {
+        if (data.name() != null && !data.name().isBlank() && !data.name().equals(account.getName())) {
             account.setName(data.name());
         }
-        if (data.type() != null) {
+        if (data.type() != null && !data.type().equals(account.getType())) {
             account.setType(data.type());
         }
-        if (data.currency() != null) {
+        if (data.currency() != null && !data.currency().equals(account.getCurrency())) {
             account.setCurrency(data.currency());
         }
-        if (data.description() != null && !data.description().isBlank()) {
+        if (data.description() != null && !data.description().isBlank()
+                && !data.description().equals(account.getDescription())) {
             account.setDescription(data.description());
         }
 
-        if (data.enable() != null) {
+        if (data.enable() != null && !data.enable().equals(account.isEnable())) {
             if (data.enable() == false && account.isDefault()) {
                 throw new CannotDeactivateDefaultAccountException();
             }
             account.setEnable(data.enable());
         }
 
-        if (data.isDefault() != null) {
+        if (data.isDefault() != null && !data.isDefault().equals(account.isDefault())) {
             if (!data.isDefault() && account.isDefault()) {
                 throw new CannotDeactivateDefaultAccountException();
             }
 
-            Account oldDeafaultAccount = accountGateway.findDefaultByUserId(account.getUser().getId()).orElseThrow(DefaultAccountNotFoundException::new);
+            Account oldDeafaultAccount = accountGateway.findDefaultByUserId(account.getUser().getId())
+                    .orElseThrow(DefaultAccountNotFoundException::new);
 
             oldDeafaultAccount.setDefault(false);
 
@@ -62,10 +64,10 @@ public class UpdateAccountUseCase {
             account.setDefault(data.isDefault());
         }
 
-        if (data.withdrawFee() != null) {
+        if (data.withdrawFee() != null && !data.withdrawFee().equals(account.getWithdrawFee())) {
             account.setWithdrawFee(data.withdrawFee());
         }
-        if (data.depositFee() != null) {
+        if (data.depositFee() != null && !data.depositFee().equals(account.getDepositFee())) {
             account.setDepositFee(data.depositFee());
         }
 
