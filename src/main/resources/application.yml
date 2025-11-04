@@ -13,6 +13,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${github-client-id}
+            client-secret: ${github-client-id}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: read:user,user:email
 
 # configuration of logging
 logging:
