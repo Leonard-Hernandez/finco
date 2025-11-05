@@ -57,9 +57,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Error al procesar el login OAuth2: " + ex.getMessage());
         }
 
-
-    }
-
-    
+    }    
 
 }

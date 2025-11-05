@@ -21,7 +21,10 @@ spring:
             client-id: ${github-client-id}
             client-secret: ${github-client-id}
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope: read:user,user:email
+            scope:
+              - openid
+              - profile
+              - email
 
 # configuration of logging
 logging:
