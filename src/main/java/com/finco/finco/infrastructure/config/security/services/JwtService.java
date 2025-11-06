@@ -10,6 +10,7 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,6 +44,25 @@ public class JwtService {
 
         String token = Jwts.builder()
                 .subject(user.getUsername())
+                .claims(claims)
+                .signWith(SECRECT_KEY)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 7200000))
+                .compact();
+
+        return token;
+
+    }
+
+    public String generateToken(OAuth2User user) throws JsonProcessingException {
+
+        Collection<? extends GrantedAuthority> roles = user.getAuthorities();
+
+        Claims claims = Jwts.claims().add(
+                "authorities", new ObjectMapper().writeValueAsString(roles)).build();
+
+        String token = Jwts.builder()
+                .subject(user.getAttribute("name"))
                 .claims(claims)
                 .signWith(SECRECT_KEY)
                 .issuedAt(new Date())

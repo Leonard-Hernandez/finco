@@ -18,8 +18,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-//import com.finco.finco.infrastructure.config.security.filter.JwtAuthenticationFilter;
 import com.finco.finco.infrastructure.config.security.filter.JwtValidationFilter;
+import com.finco.finco.infrastructure.config.security.handler.OAuth2LoginSuccessHandler;
+import com.finco.finco.infrastructure.config.security.services.CustomOAuth2UserService;
 import com.finco.finco.infrastructure.config.security.services.JwtService;
 
 @Configuration
@@ -28,6 +29,12 @@ public class SpringSecurityConfig {
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Autowired
     private JwtService jwtService;
@@ -43,9 +50,14 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET, "accounts/currencies").permitAll()
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/oauth2/**").hasRole("USER")
                 .requestMatchers("/admin/*").hasRole("ADMIN")
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                    .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                    .successHandler(oAuth2LoginSuccessHandler)
+                )
                 .addFilter(new JwtValidationFilter(authenticationManager(), jwtService))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())

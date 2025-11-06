@@ -12,11 +12,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.finco.finco.entity.role.exception.RoleNotFoundException;
-import com.finco.finco.infrastructure.config.db.mapper.UserMapper;
 import com.finco.finco.infrastructure.config.db.repository.RoleRepository;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
-import com.finco.finco.infrastructure.config.security.dto.CustomOAuth2User;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -25,8 +23,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
-    @Autowired
-    private UserMapper userMapper;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -35,6 +31,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         try {
             String email = oAuth2User.getAttribute("email");
             String name = oAuth2User.getAttribute("name");
+
+            System.out.println("Email: " + email);
+            System.out.println("Name: " + name);
 
             Optional<UserSchema> userDb = userRepository.findByEmail(email);
             UserSchema user;
@@ -52,7 +51,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 user = userDb.get();
             }
 
-            return new CustomOAuth2User(oAuth2User, userMapper.toLightUser(user));
+            return oAuth2User;
         } catch (Exception ex) {
             throw new OAuth2AuthenticationException("Error al procesar el login OAuth2: " + ex.getMessage());
         }
