@@ -2,6 +2,16 @@ server:
   port: 8086
   servlet:
     contextPath: /finco-api/v1
+    session:
+      cookie:
+        name: FINCO_SESSION
+        http-only: true
+        secure: false  # Set to true in production with HTTPS
+        same-site: lax
+
+# Frontend URL for OAuth2 redirects
+frontend:
+  url: http://localhost:4200
 
 spring:
   application:
@@ -19,12 +29,13 @@ spring:
         registration:
           github:
             client-id: ${github-client-id}
-            client-secret: ${github-client-id}
+            client-secret: ${client-secret}
+            scope: 
+              - user:email
+              - read:user
+            client-name: GitHub
+            authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope:
-              - openid
-              - profile
-              - email
 
 # configuration of logging
 logging:
@@ -32,6 +43,9 @@ logging:
     '[com.finco.finco]': INFO
     '[org.springframework.web]': INFO
     '[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web.client.RestTemplate: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
