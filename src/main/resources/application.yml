@@ -2,16 +2,10 @@ server:
   port: 8086
   servlet:
     contextPath: /finco-api/v1
-    session:
-      cookie:
-        name: FINCO_SESSION
-        http-only: true
-        secure: false  # Set to true in production with HTTPS
-        same-site: lax
 
-# Frontend URL for OAuth2 redirects
-frontend:
-  url: http://localhost:4200
+finco:
+  frontend:
+    url: http://localhost:4200
 
 spring:
   application:
@@ -31,11 +25,15 @@ spring:
             client-id: ${github-client-id}
             client-secret: ${client-secret}
             scope: 
-              - user:email
               - read:user
+              - user:email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-name: GitHub
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          github:
+            user-info-uri: https://api.github.com/user
+            user-name-attribute: login
 
 # configuration of logging
 logging:
