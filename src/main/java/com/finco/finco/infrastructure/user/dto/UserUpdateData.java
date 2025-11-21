@@ -3,6 +3,7 @@ package com.finco.finco.infrastructure.user.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.usecase.user.dto.IUserUpdateData;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +15,9 @@ public record UserUpdateData(
         String name,
         @NotNull(message = "Enable cannot be null")
         @Schema(description = "User enable", required = true)
-        Boolean enable) implements IUserUpdateData {
+        Boolean enable,
+        @Schema(description = "User default currency", required = true)
+        CurrencyEnum defaultCurrency
+) implements IUserUpdateData {
 
 }

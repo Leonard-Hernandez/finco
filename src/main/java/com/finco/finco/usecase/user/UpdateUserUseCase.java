@@ -26,11 +26,14 @@ public class UpdateUserUseCase {
         
         User user = userGateway.findById(id).orElseThrow(() -> new UserNotFoundException());
 
-        if (userData.name() != null && !userData.name().isEmpty()) {
+        if (userData.name() != null && !userData.name().isEmpty() && !user.getName().equals(userData.name())) {
             user.setName(userData.name());            
         }
-        if (userData.enable() != null) {
+        if (userData.enable() != null && !user.isEnable().equals(userData.enable())) {
             user.setEnable(userData.enable());
+        }
+        if (userData.defaultCurrency() != null && !user.getDefaultCurrency().equals(userData.defaultCurrency())) {
+            user.setDefaultCurrency(userData.defaultCurrency());
         }
 
         return userGateway.update(user);

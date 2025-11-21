@@ -62,7 +62,7 @@ public class JwtService {
                 "authorities", new ObjectMapper().writeValueAsString(roles)).build();
 
         String token = Jwts.builder()
-                .subject(user.getAttribute("name"))
+                .subject(user.getAttribute("email"))
                 .claims(claims)
                 .signWith(SECRECT_KEY)
                 .issuedAt(new Date())

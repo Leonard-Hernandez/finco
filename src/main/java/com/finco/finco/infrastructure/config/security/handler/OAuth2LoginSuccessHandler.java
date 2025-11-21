@@ -32,7 +32,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String token = jwtService.generateToken(oauth2User);
 
-        setDefaultTargetUrl(frontendUrl + "auth/oauth-success/token=" + token);
+        setDefaultTargetUrl(frontendUrl + "/auth/oauth-success?token=" + token);
 
         getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
     }

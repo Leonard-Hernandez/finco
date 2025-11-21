@@ -77,7 +77,7 @@ public class SpringSecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
         corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         corsConfiguration.setMaxAge(3600L);

@@ -3,6 +3,8 @@ package com.finco.finco.infrastructure.config.db.schema;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.infrastructure.user.validation.unique.UniqueEmail;
 
@@ -37,6 +39,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class UserSchema {
 
     @Id
