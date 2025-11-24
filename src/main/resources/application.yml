@@ -5,7 +5,7 @@ server:
 
 finco:
   frontend:
-    url: http://localhost:4200
+    url: ${FRONTEND_URL}
 
 spring:
   application:
