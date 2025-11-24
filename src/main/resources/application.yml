@@ -22,8 +22,8 @@ spring:
       client:
         registration:
           github:
-            client-id: ${github-client-id}
-            client-secret: ${client-secret}
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
             scope: 
               - read:user
               - user:email
@@ -31,8 +31,8 @@ spring:
             client-name: GitHub
             authorization-grant-type: authorization_code
           google:
-            client-id: ${google-client-id}
-            client-secret: ${google-client-secret}
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: 
               - email
               - profile
@@ -46,9 +46,6 @@ logging:
     '[com.finco.finco]': INFO
     '[org.springframework.web]': INFO
     '[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2: DEBUG
-    org.springframework.web.client.RestTemplate: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
