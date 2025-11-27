@@ -57,7 +57,7 @@ public class AccountSchema {
 
     @Column(name = "currency", 
                     columnDefinition = "Default 'COP'", 
-                    length = 3)
+                    length = 4)
     @Enumerated(EnumType.STRING)
     private CurrencyEnum currency;
 

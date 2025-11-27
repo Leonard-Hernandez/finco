@@ -1,0 +1,8 @@
+ALTER TABLE accounts 
+MODIFY COLUMN deposit_fee DECIMAL(10, 6) NULL;
+
+ALTER TABLE accounts 
+MODIFY COLUMN withdraw_fee DECIMAL(10, 6) NULL;
+
+ALTER TABLE accounts 
+MODIFY COLUMN currency VARCHAR(4) NOT NULL DEFAULT 'USD' ;
