@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.account.controller;
 
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +45,7 @@ public class CreateAccountController {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
+    @Tool(description = "Create a new account")
     public AccountPublicData createAccount(
             @PathVariable Long userId,
             @Valid @RequestBody AccountRegistrationData data) {
