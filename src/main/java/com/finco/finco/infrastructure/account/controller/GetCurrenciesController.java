@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.account.controller;
 
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,7 @@ public class GetCurrenciesController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Currencies found successfully", 
                 content = @Content(schema = @Schema(implementation = CurrencyEnum[].class))) })
+    @Tool(description = "Get currencies")
     public CurrencyEnum[] getCurrencies() {
         return CurrencyEnum.values();
     }

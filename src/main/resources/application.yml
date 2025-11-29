@@ -39,6 +39,9 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-name: Google
             authorization-grant-type: authorization_code
+  ai:
+    openai:
+      api-key: ${openai-key}
 
 # configuration of logging
 logging:
