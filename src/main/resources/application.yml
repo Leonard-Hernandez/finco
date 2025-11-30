@@ -42,6 +42,11 @@ spring:
   ai:
     openai:
       api-key: ${openai-key}
+    mcp:
+      server:
+        base-url: ${server.servlet.context-path}
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp/message
 
 # configuration of logging
 logging:

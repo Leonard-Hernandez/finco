@@ -13,11 +13,9 @@ import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
-import com.finco.finco.infrastructure.account.controller.CreateAccountController;
 import com.finco.finco.infrastructure.account.controller.DepositAccountController;
-import com.finco.finco.infrastructure.account.controller.GetAllAccountsByUserController;
 import com.finco.finco.infrastructure.account.controller.WithDrawAccountController;
-import com.finco.finco.infrastructure.transaction.controller.GetAllTransactionsByUserController;
+import com.finco.finco.infrastructure.transaction.controller.TransactionTools;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
 import com.finco.finco.usecase.account.DeleteAccountUseCase;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
@@ -207,11 +205,11 @@ public class AppConfig {
     }
 
     @Bean
-    ToolCallbackProvider transactionTools(DepositAccountController depositAccountController,
-            WithDrawAccountController withDrawAccountController) {
+    ToolCallbackProvider tools(DepositAccountController depositAccountController,
+            WithDrawAccountController withDrawAccountController, TransactionTools transactionTools) {
         return MethodToolCallbackProvider
                 .builder()
-                .toolObjects(depositAccountController, withDrawAccountController)
+                .toolObjects(depositAccountController, withDrawAccountController, transactionTools)
                 .build();
     }
 
