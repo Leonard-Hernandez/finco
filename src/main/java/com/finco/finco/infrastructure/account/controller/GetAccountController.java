@@ -1,6 +1,5 @@
 package com.finco.finco.infrastructure.account.controller;
 
-import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +43,6 @@ public class GetAccountController {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
-    @Tool(description = "Get an account by id")
     public AccountPublicData getAccount(@PathVariable Long id) {
         return new AccountPublicData(getAccountUseCase.execute(id));
     }

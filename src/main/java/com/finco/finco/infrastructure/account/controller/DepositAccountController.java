@@ -1,6 +1,5 @@
 package com.finco.finco.infrastructure.account.controller;
 
-import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +43,6 @@ public class DepositAccountController {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
-    @Tool(description =  "Deposit money into an account")
     public AccountPublicData deposit(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(depositAccountUseCase.execute(id, data));
     }

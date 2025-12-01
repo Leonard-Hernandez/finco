@@ -1,6 +1,5 @@
 package com.finco.finco.infrastructure.account.controller;
 
-import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +43,6 @@ public class WithDrawAccountController {
             @ApiResponse(responseCode = "500", description = "Internal server error", 
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
-    @Tool(description = "Withdraw money from an account")
     public AccountPublicData withdraw(@PathVariable Long id, @Valid @RequestBody AccountTransactionData data) {
         return new AccountPublicData(withDrawAccountUseCase.execute(id, data));
     }
