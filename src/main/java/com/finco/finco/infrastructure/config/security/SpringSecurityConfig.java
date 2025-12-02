@@ -3,6 +3,7 @@ package com.finco.finco.infrastructure.config.security;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,9 @@ import com.finco.finco.infrastructure.config.security.services.JwtService;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+
+    @Value("${finco.frontend.url}")
+    private String frontendUrl;
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
@@ -76,8 +80,7 @@ public class SpringSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
-        //corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList(frontendUrl));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
