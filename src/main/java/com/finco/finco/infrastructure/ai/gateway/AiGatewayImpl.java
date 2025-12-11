@@ -19,7 +19,7 @@ public class AiGatewayImpl implements AiGateway {
     public AiGatewayImpl(ChatClient.Builder builder, TransactionAiTools transactionAiTools,
             AccountAiTools accountAiTools) {
 
-        this.chatMemory = MessageWindowChatMemory.builder().build();
+        this.chatMemory = MessageWindowChatMemory.builder().maxMessages(10).build();
         this.chatClient = builder.defaultTools(transactionAiTools, accountAiTools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
