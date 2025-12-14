@@ -1,9 +1,17 @@
 package com.finco.finco.infrastructure.ai.gateway;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
+import org.springframework.ai.util.ResourceUtils;
 import org.springframework.stereotype.Service;
 
 import com.finco.finco.entity.ai.gateway.AiGateway;
@@ -15,6 +23,7 @@ public class AiGatewayImpl implements AiGateway {
 
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
+    private SystemPromptTemplate systemPromptTemplate;
 
     public AiGatewayImpl(ChatClient.Builder builder, TransactionAiTools transactionAiTools,
             AccountAiTools accountAiTools) {
@@ -23,15 +32,19 @@ public class AiGatewayImpl implements AiGateway {
         this.chatClient = builder.defaultTools(transactionAiTools, accountAiTools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
+        
+        this.systemPromptTemplate = new SystemPromptTemplate(ResourceUtils.getText("classpath:prompts/system.md"));
     }
 
     @Override
     public String getAnswer(String question, Long userId) {
 
-        return chatClient.prompt()
-                .user(question + " datos: id: " + userId)
-                .system(
-                        "You are finco a finacial expert and you rol is help the user with their personal finance using the tools")
+        UserMessage userMessage = new UserMessage(question);
+        Message systemMessage = this.systemPromptTemplate.createMessage(Map.of("id", userId));
+
+        Prompt prompt = new Prompt(List.of(userMessage, systemMessage));
+
+        return chatClient.prompt(prompt)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, userId))
                 .call().content();
 
