@@ -13,10 +13,10 @@ public class AiGetAnswerUseCase {
         this.aiGateway = aiGateway;
     }
 
-    public String execute(String question, Long userId) {
+    public String execute(String question, Long userId, byte[] image, String imageExtension) {
         authGateway.verifyOwnershipOrAdmin(userId);
 
-        return aiGateway.getAnswer(question, userId);
+        return aiGateway.getAnswer(question, userId, image, imageExtension);
     }
 
 }

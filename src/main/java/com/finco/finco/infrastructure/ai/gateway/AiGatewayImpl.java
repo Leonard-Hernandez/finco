@@ -11,8 +11,11 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
+import org.springframework.ai.content.Media;
 import org.springframework.ai.util.ResourceUtils;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
 
 import com.finco.finco.entity.ai.gateway.AiGateway;
 import com.finco.finco.infrastructure.account.gateway.AccountAiTools;
@@ -32,14 +35,20 @@ public class AiGatewayImpl implements AiGateway {
         this.chatClient = builder.defaultTools(transactionAiTools, accountAiTools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
-        
+
         this.systemPromptTemplate = new SystemPromptTemplate(ResourceUtils.getText("classpath:prompts/system.md"));
     }
 
     @Override
-    public String getAnswer(String question, Long userId) {
+    public String getAnswer(String question, Long userId, byte[] image, String imageExtension) {
 
         UserMessage userMessage = new UserMessage(question);
+
+        if (image != null) {
+            Media media = new Media(MimeTypeUtils.parseMimeType(imageExtension), new ByteArrayResource(image));
+            userMessage = userMessage.mutate().media(media).build();
+        }
+
         Message systemMessage = this.systemPromptTemplate.createMessage(Map.of("id", userId));
 
         Prompt prompt = new Prompt(List.of(userMessage, systemMessage));
