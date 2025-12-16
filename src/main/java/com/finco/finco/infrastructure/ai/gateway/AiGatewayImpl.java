@@ -7,6 +7,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -29,10 +30,14 @@ public class AiGatewayImpl implements AiGateway {
     private SystemPromptTemplate systemPromptTemplate;
 
     public AiGatewayImpl(ChatClient.Builder builder, TransactionAiTools transactionAiTools,
-            AccountAiTools accountAiTools) {
+            AccountAiTools accountAiTools, JdbcChatMemoryRepository chatMemoryRepository) {
 
-        this.chatMemory = MessageWindowChatMemory.builder().maxMessages(10).build();
-        this.chatClient = builder.defaultTools(transactionAiTools, accountAiTools)
+        this.chatMemory = MessageWindowChatMemory.builder()
+                .chatMemoryRepository(chatMemoryRepository)
+                .maxMessages(10)
+                .build();
+        this.chatClient = builder
+                .defaultTools(transactionAiTools, accountAiTools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
 
@@ -45,7 +50,10 @@ public class AiGatewayImpl implements AiGateway {
         UserMessage userMessage = new UserMessage(question);
 
         if (image != null) {
-            Media media = new Media(MimeTypeUtils.parseMimeType(imageExtension), new ByteArrayResource(image));
+            Media media = new Media(
+                MimeTypeUtils.parseMimeType(imageExtension), 
+                new ByteArrayResource(image)
+            );
             userMessage = userMessage.mutate().media(media).build();
         }
 

@@ -47,6 +47,11 @@ spring:
         base-url: ${server.servlet.context-path}
         sse-endpoint: /sse
         sse-message-endpoint: /mcp/message
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
 
 # configuration of logging
 logging:
