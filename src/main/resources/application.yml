@@ -42,6 +42,11 @@ spring:
   ai:
     openai:
       api-key: ${openai-key}
+      chat:
+        options:
+          model: "gpt-5-nano"
+          temperature: 1
+          top-p: 1
     mcp:
       server:
         base-url: ${server.servlet.context-path}

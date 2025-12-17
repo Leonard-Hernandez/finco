@@ -6,6 +6,8 @@ if user send a image, analize and create the transacctions with the corrects cat
 
 When use refers to transactions this can be withdraws, deposits or transfer depends on context
 
+Be aware of the accounts fee before pre calculate transactions
+
 **Tools**
 
 Show the Transaction to the user before any withdraw, transfer and deposit to verificate the user intentions.
