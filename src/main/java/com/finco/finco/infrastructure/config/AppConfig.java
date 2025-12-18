@@ -13,8 +13,6 @@ import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
-import com.finco.finco.infrastructure.account.controller.DepositAccountController;
-import com.finco.finco.infrastructure.account.controller.WithDrawAccountController;
 import com.finco.finco.infrastructure.account.gateway.AccountAiTools;
 import com.finco.finco.infrastructure.transaction.gateway.TransactionAiTools;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
@@ -205,6 +203,7 @@ public class AppConfig {
                 accountGateway);
     }
 
+    // Spring Ai
     @Bean
     ToolCallbackProvider tools(AccountAiTools accountAiTools, TransactionAiTools transactionAiTools) {
         return MethodToolCallbackProvider
