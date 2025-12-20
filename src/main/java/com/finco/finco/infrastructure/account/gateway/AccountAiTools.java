@@ -2,6 +2,8 @@ package com.finco.finco.infrastructure.account.gateway;
 
 import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
 
+import java.util.List;
+
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
@@ -10,8 +12,8 @@ import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.pagination.PageRequest;
-import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.infrastructure.account.dto.AccountFilterData;
+import com.finco.finco.infrastructure.account.dto.AccountPublicData;
 import com.finco.finco.infrastructure.account.dto.AccountTransactionData;
 import com.finco.finco.infrastructure.account.dto.AccountTransferData;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
@@ -45,34 +47,34 @@ public class AccountAiTools {
     }
 
     @Tool(description = "Get all accounts by user id")
-    public PagedResult<Account> getAllAccountsByUser(
+    public List<AccountPublicData> getAllAccountsByUser(
             @ToolParam(description = "Page, default 0", required = true) Integer page,
             @ToolParam(description = "Size, default 20", required = true) Integer size,
-            @ToolParam(description = "Sort by, default id", required = false) String sortBy, 
+            @ToolParam(description = "Sort by, default id", required = false) String sortBy,
             @ToolParam(description = "Sort direction, default desc", required = false) String sortDirection,
             @ToolParam(description = "Currency", required = false) CurrencyEnum currency,
-            @ToolParam(description = "Type", required = false)AccountType type,
+            @ToolParam(description = "Type", required = false) AccountType type,
             @ToolParam(description = "User id", required = true) Long userId) {
 
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
         AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, true);
-        return getAllAccountsByUserUseCase.execute(domainPageRequest, accountFilterData);
+        return getAllAccountsByUserUseCase.execute(domainPageRequest, accountFilterData).getContent().stream()
+                .map(AccountPublicData::new).toList();
     }
 
     @Tool(description = "Deposit money to account")
-    public void deposit(Long accountId, AccountTransactionData data) {
-        depositAccountUseCase.execute(accountId, data);
+    public AccountPublicData deposit(Long accountId, AccountTransactionData data) {
+        return new AccountPublicData(depositAccountUseCase.execute(accountId, data));
     }
 
     @Tool(description = "Withdraw money from account")
-    public void withdraw(Long accountId, AccountTransactionData data) {
-        withDrawAccountUseCase.execute(accountId, data);
+    public AccountPublicData withdraw(Long accountId, AccountTransactionData data) {
+        return new AccountPublicData(withDrawAccountUseCase.execute(accountId, data));
     }
 
     @Tool(description = "Transfer money between accounts")
-    public void transfer(Long accountId, AccountTransferData data) {
-        transferAccountUseCase.execute(accountId, data);
-    }   
-
+    public AccountPublicData transfer(Long accountId, AccountTransferData data) {
+        return new AccountPublicData(transferAccountUseCase.execute(accountId, data));
+    }
 
 }

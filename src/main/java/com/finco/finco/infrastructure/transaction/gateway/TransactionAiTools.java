@@ -3,16 +3,17 @@ package com.finco.finco.infrastructure.transaction.gateway;
 import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
 
 import com.finco.finco.entity.pagination.PageRequest;
-import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.transaction.model.TransactionType;
 import com.finco.finco.infrastructure.transaction.dto.TransactionFilterData;
+import com.finco.finco.infrastructure.transaction.dto.TransactionPublicData;
 import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
 
 @Service
@@ -25,7 +26,7 @@ public class TransactionAiTools {
     }
 
     @Tool(description = "Get all transactions by user and filters")
-    public PagedResult<Transaction> getAllTransactionsByUser(
+    public List<TransactionPublicData> getAllTransactionsByUser(
             @ToolParam(description = "Page, default 0", required = true) Integer page,
             @ToolParam(description = "Size, default 20", required = true) Integer size,
             @ToolParam(description = "Sort by, default id", required = false) String sortBy,
@@ -44,7 +45,7 @@ public class TransactionAiTools {
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
         TransactionFilterData transactionFilterData = new TransactionFilterData(userId, accountId, goalId,
                 transferAccountId, category, type, onlyAccountTransactions, onlyGoalTransactions, startDate, endDate);
-        return tool.execute(domainPageRequest, transactionFilterData);
+        return tool.execute(domainPageRequest, transactionFilterData).getContent().stream().map(TransactionPublicData::new).toList();
     }
 
 }

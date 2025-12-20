@@ -1,7 +1,5 @@
 package com.finco.finco.infrastructure.config;
 
-import org.springframework.ai.tool.ToolCallbackProvider;
-import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -13,8 +11,6 @@ import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
-import com.finco.finco.infrastructure.account.gateway.AccountAiTools;
-import com.finco.finco.infrastructure.transaction.gateway.TransactionAiTools;
 import com.finco.finco.usecase.account.CreateAccountUseCase;
 import com.finco.finco.usecase.account.DeleteAccountUseCase;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
@@ -201,15 +197,6 @@ public class AppConfig {
             TransactionGateway transactionGateway) {
         return new WithDrawGoalUseCase(goalGateway, goalAccountBalanceGateway, transactionGateway, authGateway,
                 accountGateway);
-    }
-
-    // Spring Ai
-    @Bean
-    ToolCallbackProvider tools(AccountAiTools accountAiTools, TransactionAiTools transactionAiTools) {
-        return MethodToolCallbackProvider
-                .builder()
-                .toolObjects(accountAiTools, transactionAiTools)
-                .build();
     }
 
 }
