@@ -4,19 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.ChatClientRequest;
-import org.springframework.ai.chat.client.ChatClientResponse;
+
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.api.AdvisorChain;
-import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.chat.messages.ToolResponseMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.content.Media;
@@ -48,7 +42,7 @@ public class AiGatewayImpl implements AiGateway {
 
         this.chatClient = builder
                 .defaultToolCallbacks(delegatorToolCallbackProvider)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build(), new MyLogAdvisor())
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
 
         this.systemPromptTemplate = new SystemPromptTemplate(ResourceUtils.getText("classpath:prompts/system.md"));
@@ -70,44 +64,9 @@ public class AiGatewayImpl implements AiGateway {
 
         Prompt prompt = new Prompt(List.of(userMessage, systemMessage));
 
-        ChatResponse response = chatClient.prompt(prompt)
+        return chatClient.prompt(prompt)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, userId))
-                .call().chatResponse();
-
-        System.out.println(String.format("""
-                RESPONSE: %s
-                USAGE: %s
-                """, response.getResult().getOutput().getText(), response.getMetadata().getUsage()));
-
-        return response.getResult().getOutput().getText();
-
+                .call().content();
     }
-
-    static class MyLogAdvisor implements BaseAdvisor {
-
-		@Override
-		public int getOrder() {
-			return 0;
-		}
-
-		@Override
-		public ChatClientRequest before(ChatClientRequest chatClientRequest, AdvisorChain advisorChain) {
-			chatClientRequest.prompt()
-				.getInstructions()
-				.stream()
-				.filter(m -> m.getMessageType() == MessageType.TOOL)
-				.map(m -> (ToolResponseMessage) m)
-				.flatMap(m -> m.getResponses().stream())
-				.forEach(r -> System.out.println("TOOL RESPONSE DATA:\n" + r.responseData()));
-
-			return chatClientRequest;
-		}
-
-		@Override
-		public ChatClientResponse after(ChatClientResponse chatClientResponse, AdvisorChain advisorChain) {
-			return chatClientResponse;
-		}
-
-	}
 
 }

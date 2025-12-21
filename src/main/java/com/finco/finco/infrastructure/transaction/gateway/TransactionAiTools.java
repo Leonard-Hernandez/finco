@@ -10,7 +10,6 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
 
 import com.finco.finco.entity.pagination.PageRequest;
-import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.transaction.model.TransactionType;
 import com.finco.finco.infrastructure.transaction.dto.TransactionFilterData;
 import com.finco.finco.infrastructure.transaction.dto.TransactionPublicData;
