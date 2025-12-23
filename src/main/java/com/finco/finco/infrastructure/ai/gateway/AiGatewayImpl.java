@@ -22,6 +22,7 @@ import org.springframework.util.MimeTypeUtils;
 
 import com.finco.finco.entity.ai.gateway.AiGateway;
 import com.finco.finco.infrastructure.config.ai.DelegatorToolCallbackProvider;
+import com.finco.finco.usecase.ai.dto.IAiAskDto;
 
 @Service
 public class AiGatewayImpl implements AiGateway {
@@ -49,23 +50,23 @@ public class AiGatewayImpl implements AiGateway {
     }
 
     @Override
-    public String getAnswer(String question, Long userId, byte[] image, String imageExtension) {
+    public String getAnswer(IAiAskDto aiAskDto) {
 
-        UserMessage userMessage = new UserMessage(question);
+        UserMessage userMessage = new UserMessage(aiAskDto.prompt());
 
-        if (image != null) {
+        if (aiAskDto.image() != null) {
             Media media = new Media(
-                    MimeTypeUtils.parseMimeType(imageExtension),
-                    new ByteArrayResource(image));
+                    MimeTypeUtils.parseMimeType(aiAskDto.imageExtension()),
+                    new ByteArrayResource(aiAskDto.image()));
             userMessage = userMessage.mutate().media(media).build();
         }
 
-        Message systemMessage = this.systemPromptTemplate.createMessage(Map.of("id", userId));
+        Message systemMessage = this.systemPromptTemplate.createMessage(Map.of("id", aiAskDto.userId()));
 
         Prompt prompt = new Prompt(List.of(userMessage, systemMessage));
 
         return chatClient.prompt(prompt)
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, userId))
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, aiAskDto.userId()))
                 .call().content();
     }
 

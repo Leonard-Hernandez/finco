@@ -2,7 +2,9 @@ package com.finco.finco.usecase.ai.dto;
 
 public interface IAiAskDto {
 
-    String question();
+    String prompt();
     Long userId();
+    byte[] image();
+    String imageExtension();
 
 }

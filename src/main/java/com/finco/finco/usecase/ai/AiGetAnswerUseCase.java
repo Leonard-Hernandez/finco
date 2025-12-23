@@ -2,6 +2,7 @@ package com.finco.finco.usecase.ai;
 
 import com.finco.finco.entity.ai.gateway.AiGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.usecase.ai.dto.IAiAskDto;
 
 public class AiGetAnswerUseCase {
 
@@ -13,10 +14,10 @@ public class AiGetAnswerUseCase {
         this.aiGateway = aiGateway;
     }
 
-    public String execute(String question, Long userId, byte[] image, String imageExtension) {
-        authGateway.verifyOwnershipOrAdmin(userId);
+    public String execute(IAiAskDto aiAskDto) {
+        authGateway.verifyOwnershipOrAdmin(aiAskDto.userId());
 
-        return aiGateway.getAnswer(question, userId, image, imageExtension);
+        return aiGateway.getAnswer(aiAskDto);
     }
 
 }
