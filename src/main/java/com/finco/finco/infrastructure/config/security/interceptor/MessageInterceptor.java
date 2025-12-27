@@ -36,7 +36,7 @@ public class MessageInterceptor implements ChannelInterceptor {
 
             assert authHeaderList != null;
             String authHeader = authHeaderList.get(0);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            if (authHeader != null && authHeader.startsWith(JwtService.PREFIX_TOKEN)) {
 
                 String jwt = authHeader.replace(JwtService.PREFIX_TOKEN, "");
                 String username = jwtService.getUsername(jwt);
