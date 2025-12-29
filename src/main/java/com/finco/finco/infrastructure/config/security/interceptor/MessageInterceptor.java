@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.finco.finco.infrastructure.config.security.services.JpaUserDetailsService;
@@ -31,21 +32,25 @@ public class MessageInterceptor implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         assert accessor != null;
+
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             var authHeaderList = accessor.getNativeHeader("Authorization");
 
             assert authHeaderList != null;
             String authHeader = authHeaderList.get(0);
+            
             if (authHeader != null && authHeader.startsWith(JwtService.PREFIX_TOKEN)) {
 
                 String jwt = authHeader.replace(JwtService.PREFIX_TOKEN, "");
                 String username = jwtService.getUsername(jwt);
                 UserDetails userDetails = jpaUserDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authenticatedUser = new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        userDetails.getUsername(),
                         null,
                         userDetails.getAuthorities());
                 accessor.setUser(authenticatedUser);
+
+                SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
             }
         }
 
