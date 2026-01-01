@@ -1,6 +1,7 @@
 package com.finco.finco.infrastructure.ai.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -37,9 +38,9 @@ public class AiController {
     }
 
     @MessageMapping(value = "/chat")
-    public void SendMessage(@Payload AiAskDto aiAskDto) throws Exception {
+    public void SendMessage(@Payload AiAskDto aiAskDto, Principal principal) throws Exception {
         String response = aiGetAnswerUseCase.execute(aiAskDto);
-        messagingTemplate.convertAndSendToUser(aiAskDto.userId().toString(), "/queue/chat", response);
+        messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/chat", response);
     }
 
 }
