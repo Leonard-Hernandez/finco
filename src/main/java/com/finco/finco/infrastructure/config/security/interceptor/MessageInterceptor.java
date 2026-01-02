@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -38,7 +39,7 @@ public class MessageInterceptor implements ChannelInterceptor {
 
             assert authHeaderList != null;
             String authHeader = authHeaderList.get(0);
-            
+
             if (authHeader != null && authHeader.startsWith(JwtService.PREFIX_TOKEN)) {
 
                 String jwt = authHeader.replace(JwtService.PREFIX_TOKEN, "");
@@ -52,6 +53,10 @@ public class MessageInterceptor implements ChannelInterceptor {
 
                 SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
             }
+        }
+
+        if (accessor != null && accessor.getUser() != null) {
+            SecurityContextHolder.getContext().setAuthentication((Authentication) accessor.getUser());
         }
 
         return message;

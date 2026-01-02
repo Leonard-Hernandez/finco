@@ -15,7 +15,7 @@ public class AiGetAnswerUseCase {
     }
 
     public String execute(IAiAskDto aiAskDto) {
-        //authGateway.verifyOwnershipOrAdmin(aiAskDto.userId());
+        authGateway.verifyOwnershipOrAdmin(aiAskDto.userId());
         return aiGateway.getAnswer(aiAskDto);
     }
 
