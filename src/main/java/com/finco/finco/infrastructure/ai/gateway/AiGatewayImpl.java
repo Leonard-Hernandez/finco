@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.ai.gateway;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class AiGatewayImpl implements AiGateway {
         if (aiAskDto.image() != null) {
             Media media = new Media(
                     MimeTypeUtils.parseMimeType(aiAskDto.imageExtension()),
-                    new ByteArrayResource(aiAskDto.image()));
+                    new ByteArrayResource(Base64.getDecoder().decode(aiAskDto.image())));
             userMessage = userMessage.mutate().media(media).build();
         }
 

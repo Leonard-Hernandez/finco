@@ -10,12 +10,12 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.finco.finco.infrastructure.config.security.services.JpaUserDetailsService;
 import com.finco.finco.infrastructure.config.security.services.JwtService;
+import com.finco.finco.infrastructure.config.security.services.WebSocketAuthHolder;
 
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -23,10 +23,13 @@ public class MessageInterceptor implements ChannelInterceptor {
 
     private final JwtService jwtService;
     private final JpaUserDetailsService jpaUserDetailsService;
+    private final WebSocketAuthHolder webSocketAuthHolder;
 
-    public MessageInterceptor(JwtService jwtService, JpaUserDetailsService jpaUserDetailsService) {
+    public MessageInterceptor(JwtService jwtService, JpaUserDetailsService jpaUserDetailsService,
+            WebSocketAuthHolder webSocketAuthHolder) {
         this.jwtService = jwtService;
         this.jpaUserDetailsService = jpaUserDetailsService;
+        this.webSocketAuthHolder = webSocketAuthHolder;
     }
 
     @Override
@@ -50,13 +53,13 @@ public class MessageInterceptor implements ChannelInterceptor {
                         null,
                         userDetails.getAuthorities());
                 accessor.setUser(authenticatedUser);
-
+                webSocketAuthHolder.store(accessor.getSessionId(), authenticatedUser);
                 SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
             }
         }
 
-        if (accessor != null && accessor.getUser() != null) {
-            SecurityContextHolder.getContext().setAuthentication((Authentication) accessor.getUser());
+        if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            webSocketAuthHolder.remove(accessor.getSessionId());
         }
 
         return message;

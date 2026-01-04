@@ -4,7 +4,7 @@ public interface IAiAskDto {
 
     String prompt();
     Long userId();
-    byte[] image();
+    String image();
     String imageExtension();
 
 }

@@ -10,29 +10,27 @@ import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
+import com.finco.finco.infrastructure.config.security.services.WebSocketAuthHolder;
+import com.finco.finco.infrastructure.config.security.services.WebSocketSessionHolder;
 
 @Component
 public class AuthSpringSecurityGateway implements AuthGateway {
 
     private final UserRepository userRepository;
+    private final WebSocketAuthHolder webSocketAuthHolder;
 
-    public AuthSpringSecurityGateway(UserRepository userRepository) {
+    public AuthSpringSecurityGateway(UserRepository userRepository, WebSocketAuthHolder webSocketAuthHolder) {
         this.userRepository = userRepository;
+        this.webSocketAuthHolder = webSocketAuthHolder;
     }
 
     @Override
     @LogExecution(logReturnValue = false)
     public Long getAuthenticatedUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedBusinessException();
-        }
-
-        UserSchema authenticatedUser = userRepository.findByEmail(authentication.getName())
+        Authentication authentication = getAuthentication();
+        UserSchema user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(UserNotFoundException::new);
-
-        return authenticatedUser.getId();
+        return user.getId();
     }
 
     @Override
@@ -59,6 +57,20 @@ public class AuthSpringSecurityGateway implements AuthGateway {
                 throw new AccessDeniedBusinessException();
             }
         }
+    }
+
+    private Authentication getAuthentication() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            String sessionId = WebSocketSessionHolder.getSessionId();
+            if (sessionId != null) {
+                auth = webSocketAuthHolder.get(sessionId);
+            }
+        }
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedBusinessException();
+        }
+        return auth;
     }
 
 }
