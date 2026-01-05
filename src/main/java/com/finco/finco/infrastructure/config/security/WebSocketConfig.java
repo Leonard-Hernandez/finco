@@ -1,5 +1,7 @@
 package com.finco.finco.infrastructure.config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -16,15 +18,15 @@ import com.finco.finco.infrastructure.config.security.interceptor.MessageInterce
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final MessageInterceptor messageInterceptor;
+    @Value("${finco.frontend.url}")
+    private String frontendUrl;
 
-    public WebSocketConfig(MessageInterceptor messageInterceptor) {
-        this.messageInterceptor = messageInterceptor;
-    }
+    @Autowired
+    private MessageInterceptor messageInterceptor;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:4200")
+        registry.addEndpoint("/ws").setAllowedOrigins(frontendUrl)
                 .withSockJS();
     }
 
@@ -47,7 +49,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Bean
-    public ServletServerContainerFactoryBean createServletServerContainerFactoryBean() {
+    ServletServerContainerFactoryBean createServletServerContainerFactoryBean() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
         container.setMaxTextMessageBufferSize(512 * 1024);
         container.setMaxBinaryMessageBufferSize(512 * 1024);

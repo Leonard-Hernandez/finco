@@ -16,21 +16,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Account registration data")
 public record AccountRegistrationData(
-        @Schema(description = "Account name", required = true)
+        @Schema(description = "Account name", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotBlank(message = "Account name is required")
         @Size(min = 2, max = 100, message = "Account name must be between 2 and 100 characters")
         String name,
 
-        @Schema(description = "Account type", required = true)
+        @Schema(description = "Account type", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull(message = "Account type is required")
         AccountType type,
 
-        @Schema(description = "Initial balance", required = true)
+        @Schema(description = "Initial balance", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull(message = "Initial balance is required")
         @DecimalMin(value = "0.0", inclusive = true, message = "Balance must be positive or zero")
         BigDecimal balance,
 
-        @Schema(description = "Currency", required = true)
+        @Schema(description = "Currency", requiredMode = Schema.RequiredMode.REQUIRED)
         @NotNull(message = "Currency is required")
         CurrencyEnum currency,
 

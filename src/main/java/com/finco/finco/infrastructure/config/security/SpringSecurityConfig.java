@@ -55,9 +55,10 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET, "/accounts/currencies").permitAll()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/ws/**").permitAll() 
                 .requestMatchers("/oauth2/**").permitAll()
                 .requestMatchers("/admin/*").hasRole("ADMIN")
+                .requestMatchers("/ws/**").permitAll() 
+                .requestMatchers("/sse/**", "/mcp/message/**" ,"/ws/**").hasRole("PREMIUM")
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2

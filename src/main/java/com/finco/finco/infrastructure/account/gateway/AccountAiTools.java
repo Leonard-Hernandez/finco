@@ -12,6 +12,8 @@ import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.pagination.PageRequest;
+import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
+import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.infrastructure.account.dto.AccountFilterData;
 import com.finco.finco.infrastructure.account.dto.AccountPublicData;
 import com.finco.finco.infrastructure.account.dto.AccountTransactionData;
@@ -30,19 +32,24 @@ public class AccountAiTools {
     private final DepositAccountUseCase depositAccountUseCase;
     private final TransferAccountUseCase transferAccountUseCase;
     private final WithDrawAccountUseCase withDrawAccountUseCase;
+    private final AuthGateway authGateway;
 
     public AccountAiTools(GetAccountUseCase getAccountUseCase, GetAllAccountsByUserUseCase getAllAccountsByUserUseCase,
             DepositAccountUseCase depositAccountUseCase, TransferAccountUseCase transferAccountUseCase,
-            WithDrawAccountUseCase withDrawAccountUseCase) {
+            WithDrawAccountUseCase withDrawAccountUseCase, AuthGateway authGateway) {
         this.getAccountUseCase = getAccountUseCase;
         this.getAllAccountsByUserUseCase = getAllAccountsByUserUseCase;
         this.depositAccountUseCase = depositAccountUseCase;
         this.transferAccountUseCase = transferAccountUseCase;
         this.withDrawAccountUseCase = withDrawAccountUseCase;
+        this.authGateway = authGateway;
     }
 
     @Tool(description = "Get account by id")
     public Account getAccount(Long id) {
+        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
+            throw new AccessDeniedBusinessException();
+        }
         return getAccountUseCase.execute(id);
     }
 
@@ -56,6 +63,10 @@ public class AccountAiTools {
             @ToolParam(description = "Type", required = false) AccountType type,
             @ToolParam(description = "User id", required = true) Long userId) {
 
+        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
+            throw new AccessDeniedBusinessException();
+        }
+
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
         AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, true);
         return getAllAccountsByUserUseCase.execute(domainPageRequest, accountFilterData).getContent().stream()
@@ -64,16 +75,25 @@ public class AccountAiTools {
 
     @Tool(description = "Deposit money to account")
     public AccountPublicData deposit(Long accountId, AccountTransactionData data) {
+        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
+            throw new AccessDeniedBusinessException();
+        }
         return new AccountPublicData(depositAccountUseCase.execute(accountId, data));
     }
 
     @Tool(description = "Withdraw money from account")
     public AccountPublicData withdraw(Long accountId, AccountTransactionData data) {
+        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
+            throw new AccessDeniedBusinessException();
+        }
         return new AccountPublicData(withDrawAccountUseCase.execute(accountId, data));
     }
 
     @Tool(description = "Transfer money between accounts")
     public AccountPublicData transfer(Long accountId, AccountTransferData data) {
+        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
+            throw new AccessDeniedBusinessException();
+        }
         return new AccountPublicData(transferAccountUseCase.execute(accountId, data));
     }
 

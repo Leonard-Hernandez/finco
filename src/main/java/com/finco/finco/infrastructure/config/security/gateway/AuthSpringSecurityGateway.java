@@ -36,7 +36,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
     @Override
     @LogExecution()
     public boolean isAuthenticatedUserInRole(String roleName) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;

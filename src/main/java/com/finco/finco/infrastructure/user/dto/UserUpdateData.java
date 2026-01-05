@@ -11,12 +11,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "User update data")
 public record UserUpdateData(
         @NotBlank(message = "Name cannot be blank")
-        @Schema(description = "User name", required = true)
+        @Schema(description = "User name")
         String name,
         @NotNull(message = "Enable cannot be null")
-        @Schema(description = "User enable", required = true)
+        @Schema(description = "User enable")
         Boolean enable,
-        @Schema(description = "User default currency", required = true)
+        @Schema(description = "User default currency")
         CurrencyEnum defaultCurrency
 ) implements IUserUpdateData {
 

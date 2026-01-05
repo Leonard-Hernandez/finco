@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Account transaction data to deposit or withdraw")
 public record AccountTransactionData(
-    @Schema(description = "Amount of the transaction", required = true)
+    @Schema(description = "Amount of the transaction", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "Amount is required")
     @Min(value = 0, message = "Amount must be positive")
     BigDecimal amount, 
