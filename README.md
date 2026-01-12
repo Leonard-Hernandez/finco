@@ -40,9 +40,9 @@ Finco is a robust, scalable, and clean-architecture based API designed to help y
    cd finco
    ```
 
-2. **Configure the database**
+2. **Configure the env Variables**
    - Create a new MySQL database
-   - Update `src/main/resources/application.yml` with your database credentials
+   - Update `.env` with your database credentials, OpenAi key adn front-end url
 
 3. **Build the project**
    ```bash
@@ -52,6 +52,47 @@ Finco is a robust, scalable, and clean-architecture based API designed to help y
 4. **Run the application**
    ```bash
    mvn spring-boot:run
+   ```
+The application will be available at `http://localhost:8080`
+
+## To run Finco in Docker, follow these steps:
+
+1. Clone this repository or download it to your computer.
+
+2. Open a terminal and navigate to the project directory.
+
+3. **Build the JAR file using Maven**: 
+
+   - **On macOS/Linux**: Run the following command:
+     ```bash
+     mvn clean package
+     ```
+
+   - **On Windows**: Run the following command:
+     ```bash
+     mvn clean package
+     ```
+
+4. Create a `.env` file in the root directory of the project. This file will be used to store your environment variables.
+
+5. Add the following environment variables to the `.env` file, replacing the placeholder values with your actual values:
+
+   ```plaintext
+   DbUrl=your_database_url
+   UserDb=your_username
+   password=your_password
+   FRONTEND_URL=your_front_end_url
+   openai-key=your_openai_key
+   ```
+
+6. Run the following command to build the container image.
+    ```bash
+   docker build -t Finco .
+   ```
+
+7. Run the following command to start the container.
+    ```bash
+   docker run -p 8086:8086 --env-file .env Finco
    ```
 
 The application will be available at `http://localhost:8080`
