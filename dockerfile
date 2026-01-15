@@ -1,4 +1,4 @@
-FROM openjdk:17.0.2
+FROM amazoncorretto:17-alpine3.20-jdk as builder
 
 WORKDIR /app/finco
 
@@ -14,4 +14,10 @@ RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8086
 
-ENTRYPOINT [ "java", "-jar", "./target/finco-0.0.1-SNAPSHOT.jar" ]
+FROM amazoncorretto:17-alpine3.20-jdk
+
+WORKDIR /app
+
+COPY --from=builder /app/finco/target/finco-0.0.1-SNAPSHOT.jar .
+
+ENTRYPOINT [ "java", "-jar", "finco-0.0.1-SNAPSHOT.jar" ]
