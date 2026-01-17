@@ -14,7 +14,7 @@ RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8086
 
-FROM amazoncorretto:17-alpine3.20-jdk
+FROM bellsoft/liberica-runtime-container:jre-17-cds-slim-musl
 
 WORKDIR /app
 

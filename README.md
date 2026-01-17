@@ -87,12 +87,12 @@ The application will be available at `http://localhost:8080`
 
 6. Run the following command to build the container image.
     ```bash
-   docker build -t Finco .
+   docker build -t finco .
    ```
 
 7. Run the following command to start the container.
     ```bash
-   docker run -p 8086:8086 --env-file .env Finco
+   docker run -p 8086:8086 --env-file .env finco
    ```
 
 The application will be available at `http://localhost:8080`

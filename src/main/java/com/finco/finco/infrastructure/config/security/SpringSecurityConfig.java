@@ -22,8 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.finco.finco.infrastructure.config.security.filter.JwtValidationFilter;
 import com.finco.finco.infrastructure.config.security.handler.OAuth2LoginSuccessHandler;
-import com.finco.finco.infrastructure.config.security.services.OAuth2UserService;
 import com.finco.finco.infrastructure.config.security.services.JwtService;
+import com.finco.finco.infrastructure.config.security.services.OAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -56,8 +56,8 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/accounts/currencies").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/oauth2/**").permitAll()
-                .requestMatchers("/admin/*").hasRole("ADMIN")
                 .requestMatchers("/ws/**").permitAll() 
+                .requestMatchers("/admin/*").hasRole("ADMIN")
                 .requestMatchers("/sse/**", "/mcp/message/**" ,"/ws/**").hasRole("PREMIUM")
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated())
