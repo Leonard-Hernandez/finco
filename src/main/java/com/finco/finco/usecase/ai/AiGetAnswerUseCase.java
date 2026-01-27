@@ -1,6 +1,7 @@
 package com.finco.finco.usecase.ai;
 
 import com.finco.finco.entity.ai.gateway.AiGateway;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.usecase.ai.dto.IAiAskDto;
@@ -15,6 +16,7 @@ public class AiGetAnswerUseCase {
         this.aiGateway = aiGateway;
     }
 
+    @LogExecution(logReturnValue = false, logArguments = false)
     public String execute(IAiAskDto aiAskDto) {
         authGateway.verifyOwnershipOrAdmin(aiAskDto.userId());
         if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
