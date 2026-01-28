@@ -1,7 +1,5 @@
 package com.finco.finco.infrastructure.account.gateway;
 
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
-
 import java.util.List;
 
 import org.springframework.ai.tool.annotation.Tool;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.finco.finco.entity.account.model.Account;
 import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.account.model.CurrencyEnum;
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
@@ -18,6 +17,7 @@ import com.finco.finco.infrastructure.account.dto.AccountFilterData;
 import com.finco.finco.infrastructure.account.dto.AccountPublicData;
 import com.finco.finco.infrastructure.account.dto.AccountTransactionData;
 import com.finco.finco.infrastructure.account.dto.AccountTransferData;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
 import com.finco.finco.usecase.account.DepositAccountUseCase;
 import com.finco.finco.usecase.account.GetAccountUseCase;
 import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
@@ -46,6 +46,7 @@ public class AccountAiTools {
     }
 
     @Tool(description = "Get account by id")
+    @LogExecution(logArguments = false, logReturnValue = false)
     public Account getAccount(Long id) {
         if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
             throw new AccessDeniedBusinessException();
@@ -54,6 +55,7 @@ public class AccountAiTools {
     }
 
     @Tool(description = "Get all accounts by user id")
+    @LogExecution(logArguments = false, logReturnValue = false)
     public List<AccountPublicData> getAllAccountsByUser(
             @ToolParam(description = "Page, default 0", required = true) Integer page,
             @ToolParam(description = "Size, default 20", required = true) Integer size,
@@ -74,6 +76,7 @@ public class AccountAiTools {
     }
 
     @Tool(description = "Deposit money to account")
+    @LogExecution(logArguments = false, logReturnValue = false)
     public AccountPublicData deposit(Long accountId, AccountTransactionData data) {
         if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
             throw new AccessDeniedBusinessException();
@@ -82,6 +85,7 @@ public class AccountAiTools {
     }
 
     @Tool(description = "Withdraw money from account")
+    @LogExecution(logArguments = false, logReturnValue = false)
     public AccountPublicData withdraw(Long accountId, AccountTransactionData data) {
         if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
             throw new AccessDeniedBusinessException();
@@ -90,6 +94,7 @@ public class AccountAiTools {
     }
 
     @Tool(description = "Transfer money between accounts")
+    @LogExecution(logArguments = false, logReturnValue = false)
     public AccountPublicData transfer(Long accountId, AccountTransferData data) {
         if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
             throw new AccessDeniedBusinessException();

@@ -1,7 +1,5 @@
 package com.finco.finco.infrastructure.transaction.gateway;
 
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -9,8 +7,10 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
 
+import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.transaction.model.TransactionType;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
 import com.finco.finco.infrastructure.transaction.dto.TransactionFilterData;
 import com.finco.finco.infrastructure.transaction.dto.TransactionPublicData;
 import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
@@ -25,6 +25,7 @@ public class TransactionAiTools {
     }
 
     @Tool(description = "Get all transactions by user and filters")
+    @LogExecution(logArguments = false, logReturnValue = false)
     public List<TransactionPublicData> getAllTransactionsByUser(
             @ToolParam(description = "Page, default 0", required = true) Integer page,
             @ToolParam(description = "Size, default 20", required = true) Integer size,
