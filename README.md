@@ -65,12 +65,12 @@ The application will be available at `http://localhost:8080`
 
    - **On macOS/Linux**: Run the following command:
      ```bash
-     mvn clean package
+     mvnw clean package
      ```
 
    - **On Windows**: Run the following command:
      ```bash
-     mvn clean package
+     mvnw.cmd clean package
      ```
 
 4. Create a `.env` file in the root directory of the project. This file will be used to store your environment variables.
@@ -92,7 +92,7 @@ The application will be available at `http://localhost:8080`
 
 7. Run the following command to start the container.
     ```bash
-   docker run -p 8086:8086 --env-file .env finco
+   docker run -p 8086:8086 -d --name finco --env-file .env finco
    ```
 
 The application will be available at `http://localhost:8080`
