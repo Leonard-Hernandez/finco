@@ -55,47 +55,83 @@ Finco is a robust, scalable, and clean-architecture based API designed to help y
    ```
 The application will be available at `http://localhost:8080`
 
-## To run Finco in Docker, follow these steps:
+## 🐳 Docker Setup (Recommended)
 
-1. Clone this repository or download it to your computer.
+The easiest way to run Finco is using Docker Compose, which will automatically set up both MySQL and the application.
 
-2. Open a terminal and navigate to the project directory.
+### Prerequisites
 
-3. **Build the JAR file using Maven**: 
+- Docker and Docker Compose installed
+- Git
 
-   - **On macOS/Linux**: Run the following command:
-     ```bash
-     mvnw clean package
-     ```
+### Quick Start with Docker Compose
 
-   - **On Windows**: Run the following command:
-     ```bash
-     mvnw.cmd clean package
-     ```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Leonard-Hernandez/finco.git
+   cd finco
+   ```
 
-4. Create a `.env` file in the root directory of the project. This file will be used to store your environment variables.
-
-5. Add the following environment variables to the `.env` file, replacing the placeholder values with your actual values:
-
+2. **Configure environment variables**
+   Create a `.env` file in the root directory with your configuration:
+   
    ```plaintext
-   DbUrl=your_database_url
-   UserDb=your_username
-   password=your_password
-   FRONTEND_URL=your_front_end_url
+   # Database connection
+   DbUrl=mysql:3306
+   UserDb=finco_user
+   password=finco_password
+   
+   # Application settings
+   FRONTEND_URL=http://localhost:4200
    openai-key=your_openai_key
    ```
 
-6. Run the following command to build the container image.
-    ```bash
+3. **Update Docker Compose credentials** (if needed)
+   If you want to use different database credentials than the defaults, update the `docker-compose.yml` file:
+   
+   ```yaml
+   services:
+     mysql:
+       environment:
+         MYSQL_ROOT_PASSWORD: your_root_password
+         MYSQL_DATABASE: Finco
+   ```
+
+   **Important**: Make sure the credentials in `.env` and `docker-compose.yml` match:
+   - `.env` → `password` should match `MYSQL_ROOT_PASSWORD` in docker-compose
+   - `.env` → `DbUrl` should be `mysql:3306` (container name)
+
+4. **Build and run with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+5. **Access the application**
+   - **API**: `http://localhost:8086`
+   - **Swagger UI**: `http://localhost:8086/finco-api/v1/swagger-ui.html`
+
+### Docker Compose Commands
+
+- **Start services**: `docker-compose up -d`
+- **Stop services**: `docker-compose down`
+- **View logs**: `docker-compose logs -f`
+- **Rebuild application**: `docker-compose up --build -d`
+
+## 🐳 Manual Docker Setup
+
+If you prefer to run Docker containers manually:
+
+1. **Create `.env` file** (same configuration as above)
+
+2. **Build the container image**
+   ```bash
    docker build -t finco .
    ```
 
-7. Run the following command to start the container.
-    ```bash
+3. **Run the container**
+   ```bash
    docker run -p 8086:8086 -d --name finco --env-file .env finco
    ```
-
-The application will be available at `http://localhost:8080`
 
 ## 📚 API Documentation
 
