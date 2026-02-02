@@ -78,3 +78,13 @@ springdoc:
   default-consumes-media-type: application/json
   swagger-ui:
     operationsSorter: method
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+        exclude: "heapdump,env,refresh"
+  endpoint:
+    health:
+      show-details: always

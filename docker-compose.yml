@@ -16,7 +16,9 @@ services:
       - finco_network
   finco:
     container_name: finco
-    image: finco:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8086:8086"
     env_file: .env
