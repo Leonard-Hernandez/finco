@@ -56,6 +56,8 @@ public class TransactionSchemeSpecification {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("date"), filterData.endDate()));
             }
 
+            predicates.add(criteriaBuilder.equal(root.get("account").get("enable"), true));
+
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
 
         };
