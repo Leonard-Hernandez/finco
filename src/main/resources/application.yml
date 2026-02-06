@@ -83,8 +83,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
-        exclude: "heapdump,env,refresh"
+        include: health,info
   endpoint:
     health:
-      show-details: always
+      show-details: never
+      show-components: never
