@@ -2,6 +2,7 @@ package com.finco.finco.infrastructure.transaction.controller;
 
 import java.util.List;
 
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +43,7 @@ public class GetCategoriesByUserController {
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) 
         })
     @SecurityRequirement(name = "bearerAuth")
+    @Tool(description = "Get categories by user")
     public List<String> getCategoriesByUser(@PathVariable Long userId) {
         return getCategoriesByUserUseCase.execute(userId);
     }

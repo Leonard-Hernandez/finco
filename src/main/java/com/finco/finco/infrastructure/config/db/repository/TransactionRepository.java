@@ -21,7 +21,7 @@ public interface TransactionRepository extends JpaRepository<TransactionSchema, 
     @Override
     Page<TransactionSchema> findAll(@Nullable Specification<TransactionSchema> specification, @Nullable Pageable pageable);
 
-    @Query("SELECT DISTINCT t.category FROM TransactionSchema t WHERE t.user.id = :userId and t.category is not null")
+    @Query("SELECT DISTINCT t.category FROM TransactionSchema t join AccountSchema a on t.account.id = a.id WHERE t.user.id = :userId and a.enable = true")
     List<String> findAllCategoriesByUserId(Long userId);
 
 }

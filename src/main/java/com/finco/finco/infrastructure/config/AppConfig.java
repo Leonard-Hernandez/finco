@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import com.finco.finco.entity.account.gateway.AccountGateway;
+import com.finco.finco.entity.ai.gateway.AiGateway;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goalAccountBalance.gateway.GoalAccountBalanceGateway;
 import com.finco.finco.entity.role.gateway.RoleGateway;
@@ -20,6 +21,7 @@ import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
 import com.finco.finco.usecase.account.TransferAccountUseCase;
 import com.finco.finco.usecase.account.UpdateAccountUseCase;
 import com.finco.finco.usecase.account.WithDrawAccountUseCase;
+import com.finco.finco.usecase.ai.AiGetAnswerUseCase;
 import com.finco.finco.usecase.goal.CreateGoalUseCase;
 import com.finco.finco.usecase.goal.DeleteGoalUseCase;
 import com.finco.finco.usecase.goal.DepositGoalUseCase;
@@ -44,7 +46,6 @@ import com.finco.finco.usecase.user.UpdateUserUseCase;
 public class AppConfig {
 
     // User Beans
-
     @Bean
     CreateUserUseCase createUserUserCase(UserGateway userGateway, RoleGateway roleGateway) {
         return new CreateUserUseCase(userGateway, roleGateway);
@@ -82,7 +83,6 @@ public class AppConfig {
     }
 
     // Accounts beans
-
     @Bean
     CreateAccountUseCase createAccountUseCase(UserGateway userGateway, AccountGateway accountGateway,
             AuthGateway authGateway) {
@@ -133,7 +133,6 @@ public class AppConfig {
     }
 
     // Transactions beans
-
     @Bean
     GetCategoriesByUserUseCase getCategoriesByUserUseCase(TransactionGateway transactionGateway,
             AuthGateway authGateway) {
@@ -153,7 +152,6 @@ public class AppConfig {
     }
 
     // goal beans
-
     @Bean
     CreateGoalUseCase createGoalUseCase(GoalGateway goalGateway, UserGateway userGateway, AuthGateway authGateway) {
         return new CreateGoalUseCase(goalGateway, userGateway, authGateway);
@@ -197,6 +195,12 @@ public class AppConfig {
             TransactionGateway transactionGateway) {
         return new WithDrawGoalUseCase(goalGateway, goalAccountBalanceGateway, transactionGateway, authGateway,
                 accountGateway);
+    }
+
+    // ai beans
+    @Bean
+    AiGetAnswerUseCase aiGetAnswerUseCase(AiGateway aiGateway, AuthGateway authGateway) {
+        return new AiGetAnswerUseCase(authGateway, aiGateway);
     }
 
 }

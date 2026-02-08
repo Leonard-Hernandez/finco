@@ -1,5 +1,6 @@
 package com.finco.finco.infrastructure.transaction.controller;
 
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,9 +12,7 @@ import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.transaction.model.TransactionType;
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPage;
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageRequest;
-import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageable;
+import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.*;
 
 import java.time.LocalDate;
 
@@ -55,20 +54,21 @@ public class GetAllTransactionsByUserController {
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @SecurityRequirement(name = "bearerAuth")
+    @Tool(description = "Get all transactions by user")
     public Page<TransactionPublicData> getAllTransactionsByUser(
-            @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "20") Integer size,
-            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
-            @RequestParam(name = "accountId", required = false) Long accountId,
-            @RequestParam(name = "goalId", required = false) Long goalId,
-            @RequestParam(name = "transferAccountId", required = false) Long transferAccountId,
-            @RequestParam(name = "category", required = false) String category,
-            @RequestParam(name = "type", required = false) TransactionType type,
-            @RequestParam(name = "onlyAccountTransactions", required = false) Boolean onlyAccountTransactions,
-            @RequestParam(name = "onlyGoalTransactions", required = false) Boolean onlyGoalTransactions,
-            @RequestParam(name = "startDate", required = false) LocalDate startDate,
-            @RequestParam(name = "endDate", required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(required = false) Long accountId,
+            @RequestParam(required = false) Long goalId,
+            @RequestParam(required = false) Long transferAccountId,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) TransactionType type,
+            @RequestParam(required = false) Boolean onlyAccountTransactions,
+            @RequestParam(required = false) Boolean onlyGoalTransactions,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
             @PathVariable Long userId) {
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
         TransactionFilterData transactionFilterData = new TransactionFilterData(userId, accountId, goalId,

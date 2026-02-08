@@ -11,11 +11,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Account transfer data")
 public record AccountTransferData(
     @NotNull(message = "Transfer account ID is required")
-    @Schema(description = "Transfer account ID", required = true)
+    @Schema(description = "Transfer account ID", requiredMode = Schema.RequiredMode.REQUIRED)
     Long transferAccountId, 
     @NotNull(message = "Amount is required")
     @Min(value = 0, message = "Amount must be positive")
-    @Schema(description = "Amount", required = true)
+    @Schema(description = "Amount", requiredMode = Schema.RequiredMode.REQUIRED)
     BigDecimal amount, 
     @Schema(description = "Category")
     String category, 

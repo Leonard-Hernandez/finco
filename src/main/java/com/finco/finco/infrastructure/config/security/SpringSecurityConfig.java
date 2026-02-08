@@ -3,6 +3,7 @@ package com.finco.finco.infrastructure.config.security;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,12 +22,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.finco.finco.infrastructure.config.security.filter.JwtValidationFilter;
 import com.finco.finco.infrastructure.config.security.handler.OAuth2LoginSuccessHandler;
-import com.finco.finco.infrastructure.config.security.services.OAuth2UserService;
 import com.finco.finco.infrastructure.config.security.services.JwtService;
+import com.finco.finco.infrastructure.config.security.services.OAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+
+    @Value("${finco.frontend.url}")
+    private String frontendUrl;
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
@@ -50,9 +54,12 @@ public class SpringSecurityConfig {
         return http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET, "/accounts/currencies").permitAll()
+                .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/oauth2/**").permitAll()
+                .requestMatchers("/ws/**").permitAll() 
                 .requestMatchers("/admin/*").hasRole("ADMIN")
+                .requestMatchers("/sse/**", "/mcp/message/**" ,"/ws/**").hasRole("PREMIUM")
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
@@ -75,9 +82,8 @@ public class SpringSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOriginPatterns(Arrays.asList("*"));
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList(frontendUrl));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         corsConfiguration.setMaxAge(3600L);

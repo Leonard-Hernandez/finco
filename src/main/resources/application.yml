@@ -39,6 +39,24 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             client-name: Google
             authorization-grant-type: authorization_code
+  ai:
+    openai:
+      api-key: ${openai-key}
+      chat:
+        options:
+          model: "gpt-5-nano"
+          temperature: 1
+          top-p: 1
+    mcp:
+      server:
+        base-url: ${server.servlet.context-path}
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp/message
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
 
 # configuration of logging
 logging:
@@ -60,3 +78,13 @@ springdoc:
   default-consumes-media-type: application/json
   swagger-ui:
     operationsSorter: method
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      show-components: never

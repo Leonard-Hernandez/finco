@@ -1,0 +1,33 @@
+version: '5.0'
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: DefaultPassword
+      MYSQL_DATABASE: Finco
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    networks:
+      - finco_network
+  finco:
+    container_name: finco
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8086"
+    env_file: .env
+    networks:
+      - finco_network
+    restart: always
+
+volumes:
+  mysql_data:
+
+networks:
+  finco_network:

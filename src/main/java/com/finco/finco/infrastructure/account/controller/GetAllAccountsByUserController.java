@@ -41,34 +41,27 @@ public class GetAllAccountsByUserController {
     @LogExecution()
     @Operation(summary = "Get all accounts by user", description = "Get all accounts by user")
     @ApiResponses(value = {
-            @ApiResponse(
-                responseCode = "200", description = "Accounts found successfully", 
-                content = @Content(schema = @Schema(implementation = Page.class))),
-            @ApiResponse(
-                responseCode = "400", description = "Bad request: Invalid parameters", 
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(
-                responseCode = "403", description = "Forbidden: You need to be owner to get all accounts by user", 
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(
-                responseCode = "500", description = "Internal server error", 
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Accounts found successfully", content = @Content(schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request: Invalid parameters", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden: You need to be owner to get all accounts by user", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @SecurityRequirement(name = "bearerAuth")
     public Page<AccountPublicData> getAllAccountsByUser(
-            @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "20") Integer size,
-            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
-            @RequestParam(name = "currency", required = false) CurrencyEnum currency,
-            @RequestParam(name = "type", required = false) AccountType type,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(required = false) CurrencyEnum currency,
+            @RequestParam(required = false) AccountType type,
             @PathVariable Long userId) {
 
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
         AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, true);
 
-        PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest, accountFilterData);
-        
+        PagedResult<Account> accountsPagedResult = getAllAccountsByUserUseCase.execute(domainPageRequest,
+                accountFilterData);
+
         return toPage(accountsPagedResult, toPageable(domainPageRequest)).map(AccountPublicData::new);
     }
 

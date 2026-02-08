@@ -48,14 +48,14 @@ public class GetAllAccountController {
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     @SecurityRequirement(name = "bearerAuth")
     public Page<AccountPublicData> getAllAccounts(
-        @RequestParam(name = "page", defaultValue = "0") Integer page,
-        @RequestParam(name = "size", defaultValue = "20") Integer size,
-        @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-        @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
-        @RequestParam(name = "userId", required = false) Long userId,
-        @RequestParam(name = "currency", required = false) CurrencyEnum currency,
-        @RequestParam(name = "type", required = false) AccountType type,
-        @RequestParam(name = "enable", required = false) Boolean enable) {
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "20") Integer size,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "desc") String sortDirection,
+        @RequestParam(required = false) Long userId,
+        @RequestParam(required = false) CurrencyEnum currency,
+        @RequestParam(required = false) AccountType type,
+        @RequestParam(required = false) Boolean enable) {
 
         PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
         AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, enable);

@@ -1,0 +1,1 @@
+INSERT INTO Finco.roles (name) VALUES('ROLE_PREMIUM');
