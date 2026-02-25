@@ -43,16 +43,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration reg) {
-        reg.setMessageSizeLimit(512 * 1024)
-                .setSendBufferSizeLimit(1024 * 1024)
+        reg.setMessageSizeLimit(5 * 1024 * 1024)
+                .setSendBufferSizeLimit(5 * 1024 * 1024)
                 .setSendTimeLimit(20_000);
     }
 
     @Bean
     ServletServerContainerFactoryBean createServletServerContainerFactoryBean() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        container.setMaxTextMessageBufferSize(512 * 1024);
-        container.setMaxBinaryMessageBufferSize(512 * 1024);
+        container.setMaxTextMessageBufferSize(5 * 1024 * 1024);
+        container.setMaxBinaryMessageBufferSize(5 * 1024 * 1024);
         return container;
     }
 }
