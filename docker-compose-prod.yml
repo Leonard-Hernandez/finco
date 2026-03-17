@@ -16,7 +16,7 @@ services:
       - finco_network
   finco:
     container_name: finco
-    image: leonard20/finco:arm64
+    image: leonard20/finco:latest
     ports:
       - "8086:8086"
     environment:

@@ -14,7 +14,7 @@ RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8086
 
-FROM bellsoft/liberica-runtime-container:jre-17-cds-slim-musl
+FROM sourcemation/jre-17
 
 WORKDIR /app
 

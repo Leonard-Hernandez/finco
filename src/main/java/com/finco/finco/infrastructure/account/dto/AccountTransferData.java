@@ -3,6 +3,7 @@ package com.finco.finco.infrastructure.account.dto;
 import java.math.BigDecimal;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import com.finco.finco.usecase.account.dto.IAccountTransferData;
 
@@ -12,13 +13,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record AccountTransferData(
     @NotNull(message = "Transfer account ID is required")
     @Schema(description = "Transfer account ID", requiredMode = Schema.RequiredMode.REQUIRED)
-    Long transferAccountId, 
+    Long transferAccountId,
     @NotNull(message = "Amount is required")
     @Min(value = 0, message = "Amount must be positive")
     @Schema(description = "Amount", requiredMode = Schema.RequiredMode.REQUIRED)
-    BigDecimal amount, 
+    BigDecimal amount,
+    @Size(max = 100, message = "Category cannot exceed 100 characters")
     @Schema(description = "Category")
-    String category, 
+    String category,
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     @Schema(description = "Description")
     String description,
     @Schema(description = "Exchange rate")

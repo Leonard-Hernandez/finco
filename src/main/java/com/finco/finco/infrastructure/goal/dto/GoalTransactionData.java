@@ -23,8 +23,9 @@ public record GoalTransactionData(
 
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     @Schema(description = "Description", example = "Description")
-    String description, 
-    
+    String description,
+
+    @Size(max = 100, message = "Category cannot exceed 100 characters")
     @Schema(description = "Category", example = "Category")
     String category)
                 implements IGoalTransactionData {

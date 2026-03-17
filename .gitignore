@@ -37,3 +37,8 @@ build/
 logs/*
 
 .env
+
+# Claude & Plans
+.claude/
+plans/
+CLAUDE.md
