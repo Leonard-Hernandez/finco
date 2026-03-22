@@ -57,7 +57,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/oauth2/**").permitAll()
-                .requestMatchers("/ws/**").permitAll() 
+                .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/admin/*").hasRole("ADMIN")
                 .requestMatchers("/sse/**", "/mcp/message/**" ,"/ws/**").hasRole("PREMIUM")
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()

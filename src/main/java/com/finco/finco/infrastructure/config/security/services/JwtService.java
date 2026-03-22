@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,22 +18,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
 
-    public static final SecretKey SECRECT_KEY = Jwts.SIG.HS256.key().build();
+    private final SecretKey secretKey;
     public static final String PREFIX_TOKEN = "Bearer ";
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String CONTEND_TYPE = "application/json";
 
-    public JwtService(UserRepository userRepository) {
-
+    public JwtService(@Value("${jwt.secret}") String jwtSecret) {
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
     public String generateToken(User user) throws JsonProcessingException {
@@ -45,7 +47,7 @@ public class JwtService {
         String token = Jwts.builder()
                 .subject(user.getUsername())
                 .claims(claims)
-                .signWith(SECRECT_KEY)
+                .signWith(secretKey)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 7200000))
                 .compact();
@@ -64,7 +66,7 @@ public class JwtService {
         String token = Jwts.builder()
                 .subject(user.getAttribute("email"))
                 .claims(claims)
-                .signWith(SECRECT_KEY)
+                .signWith(secretKey)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 7200000))
                 .compact();
@@ -74,7 +76,7 @@ public class JwtService {
     }
 
     public Claims getClaims(String token) {
-        return Jwts.parser().verifyWith(SECRECT_KEY).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
     }
 
     public Collection<? extends GrantedAuthority> getAuthorities(String token)
@@ -93,7 +95,7 @@ public class JwtService {
         try {
 
             Jwts.parser()
-                    .verifyWith(SECRECT_KEY)
+                    .verifyWith(secretKey)
                     .build()
                     .parse(token);
 

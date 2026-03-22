@@ -3,6 +3,9 @@ server:
   servlet:
     contextPath: /finco-api/v1
 
+jwt:
+  secret: ${JWT_SECRET}
+
 finco:
   frontend:
     url: ${FRONTEND_URL}

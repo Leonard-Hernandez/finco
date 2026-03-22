@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine3.20-jdk as builder
+FROM amazoncorretto:17-alpine3.20-jdk AS builder
 
 WORKDIR /app/finco
 

@@ -169,6 +169,11 @@ public class UserMapper {
                 userSchema.setDefaultCurrency(user.getDefaultCurrency());
                 userSchema.setEnable(user.isEnable());
 
+                List<RoleSchema> roles = user.getRoles() != null
+                                ? user.getRoles().stream().map(roleMapper::toRoleSchema).collect(Collectors.toList())
+                                : List.of();
+                userSchema.setRoles(roles);
+
                 return userSchema;
         }
 
