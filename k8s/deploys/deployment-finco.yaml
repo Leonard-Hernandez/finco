@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: finco
+  name: finco
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finco
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: finco
+    spec:
+      containers:
+      - image: leonard20/finco:latest
+        name: finco
+        ports:
+        - containerPort: 8086
+        resources: {}
+        env:
+        - name: DbUrl
+          value: "mysql:3306"
+        - name: UserDb
+          value: "root"
+        - name: password
+          value: "DefaultPassword"
+        - name: FRONTEND_URL
+          value: "http://localhost:3000"
+        - name: openai-key
+          value: "sk-proj-_..."
+status: {}
+|
