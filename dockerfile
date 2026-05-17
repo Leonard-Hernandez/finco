@@ -1,23 +1,23 @@
-FROM amazoncorretto:17-alpine3.20-jdk AS builder
+FROM amazoncorretto:25-alpine AS builder
 
 WORKDIR /app/finco
 
-COPY ./.mvn ./.mvn
-COPY ./mvnw .
-COPY ./pom.xml .
-RUN chmod +x mvnw && sed -i 's/\r$//' mvnw
-RUN ./mvnw package -Dmaven.test.skip -Dmaven.main.skip -Dspring-boot.repackage.skip && rm -r ./target/
+COPY gradle ./gradle
+COPY gradlew .
+COPY build.gradle settings.gradle ./
+RUN chmod +x gradlew && sed -i 's/\r$//' gradlew
+RUN ./gradlew dependencies --no-daemon || true
 
 COPY ./src ./src
 
-RUN ./mvnw clean package -DskipTests
+RUN ./gradlew clean bootJar -x test --no-daemon
 
-EXPOSE 8086
-
-FROM sourcemation/jre-17
+FROM eclipse-temurin:25-jre-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/finco/target/finco-0.0.1-SNAPSHOT.jar .
+COPY --from=builder /app/finco/build/libs/finco-0.0.1-SNAPSHOT.jar .
+
+EXPOSE 8086
 
 ENTRYPOINT [ "java", "-jar", "finco-0.0.1-SNAPSHOT.jar" ]
