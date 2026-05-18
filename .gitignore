@@ -42,3 +42,11 @@ logs/*
 .claude/
 plans/
 CLAUDE.md
+mise.toml
+
+# mcps
+.codegraph/
+.playwright-mcp/
+
+# screenshots
+*.png
