@@ -5,15 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.ai.chat.client.ChatClient;
-
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
-import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.util.ResourceUtils;
@@ -24,13 +20,14 @@ import org.springframework.util.MimeTypeUtils;
 import com.finco.finco.entity.ai.gateway.AiGateway;
 import com.finco.finco.infrastructure.config.ai.DelegatorToolCallbackProvider;
 import com.finco.finco.usecase.ai.dto.IAiAskDto;
+import com.finco.finco.usecase.ai.dto.IAiAttachmentDto;
 
 @Service
 public class AiGatewayImpl implements AiGateway {
 
     private final ChatClient chatClient;
     private final ChatMemory chatMemory;
-    private SystemPromptTemplate systemPromptTemplate;
+    private final String systemPromptTemplate;
 
     public AiGatewayImpl(ChatClient.Builder builder, ToolCallbackProvider provider,
             JdbcChatMemoryRepository chatMemoryRepository) {
@@ -39,7 +36,7 @@ public class AiGatewayImpl implements AiGateway {
 
         this.chatMemory = MessageWindowChatMemory.builder()
                 .chatMemoryRepository(chatMemoryRepository)
-                .maxMessages(10)
+                .maxMessages(20)
                 .build();
 
         this.chatClient = builder
@@ -47,7 +44,7 @@ public class AiGatewayImpl implements AiGateway {
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
 
-        this.systemPromptTemplate = new SystemPromptTemplate(ResourceUtils.getText("classpath:prompts/system.md"));
+        this.systemPromptTemplate = ResourceUtils.getText("classpath:prompts/system.md");
     }
 
     @Override
@@ -55,20 +52,22 @@ public class AiGatewayImpl implements AiGateway {
 
         UserMessage userMessage = new UserMessage(aiAskDto.prompt());
 
-        if (aiAskDto.image() != null) {
-            Media media = new Media(
-                    MimeTypeUtils.parseMimeType(aiAskDto.imageExtension()),
-                    new ByteArrayResource(Base64.getDecoder().decode(aiAskDto.image())));
-            userMessage = userMessage.mutate().media(media).build();
+        List<? extends IAiAttachmentDto> attachments = aiAskDto.attachments();
+        if (attachments != null && !attachments.isEmpty()) {
+            List<Media> mediaList = attachments.stream()
+                    .map(att -> new Media(
+                            MimeTypeUtils.parseMimeType(att.mimeType()),
+                            new ByteArrayResource(Base64.getDecoder().decode(att.data()))))
+                    .toList();
+            userMessage = userMessage.mutate().media(mediaList).build();
         }
 
-        Message systemMessage = this.systemPromptTemplate.createMessage(Map.of("id", aiAskDto.userId()));
-
-        Prompt prompt = new Prompt(List.of(userMessage, systemMessage));
-
-        return chatClient.prompt(prompt)
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, aiAskDto.userId()))
-                .call().content();
+        return chatClient.prompt()
+                .system(s -> s.text(systemPromptTemplate).params(Map.of("id", String.valueOf(aiAskDto.userId()))))
+                .messages(userMessage)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, String.valueOf(aiAskDto.userId())))
+                .call()
+                .content();
     }
 
 }
