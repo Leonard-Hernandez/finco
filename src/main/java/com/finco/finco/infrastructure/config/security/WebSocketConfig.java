@@ -41,18 +41,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(messageInterceptor);
     }
 
+    private static final int MAX_BUFFER = 25 * 1024 * 1024;
+
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration reg) {
-        reg.setMessageSizeLimit(5 * 1024 * 1024)
-                .setSendBufferSizeLimit(5 * 1024 * 1024)
+        reg.setMessageSizeLimit(MAX_BUFFER)
+                .setSendBufferSizeLimit(MAX_BUFFER)
                 .setSendTimeLimit(20_000);
     }
 
     @Bean
     ServletServerContainerFactoryBean createServletServerContainerFactoryBean() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-        container.setMaxTextMessageBufferSize(5 * 1024 * 1024);
-        container.setMaxBinaryMessageBufferSize(5 * 1024 * 1024);
+        container.setMaxTextMessageBufferSize(MAX_BUFFER);
+        container.setMaxBinaryMessageBufferSize(MAX_BUFFER);
         return container;
     }
 }
