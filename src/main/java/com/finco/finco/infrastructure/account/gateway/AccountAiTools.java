@@ -11,7 +11,6 @@ import com.finco.finco.entity.account.model.AccountType;
 import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.pagination.PageRequest;
-import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.infrastructure.account.dto.AccountFilterData;
 import com.finco.finco.infrastructure.account.dto.AccountPublicData;
@@ -45,60 +44,50 @@ public class AccountAiTools {
         this.authGateway = authGateway;
     }
 
-    @Tool(description = "Get account by id")
+    @Tool(description = "Retrieve a single account's full details (balance, currency, type, fees) by its numeric ID. Use only when user references a specific account by ID.")
     @LogExecution(logArguments = false, logReturnValue = false)
-    public Account getAccount(Long id) {
-        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
-            throw new AccessDeniedBusinessException();
-        }
+    public Account getAccount(@ToolParam(description = "Account numeric ID") Long id) {
         return getAccountUseCase.execute(id);
     }
 
-    @Tool(description = "Get all accounts by user id")
+    @Tool(description = "List the authenticated user's accounts. Use to find the user's accounts before any transaction or when user asks about their accounts. Returns a page of accounts with id, name, balance, currency, type.")
     @LogExecution(logArguments = false, logReturnValue = false)
     public List<AccountPublicData> getAllAccountsByUser(
-            @ToolParam(description = "Page, default 0", required = true) Integer page,
-            @ToolParam(description = "Size, default 20", required = true) Integer size,
-            @ToolParam(description = "Sort by, default id", required = false) String sortBy,
-            @ToolParam(description = "Sort direction, default desc", required = false) String sortDirection,
-            @ToolParam(description = "Currency", required = false) CurrencyEnum currency,
-            @ToolParam(description = "Type", required = false) AccountType type,
-            @ToolParam(description = "User id", required = true) Long userId) {
+            @ToolParam(description = "Page number (0-based). Default 0", required = false) Integer page,
+            @ToolParam(description = "Page size. Default 20", required = false) Integer size,
+            @ToolParam(description = "Sort field. Default id", required = false) String sortBy,
+            @ToolParam(description = "Sort direction asc|desc. Default desc", required = false) String sortDirection,
+            @ToolParam(description = "Filter by currency", required = false) CurrencyEnum currency,
+            @ToolParam(description = "Filter by account type", required = false) AccountType type) {
 
-        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
-            throw new AccessDeniedBusinessException();
-        }
-
-        PageRequest domainPageRequest = toPageRequest(page, size, sortBy, sortDirection);
+        Long userId = authGateway.getAuthenticatedUserId();
+        PageRequest domainPageRequest = toPageRequest(page == null ? 0 : page, size == null ? 20 : size, sortBy, sortDirection);
         AccountFilterData accountFilterData = new AccountFilterData(userId, currency, type, true);
         return getAllAccountsByUserUseCase.execute(domainPageRequest, accountFilterData).getContent().stream()
                 .map(AccountPublicData::new).toList();
     }
 
-    @Tool(description = "Deposit money to account")
+    @Tool(description = "Deposit money into an account. ALWAYS confirm with the user before calling. Returns the updated account.")
     @LogExecution(logArguments = false, logReturnValue = false)
-    public AccountPublicData deposit(Long accountId, AccountTransactionData data) {
-        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
-            throw new AccessDeniedBusinessException();
-        }
+    public AccountPublicData deposit(
+            @ToolParam(description = "Target account ID") Long accountId,
+            @ToolParam(description = "Transaction data: amount, description, category, date") AccountTransactionData data) {
         return new AccountPublicData(depositAccountUseCase.execute(accountId, data));
     }
 
-    @Tool(description = "Withdraw money from account")
+    @Tool(description = "Withdraw money from an account. ALWAYS confirm with the user before calling. Returns the updated account.")
     @LogExecution(logArguments = false, logReturnValue = false)
-    public AccountPublicData withdraw(Long accountId, AccountTransactionData data) {
-        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
-            throw new AccessDeniedBusinessException();
-        }
+    public AccountPublicData withdraw(
+            @ToolParam(description = "Source account ID") Long accountId,
+            @ToolParam(description = "Transaction data: amount, description, category, date") AccountTransactionData data) {
         return new AccountPublicData(withDrawAccountUseCase.execute(accountId, data));
     }
 
-    @Tool(description = "Transfer money between accounts")
+    @Tool(description = "Transfer money between two accounts of the user. ALWAYS confirm with the user before calling. Returns the source account updated.")
     @LogExecution(logArguments = false, logReturnValue = false)
-    public AccountPublicData transfer(Long accountId, AccountTransferData data) {
-        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
-            throw new AccessDeniedBusinessException();
-        }
+    public AccountPublicData transfer(
+            @ToolParam(description = "Source account ID") Long accountId,
+            @ToolParam(description = "Transfer data: target account ID, amount, description, category, date") AccountTransferData data) {
         return new AccountPublicData(transferAccountUseCase.execute(accountId, data));
     }
 

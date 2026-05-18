@@ -20,7 +20,6 @@ public class DelegatorToolCallback implements ToolCallback {
 
     @Override
     public String call(String toolInput) {
-        String result = this.delegate.call(toolInput);
-        return JToon.encodeJson(result);
+        return JToon.encodeJson(this.delegate.call(toolInput));
     }
 }
