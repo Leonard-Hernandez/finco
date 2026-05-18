@@ -7,7 +7,6 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
@@ -20,34 +19,27 @@ import com.finco.finco.usecase.ai.AiGetAnswerUseCase;
 public class AiController {
 
     private final AiGetAnswerUseCase aiGetAnswerUseCase;
-    private final SimpMessagingTemplate messagingTemplate;
 
-    public AiController(AiGetAnswerUseCase aiGetAnswerUseCase,
-            SimpMessagingTemplate messagingTemplate) {
+    public AiController(AiGetAnswerUseCase aiGetAnswerUseCase) {
         this.aiGetAnswerUseCase = aiGetAnswerUseCase;
-        this.messagingTemplate = messagingTemplate;
     }
 
     @MessageMapping(value = "/chat")
-    public void SendMessage(@Payload AiAskDto aiAskDto, Principal principal, SimpMessageHeaderAccessor headerAccessor)
+    @SendToUser("/queue/chat")
+    public String SendMessage(@Payload AiAskDto aiAskDto, Principal principal, SimpMessageHeaderAccessor headerAccessor)
             throws Exception {
-        WebSocketSessionHolder.setSessionId(headerAccessor.getSessionId());
-
         try {
-            String response = aiGetAnswerUseCase.execute(aiAskDto);
-            messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/chat", response);
-
+            WebSocketSessionHolder.setSessionId(headerAccessor.getSessionId());
+            return aiGetAnswerUseCase.execute(aiAskDto);
         } finally {
             WebSocketSessionHolder.clear();
         }
-
     }
 
     @MessageExceptionHandler(Exception.class)
     @SendToUser("/queue/error")
     public ErrorResponse handleException(Exception e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
-        return errorResponse;
+        return new ErrorResponse(e.getClass().getSimpleName(), e.getMessage(), LocalDateTime.now());
     }
 
 }

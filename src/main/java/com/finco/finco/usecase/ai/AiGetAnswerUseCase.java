@@ -22,7 +22,7 @@ public class AiGetAnswerUseCase {
         if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
             throw new AccessDeniedBusinessException();
         }
-        return aiGateway.getAnswer(aiAskDto);            
+        return aiGateway.getAnswer(aiAskDto);
     }
 
 }
