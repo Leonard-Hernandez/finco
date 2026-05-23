@@ -20,7 +20,6 @@ spec:
         name: finco
         ports:
         - containerPort: 8086
-        resources: {}
         env:
         - name: DbUrl
           value: "mysql:3306"
@@ -31,6 +30,6 @@ spec:
         - name: FRONTEND_URL
           value: "http://localhost:3000"
         - name: openai-key
-          value: "sk-proj-_..."
-status: {}
-|
+          value: "x"
+        - name: JWT_SECRET
+          value: "x...."

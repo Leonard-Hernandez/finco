@@ -19,7 +19,7 @@ spec:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "root"
-        - name: MYSQL_DATABASE
           value: "DefaultPassword"
+        - name: MYSQL_DATABASE
+          value: "finco"
         
