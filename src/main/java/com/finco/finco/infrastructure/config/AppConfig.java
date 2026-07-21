@@ -18,6 +18,7 @@ import com.finco.finco.usecase.account.DepositAccountUseCase;
 import com.finco.finco.usecase.account.GetAccountUseCase;
 import com.finco.finco.usecase.account.GetAllAccountUseCase;
 import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
+import com.finco.finco.usecase.account.GetDefaultAccountByUserUseCase;
 import com.finco.finco.usecase.account.TransferAccountUseCase;
 import com.finco.finco.usecase.account.UpdateAccountUseCase;
 import com.finco.finco.usecase.account.WithDrawAccountUseCase;
@@ -107,6 +108,11 @@ public class AppConfig {
     @Bean
     GetAllAccountsByUserUseCase getAllAccountsByUserUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
         return new GetAllAccountsByUserUseCase(accountGateway, authGateway);
+    }
+
+    @Bean
+    GetDefaultAccountByUserUseCase getDefaultAccountByUserUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
+        return new GetDefaultAccountByUserUseCase(accountGateway, authGateway);
     }
 
     @Bean

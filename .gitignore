@@ -50,3 +50,8 @@ mise.toml
 
 # screenshots
 *.png
+
+#Ai
+
+.agents/*
+skills-lock.json

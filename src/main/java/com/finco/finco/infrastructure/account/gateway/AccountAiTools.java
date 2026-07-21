@@ -20,6 +20,7 @@ import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageR
 import com.finco.finco.usecase.account.DepositAccountUseCase;
 import com.finco.finco.usecase.account.GetAccountUseCase;
 import com.finco.finco.usecase.account.GetAllAccountsByUserUseCase;
+import com.finco.finco.usecase.account.GetDefaultAccountByUserUseCase;
 import com.finco.finco.usecase.account.TransferAccountUseCase;
 import com.finco.finco.usecase.account.WithDrawAccountUseCase;
 
@@ -28,16 +29,19 @@ public class AccountAiTools {
 
     private final GetAccountUseCase getAccountUseCase;
     private final GetAllAccountsByUserUseCase getAllAccountsByUserUseCase;
+    private final GetDefaultAccountByUserUseCase getDefaultAccountByUserUseCase;
     private final DepositAccountUseCase depositAccountUseCase;
     private final TransferAccountUseCase transferAccountUseCase;
     private final WithDrawAccountUseCase withDrawAccountUseCase;
     private final AuthGateway authGateway;
 
     public AccountAiTools(GetAccountUseCase getAccountUseCase, GetAllAccountsByUserUseCase getAllAccountsByUserUseCase,
+            GetDefaultAccountByUserUseCase getDefaultAccountByUserUseCase,
             DepositAccountUseCase depositAccountUseCase, TransferAccountUseCase transferAccountUseCase,
             WithDrawAccountUseCase withDrawAccountUseCase, AuthGateway authGateway) {
         this.getAccountUseCase = getAccountUseCase;
         this.getAllAccountsByUserUseCase = getAllAccountsByUserUseCase;
+        this.getDefaultAccountByUserUseCase = getDefaultAccountByUserUseCase;
         this.depositAccountUseCase = depositAccountUseCase;
         this.transferAccountUseCase = transferAccountUseCase;
         this.withDrawAccountUseCase = withDrawAccountUseCase;
@@ -48,6 +52,11 @@ public class AccountAiTools {
     @LogExecution(logArguments = false, logReturnValue = false)
     public Account getAccount(@ToolParam(description = "Account numeric ID") Long id) {
         return getAccountUseCase.execute(id);
+    }
+
+    @Tool(description = "Retrieve the authenticated user's default account. Use when the user references their main/default account without specifying an ID.")
+    public AccountPublicData getDefaultAccount() {
+        return new AccountPublicData(getDefaultAccountByUserUseCase.execute());
     }
 
     @Tool(description = "List the authenticated user's accounts. Use to find the user's accounts before any transaction or when user asks about their accounts. Returns a page of accounts with id, name, balance, currency, type.")

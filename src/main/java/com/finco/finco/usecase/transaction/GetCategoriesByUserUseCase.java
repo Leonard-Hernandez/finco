@@ -24,4 +24,10 @@ public class GetCategoriesByUserUseCase {
         return transactionGateway.findAllCategoriesByUserId(userId);
     }
 
+    @TransactionalDomainAnnotation(readOnly = true)
+    @LogExecution(logReturnValue = false, logArguments = false)
+    public List<String> execute() {
+        return transactionGateway.findAllCategoriesByUserId(authGateway.getAuthenticatedUserId());
+    }
+
 }

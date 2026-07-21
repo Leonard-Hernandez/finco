@@ -15,15 +15,19 @@ import static com.finco.finco.infrastructure.config.db.mapper.PageMapper.toPageR
 import com.finco.finco.infrastructure.transaction.dto.TransactionFilterData;
 import com.finco.finco.infrastructure.transaction.dto.TransactionPublicData;
 import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
+import com.finco.finco.usecase.transaction.GetCategoriesByUserUseCase;
 
 @Service
 public class TransactionAiTools {
 
     private final GetAllTransactionsByUserUseCase tool;
+    private final GetCategoriesByUserUseCase getCategoriesByUserUseCase;
     private final AuthGateway authGateway;
 
-    public TransactionAiTools(GetAllTransactionsByUserUseCase tool, AuthGateway authGateway) {
+    public TransactionAiTools(GetAllTransactionsByUserUseCase tool,
+            GetCategoriesByUserUseCase getCategoriesByUserUseCase, AuthGateway authGateway) {
         this.tool = tool;
+        this.getCategoriesByUserUseCase = getCategoriesByUserUseCase;
         this.authGateway = authGateway;
     }
 
@@ -49,6 +53,11 @@ public class TransactionAiTools {
         TransactionFilterData transactionFilterData = new TransactionFilterData(userId, accountId, goalId,
                 transferAccountId, category, type, onlyAccountTransactions, onlyGoalTransactions, startDate, endDate);
         return tool.execute(domainPageRequest, transactionFilterData).getContent().stream().map(TransactionPublicData::new).toList();
+    }
+
+    @Tool(description = "List all existing transaction category names for the authenticated user. Use before filtering by category to know which categories the user actually has.")
+    public List<String> getCategoriesByUser() {
+        return getCategoriesByUserUseCase.execute();
     }
 
 }
