@@ -22,4 +22,10 @@ spec:
           value: "DefaultPassword"
         - name: MYSQL_DATABASE
           value: "finco"
-        
+        volumeMounts:
+          - name: data-mysql
+            mountPath: /var/lib/mysql
+      volumes:
+        - name: data-mysql
+          persistentVolumeClaim: 
+            claimName: mysql-pvc        
