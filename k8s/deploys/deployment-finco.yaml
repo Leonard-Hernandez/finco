@@ -22,14 +22,29 @@ spec:
         - containerPort: 8086
         env:
         - name: DbUrl
-          value: "mysql:3306"
+          valueFrom: 
+            configMapKeyRef:
+              name: finco
+              key: db_url
         - name: UserDb
-          value: "root"
+          valueFrom: 
+            configMapKeyRef:
+              name: finco
+              key: user_db
         - name: password
-          value: "DefaultPassword"
+          valueFrom: 
+            configMapKeyRef:
+              name: finco
+              key: password
         - name: FRONTEND_URL
-          value: "http://localhost:3000"
+          valueFrom: 
+            configMapKeyRef:
+              name: finco
+              key: frontend_url
         - name: openai-key
           value: "x"
         - name: JWT_SECRET
-          value: "x...."
+          valueFrom: 
+            configMapKeyRef:
+              name: finco
+              key: jwt_secret

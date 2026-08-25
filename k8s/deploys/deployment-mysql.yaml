@@ -19,9 +19,15 @@ spec:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "DefaultPassword"
+          valueFrom:
+            configMapKeyRef:
+              name: mysql
+              key: password
         - name: MYSQL_DATABASE
-          value: "finco"
+          valueFrom:
+            configMapKeyRef:
+              name: mysql
+              key: database
         volumeMounts:
           - name: data-mysql
             mountPath: /var/lib/mysql
