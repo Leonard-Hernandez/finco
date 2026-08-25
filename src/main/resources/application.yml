@@ -3,9 +3,6 @@ server:
   servlet:
     contextPath: /finco-api/v1
 
-jwt:
-  secret: ${JWT_SECRET}
-
 finco:
   frontend:
     url: ${FRONTEND_URL}
@@ -22,26 +19,9 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
   security:
     oauth2:
-      client:
-        registration:
-          github:
-            client-id: ${GITHUB_CLIENT_ID}
-            client-secret: ${GITHUB_CLIENT_SECRET}
-            scope: 
-              - read:user
-              - user:email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            client-name: GitHub
-            authorization-grant-type: authorization_code
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope: 
-              - email
-              - profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            client-name: Google
-            authorization-grant-type: authorization_code
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTHCO_ISSUER}
   ai:
     openai:
       api-key: ${openai-key}

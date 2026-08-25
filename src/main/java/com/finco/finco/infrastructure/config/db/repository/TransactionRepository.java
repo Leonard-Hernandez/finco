@@ -10,11 +10,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Repository;
 
 import com.finco.finco.infrastructure.config.db.schema.TransactionSchema;
 
-@Repository
 public interface TransactionRepository extends JpaRepository<TransactionSchema, Long>, JpaSpecificationExecutor<TransactionSchema> {
 
     @NonNull
