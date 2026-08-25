@@ -20,8 +20,8 @@ spec:
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              name: mysql
+            secretKeyRef:
+              name: mysql-secret
               key: password
         - name: MYSQL_DATABASE
           valueFrom:

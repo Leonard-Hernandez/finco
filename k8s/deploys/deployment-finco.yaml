@@ -28,13 +28,13 @@ spec:
               key: db_url
         - name: UserDb
           valueFrom: 
-            configMapKeyRef:
-              name: finco
-              key: user_db
+            secretKeyRef:
+              name: finco-secret
+              key: username
         - name: password
           valueFrom: 
-            configMapKeyRef:
-              name: finco
+            secretKeyRef:
+              name: finco-secret
               key: password
         - name: FRONTEND_URL
           valueFrom: 
@@ -45,6 +45,6 @@ spec:
           value: "x"
         - name: JWT_SECRET
           valueFrom: 
-            configMapKeyRef:
-              name: finco
+            secretKeyRef:
+              name: finco-secret
               key: jwt_secret
