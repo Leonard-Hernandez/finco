@@ -10,18 +10,14 @@ import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
-import com.finco.finco.infrastructure.config.security.services.WebSocketAuthHolder;
-import com.finco.finco.infrastructure.config.security.services.WebSocketSessionHolder;
 
 @Component
 public class AuthSpringSecurityGateway implements AuthGateway {
 
     private final UserRepository userRepository;
-    private final WebSocketAuthHolder webSocketAuthHolder;
 
-    public AuthSpringSecurityGateway(UserRepository userRepository, WebSocketAuthHolder webSocketAuthHolder) {
+    public AuthSpringSecurityGateway(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.webSocketAuthHolder = webSocketAuthHolder;
     }
 
     @Override
@@ -61,12 +57,6 @@ public class AuthSpringSecurityGateway implements AuthGateway {
 
     private Authentication getAuthentication() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            String sessionId = WebSocketSessionHolder.getSessionId();
-            if (sessionId != null) {
-                auth = webSocketAuthHolder.get(sessionId);
-            }
-        }
         if (auth == null || !auth.isAuthenticated()) {
             throw new AccessDeniedBusinessException();
         }
