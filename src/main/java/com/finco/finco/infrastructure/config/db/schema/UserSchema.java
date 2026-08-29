@@ -46,6 +46,9 @@ public class UserSchema {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "authco_user_id", nullable = true, unique = true, length = 36)
+    private String authcoUserId;
+
     @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
@@ -55,7 +58,7 @@ public class UserSchema {
     @UniqueEmail
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = true)
     @NotBlank
     private String password;
 

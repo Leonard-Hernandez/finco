@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<UserSchema, Long>, JpaSpec
 
     Optional<UserSchema> findByEmail(String email);
 
+    Optional<UserSchema> findByAuthcoUserId(String authcoUserId);
+
     Page<UserSchema> findAllByEnableTrue(Pageable pageable);
 
     @NonNull
