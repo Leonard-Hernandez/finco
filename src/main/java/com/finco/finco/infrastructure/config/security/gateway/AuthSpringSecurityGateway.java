@@ -39,16 +39,12 @@ public class AuthSpringSecurityGateway implements AuthGateway {
 
     @Override
     @LogExecution()
-    public boolean isAuthenticatedUserInRole(String roleName) {
+    public boolean hasScope(String scope) {
         Authentication authentication = getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return false;
-        }
-
-        String fullRoleName = "ROLE_" + roleName.toUpperCase();
+        String fullScopeName = "SCOPE_" + scope;
         return authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(fullRoleName));
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(fullScopeName));
     }
 
     @Override
@@ -57,7 +53,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
         Long authenticatedUserId = getAuthenticatedUserId();
 
         if (!authenticatedUserId.equals(ownerId)) {
-            if (!isAuthenticatedUserInRole("ADMIN")) {
+                if (!hasScope("admin")) {
                 throw new AccessDeniedBusinessException();
             }
         }

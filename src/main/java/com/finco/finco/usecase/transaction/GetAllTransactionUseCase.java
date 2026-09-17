@@ -23,7 +23,7 @@ public class GetAllTransactionUseCase {
     @TransactionalDomainAnnotation(readOnly = true)
     @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Transaction> execute(PageRequest page, ITransactionFilterData filterData) {
-        if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
+        if (!authGateway.hasScope("admin")) {
             throw new AccessDeniedBusinessException();
         }
         return transactionGateway.findAllByFilterData(filterData, page);

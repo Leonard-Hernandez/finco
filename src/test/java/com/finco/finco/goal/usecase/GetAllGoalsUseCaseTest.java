@@ -80,7 +80,7 @@ public class GetAllGoalsUseCaseTest {
     void getAllGoalsSuccess() {
         // Arrange
         IGoalFilterData filterData = new GoalFilterData(null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
+        when(authGateway.hasScope("admin")).thenReturn(true);
         when(goalGateway.findAllByFilterData(filterData, pageRequest)).thenReturn(pagedResult);
 
         // Act
@@ -92,7 +92,7 @@ public class GetAllGoalsUseCaseTest {
         assertEquals(1, result.getContent().size());
         assertEquals("Test Goal", result.getContent().get(0).getName());
         
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope("admin");
         verify(goalGateway, times(1)).findAllByFilterData(filterData, pageRequest);
     }
 
@@ -101,7 +101,7 @@ public class GetAllGoalsUseCaseTest {
     void throwExceptionWhenUserIsNotAdmin() {
         // Arrange
         IGoalFilterData filterData = new GoalFilterData(null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
+        when(authGateway.hasScope("admin")).thenReturn(false);
 
         // Act & Assert
         AccessDeniedBusinessException exception = assertThrows(
@@ -110,7 +110,7 @@ public class GetAllGoalsUseCaseTest {
         );
         
         assertNotNull(exception);
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope("admin");
         verify(goalGateway, never()).findAll(any(PageRequest.class));
     }
       

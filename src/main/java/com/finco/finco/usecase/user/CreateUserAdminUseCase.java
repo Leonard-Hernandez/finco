@@ -29,7 +29,7 @@ public class CreateUserAdminUseCase {
     @TransactionalDomainAnnotation()
     @LogExecution(logReturnValue = false, logArguments = false)
     public User execute(IUserRegistrationData userData) {
-        if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
+        if (!authGateway.hasScope("admin")) {
             throw new AccessDeniedBusinessException();
         }
 

@@ -4,7 +4,7 @@ public interface AuthGateway {
 
     Long getAuthenticatedUserId();
 
-    boolean isAuthenticatedUserInRole(String roleName);
+    boolean hasScope(String scope);
 
     void verifyOwnershipOrAdmin(Long ownerId);
 

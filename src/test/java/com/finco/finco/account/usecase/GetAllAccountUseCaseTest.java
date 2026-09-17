@@ -70,7 +70,7 @@ public class GetAllAccountUseCaseTest {
     public void getAllAccountsSuccess() {
         // Arrange
         IAccountFilterData filterData = new AccountFilterData(null, null, null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
+        when(authGateway.hasScope("admin")).thenReturn(true);
         when(accountGateway.findByFilterData(any(PageRequest.class), any(IAccountFilterData.class))).thenReturn(pagedResult);
 
         // Act
@@ -79,7 +79,7 @@ public class GetAllAccountUseCaseTest {
         // Assert
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope("admin");
         verify(accountGateway, times(1)).findByFilterData(any(PageRequest.class), any(IAccountFilterData.class));
     }
 
@@ -88,14 +88,14 @@ public class GetAllAccountUseCaseTest {
     public void getAllAccountsWithoutAdminRoleShouldThrowException() {
         // Arrange
         IAccountFilterData filterData = new AccountFilterData(null, null, null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
+        when(authGateway.hasScope("admin")).thenReturn(false);
 
         // Act & Assert
         EbusinessException exception = assertThrows(AccessDeniedBusinessException.class, () -> {
             getAllAccountUseCase.execute(pageRequest, filterData);
         });
 
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope("admin");
         assertEquals("Access Denied for this resource", exception.getMessage());
         verify(accountGateway, never()).findByFilterData(any(PageRequest.class), any(IAccountFilterData.class));
     }

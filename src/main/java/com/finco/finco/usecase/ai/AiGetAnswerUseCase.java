@@ -19,7 +19,7 @@ public class AiGetAnswerUseCase {
     @LogExecution(logReturnValue = false, logArguments = false)
     public String execute(IAiAskDto aiAskDto) {
         authGateway.verifyOwnershipOrAdmin(aiAskDto.userId());
-        if (!authGateway.isAuthenticatedUserInRole("PREMIUM")) {
+        if (!authGateway.hasScope("finco:premium")) {
             throw new AccessDeniedBusinessException();
         }
         return aiGateway.getAnswer(aiAskDto);

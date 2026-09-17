@@ -76,7 +76,7 @@ public class CreateUserAdminTest {
     @DisplayName("Create user admin success")
     public void createUserAdminSuccess() {
         // Arrange
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
+        when(authGateway.hasScope("admin")).thenReturn(true);
         when(roleGateway.findByName("ROLE_USER")).thenReturn(Optional.of(userRole));
         when(roleGateway.findByName("ROLE_ADMIN")).thenReturn(Optional.of(adminRole));
         when(userGateway.create(any(User.class))).thenAnswer(invocation -> {
@@ -111,7 +111,7 @@ public class CreateUserAdminTest {
     @DisplayName("Create user admin not admin")
     public void createUserAdminNotAdmin() {
         // Arrange
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
+        when(authGateway.hasScope("admin")).thenReturn(false);
 
         // Act and Assert
         assertThrows(AccessDeniedBusinessException.class, () -> createUserUseCase.execute(userData));

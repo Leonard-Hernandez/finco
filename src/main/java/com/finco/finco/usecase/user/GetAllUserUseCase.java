@@ -24,7 +24,7 @@ public class GetAllUserUseCase {
     @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<User> execute(PageRequest page, IUserFilterData filterData) {
 
-        if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
+        if (!authGateway.hasScope("admin")) {
             throw new AccessDeniedBusinessException();
         }
 

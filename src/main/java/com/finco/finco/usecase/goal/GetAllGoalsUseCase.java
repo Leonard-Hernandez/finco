@@ -24,7 +24,7 @@ public class GetAllGoalsUseCase {
     @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Goal> execute(PageRequest pageRequest, IGoalFilterData goalFilterData) {
 
-        if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
+        if (!authGateway.hasScope("admin")) {
             throw new AccessDeniedBusinessException();
         }
 
