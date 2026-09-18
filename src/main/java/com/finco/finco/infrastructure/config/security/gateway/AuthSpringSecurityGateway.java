@@ -1,7 +1,5 @@
 package com.finco.finco.infrastructure.config.security.gateway;
 
-import java.util.Optional;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -10,12 +8,10 @@ import org.springframework.stereotype.Component;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
-import com.finco.finco.infrastructure.config.authco.dto.UserInfoDto;
-import com.finco.finco.infrastructure.config.authco.gateway.AuthcoRestGateway;
+import com.finco.finco.infrastructure.config.authco.service.UserProvisionService;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Component
@@ -23,17 +19,16 @@ import lombok.AllArgsConstructor;
 public class AuthSpringSecurityGateway implements AuthGateway {
 
     private final UserRepository userRepository;
-    private final AuthcoRestGateway authcoRestGateway;
+    private final UserProvisionService userProvisionService;
 
     @Override
-    @Transactional
     @LogExecution(logReturnValue = false)
     public Long getAuthenticatedUserId() {
         Authentication authentication = getAuthentication();
         String sub = authentication.getName();
 
         UserSchema user = userRepository.findByAuthcoUserId(sub)
-                .orElseGet(() -> provisionUser(sub));
+                .orElseGet(() -> userProvisionService.provisionUser(sub, getToken()));
         return user.getId();
     }
 
@@ -53,7 +48,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
         Long authenticatedUserId = getAuthenticatedUserId();
 
         if (!authenticatedUserId.equals(ownerId)) {
-                if (!hasScope("admin")) {
+            if (!hasScope("admin")) {
                 throw new AccessDeniedBusinessException();
             }
         }
@@ -67,43 +62,9 @@ public class AuthSpringSecurityGateway implements AuthGateway {
         return auth;
     }
 
-    private UserSchema provisionUser(String sub) {
-
-        if (sub == null) {
-            throw new AccessDeniedBusinessException();
-        }
-
-        Authentication authentication = getAuthentication();
-
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-
-        UserInfoDto infoDto = authcoRestGateway.getUserInfo(jwt.getTokenValue());
-
-        if (infoDto.email() == null || infoDto.email().isBlank()) {
-            throw new AccessDeniedBusinessException();
-        }
-
-        Optional<UserSchema> optional = userRepository.findByEmail(infoDto.email());
-
-        if (optional.isPresent()) {
-            if (!infoDto.emailVerified()) {
-                throw new AccessDeniedBusinessException();
-            }
-            UserSchema userSchema = optional.get();
-
-            userSchema.setAuthcoUserId(sub);
-
-            return userRepository.save(userSchema);
-        }
-
-        UserSchema newUser = new UserSchema();
-
-        newUser.setAuthcoUserId(sub);
-        newUser.setEmail(infoDto.email());
-        newUser.setName(infoDto.name() != null ? infoDto.name() : infoDto.email());
-
-        return userRepository.save(newUser);
-
+    private String getToken() {
+        Jwt jwt = (Jwt) getAuthentication().getPrincipal();
+        return jwt.getTokenValue();
     }
 
 }

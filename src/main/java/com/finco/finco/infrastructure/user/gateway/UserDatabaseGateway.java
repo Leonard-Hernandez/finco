@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.finco.finco.entity.annotation.LogExecution;
@@ -24,19 +23,15 @@ public class UserDatabaseGateway implements UserGateway {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserDatabaseGateway(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserDatabaseGateway(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
     public User create(User user) {
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userMapper.toUser(userRepository.save(userMapper.toLightUserSchema(user)));
 

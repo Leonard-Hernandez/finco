@@ -59,7 +59,6 @@ public class UserSchema {
     private String email;
 
     @Column(name = "password", nullable = true)
-    @NotBlank
     private String password;
 
     @Column(name = "registration_Date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
