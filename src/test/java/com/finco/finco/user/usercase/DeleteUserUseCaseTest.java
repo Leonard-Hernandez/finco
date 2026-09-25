@@ -41,7 +41,6 @@ public class DeleteUserUseCaseTest {
         testUser.setId(userId);
         testUser.setName("User to Delete");
         testUser.setEmail("delete@example.com");
-        testUser.setPassword("password");
         testUser.setEnable(true);
     }
 

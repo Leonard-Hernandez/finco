@@ -8,7 +8,6 @@ import com.finco.finco.entity.account.gateway.AccountGateway;
 import com.finco.finco.entity.ai.gateway.AiGateway;
 import com.finco.finco.entity.goal.gateway.GoalGateway;
 import com.finco.finco.entity.goalAccountBalance.gateway.GoalAccountBalanceGateway;
-import com.finco.finco.entity.role.gateway.RoleGateway;
 import com.finco.finco.entity.security.gateway.AuthGateway;
 import com.finco.finco.entity.transaction.gateway.TransactionGateway;
 import com.finco.finco.entity.user.gateway.UserGateway;
@@ -34,8 +33,6 @@ import com.finco.finco.usecase.goal.WithDrawGoalUseCase;
 import com.finco.finco.usecase.transaction.GetAllTransactionUseCase;
 import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
 import com.finco.finco.usecase.transaction.GetCategoriesByUserUseCase;
-import com.finco.finco.usecase.user.CreateUserAdminUseCase;
-import com.finco.finco.usecase.user.CreateUserUseCase;
 import com.finco.finco.usecase.user.DeleteUserUseCase;
 import com.finco.finco.usecase.user.GetAllUserUseCase;
 import com.finco.finco.usecase.user.GetTotalBalanceByUserUseCase;
@@ -47,17 +44,6 @@ import com.finco.finco.usecase.user.UpdateUserUseCase;
 public class AppConfig {
 
     // User Beans
-    @Bean
-    CreateUserUseCase createUserUserCase(UserGateway userGateway, RoleGateway roleGateway) {
-        return new CreateUserUseCase(userGateway, roleGateway);
-    }
-
-    @Bean
-    CreateUserAdminUseCase createUserAdminUserCase(UserGateway userGateway, RoleGateway roleGateway,
-            AuthGateway authGateway) {
-        return new CreateUserAdminUseCase(userGateway, roleGateway, authGateway);
-    }
-
     @Bean
     UpdateUserUseCase updateUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
         return new UpdateUserUseCase(userGateway, authGateway);

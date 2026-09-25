@@ -12,14 +12,12 @@ import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
 import com.finco.finco.entity.pagination.PageRequest;
 import com.finco.finco.entity.pagination.PagedResult;
-import com.finco.finco.entity.role.model.Role;
 import com.finco.finco.entity.transaction.model.Transaction;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.config.db.schema.AccountSchema;
 import com.finco.finco.infrastructure.config.db.schema.AssetSchema;
 import com.finco.finco.infrastructure.config.db.schema.GoalSchema;
 import com.finco.finco.infrastructure.config.db.schema.LiabilitieSchema;
-import com.finco.finco.infrastructure.config.db.schema.RoleSchema;
 import com.finco.finco.infrastructure.config.db.schema.TransactionSchema;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
 
@@ -30,16 +28,14 @@ public class UserMapper {
         private final GoalMapper goalMapper;
         private final AssetMapper assetMapper;
         private final LiabilitieMapper liabilitieMapper;
-        private final RoleMapper roleMapper;
         private final TransactionMapper transactionMapper;
 
         public UserMapper(AccountMapper accountMapper, GoalMapper GoalMapper, AssetMapper assetMapper,
-                        LiabilitieMapper liabilitieMapper, RoleMapper roleMapper, TransactionMapper transactionMapper) {
+                        LiabilitieMapper liabilitieMapper, TransactionMapper transactionMapper) {
                 this.accountMapper = accountMapper;
                 this.goalMapper = GoalMapper;
                 this.assetMapper = assetMapper;
                 this.liabilitieMapper = liabilitieMapper;
-                this.roleMapper = roleMapper;
                 this.transactionMapper = transactionMapper;
         }
 
@@ -53,7 +49,6 @@ public class UserMapper {
                 user.setId(userSchema.getId());
                 user.setName(userSchema.getName());
                 user.setEmail(userSchema.getEmail());
-                user.setPassword(userSchema.getPassword());
                 user.setRegistrationDate(userSchema.getRegistrationDate());
                 user.setDefaultCurrency(userSchema.getDefaultCurrency());
                 user.setEnable(userSchema.getEnable());
@@ -72,9 +67,6 @@ public class UserMapper {
                 List<Liabilitie> liabilities = userSchema.getLiabilities() != null ? userSchema.getLiabilities()
                                 .stream().map(liabilitieMapper::toLiabilitie).collect(Collectors.toList()) : List.of();
 
-                List<Role> roles = userSchema.getRoles() != null
-                                ? userSchema.getRoles().stream().map(roleMapper::toRole).collect(Collectors.toList())
-                                : List.of();
 
                 List<Transaction> transactions = userSchema.getTransactions() != null ? userSchema.getTransactions()
                                 .stream().map(transactionMapper::toTransaction).collect(Collectors.toList())
@@ -84,7 +76,6 @@ public class UserMapper {
                 user.setGoals(goals);
                 user.setAssets(assets);
                 user.setLiabilities(liabilities);
-                user.setRoles(roles);
                 user.setTransactions(transactions);
 
                 return user;
@@ -101,7 +92,6 @@ public class UserMapper {
                 user.setId(userSchema.getId());
                 user.setName(userSchema.getName());
                 user.setEmail(userSchema.getEmail());
-                user.setPassword(userSchema.getPassword());
                 user.setRegistrationDate(userSchema.getRegistrationDate());
                 user.setDefaultCurrency(userSchema.getDefaultCurrency());
                 user.setEnable(userSchema.getEnable());
@@ -119,7 +109,6 @@ public class UserMapper {
                 userSchema.setId(user.getId());
                 userSchema.setName(user.getName());
                 userSchema.setEmail(user.getEmail());
-                userSchema.setPassword(user.getPassword());
                 userSchema.setRegistrationDate(user.getRegistrationDate());
                 userSchema.setDefaultCurrency(user.getDefaultCurrency());
                 userSchema.setEnable(user.isEnable());
@@ -138,10 +127,6 @@ public class UserMapper {
                 List<LiabilitieSchema> liabilities = user.getLiabilities() != null ? user.getLiabilities().stream()
                                 .map(liabilitieMapper::toLiabilitieSchema).collect(Collectors.toList()) : List.of();
 
-                List<RoleSchema> roles = user.getRoles() != null
-                                ? user.getRoles().stream().map(roleMapper::toRoleSchema).collect(Collectors.toList())
-                                : List.of();
-
                 List<TransactionSchema> transactions = user.getTransactions() != null ? user.getTransactions().stream()
                                 .map(transactionMapper::toTransactionSchema).collect(Collectors.toList()) : List.of();
 
@@ -149,7 +134,6 @@ public class UserMapper {
                 userSchema.setGoals(goals);
                 userSchema.setAssets(assets);
                 userSchema.setLiabilities(liabilities);
-                userSchema.setRoles(roles);
                 userSchema.setTransactions(transactions);
 
                 return userSchema;
@@ -164,15 +148,9 @@ public class UserMapper {
                 userSchema.setId(user.getId());
                 userSchema.setName(user.getName());
                 userSchema.setEmail(user.getEmail());
-                userSchema.setPassword(user.getPassword());
                 userSchema.setRegistrationDate(user.getRegistrationDate());
                 userSchema.setDefaultCurrency(user.getDefaultCurrency());
                 userSchema.setEnable(user.isEnable());
-
-                List<RoleSchema> roles = user.getRoles() != null
-                                ? user.getRoles().stream().map(roleMapper::toRoleSchema).collect(Collectors.toList())
-                                : List.of();
-                userSchema.setRoles(roles);
 
                 return userSchema;
         }

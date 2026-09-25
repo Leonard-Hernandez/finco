@@ -8,7 +8,6 @@ import com.finco.finco.entity.account.model.CurrencyEnum;
 import com.finco.finco.entity.asset.model.Asset;
 import com.finco.finco.entity.goal.model.Goal;
 import com.finco.finco.entity.liabilitie.model.Liabilitie;
-import com.finco.finco.entity.role.model.Role;
 import com.finco.finco.entity.transaction.model.Transaction;
 
 public class User {
@@ -16,7 +15,6 @@ public class User {
     private Long id;
     private String name;
     private String email;
-    private String password;
     private LocalDateTime registrationDate;
     private CurrencyEnum defaultCurrency;
     private Boolean enable;
@@ -25,20 +23,18 @@ public class User {
     private List<Goal> goals;
     private List<Asset> assets;
     private List<Liabilitie> liabilities;
-    private List<Role> roles;
     private List<Transaction> transactions;
 
     public User() {
 
     }
 
-    public User(Long id, String name, String email, String password, LocalDateTime registrationDate,
-            CurrencyEnum defaultCurrency, Boolean enable, List<Account> accounts, List<Goal> goals, List<Asset> assets, 
-            List<Liabilitie> liabilities, List<Role> roles, List<Transaction> transactions) {
+    public User(Long id, String name, String email, LocalDateTime registrationDate,
+            CurrencyEnum defaultCurrency, Boolean enable, List<Account> accounts, List<Goal> goals, List<Asset> assets,
+            List<Liabilitie> liabilities, List<Transaction> transactions) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
         this.registrationDate = registrationDate;
         this.defaultCurrency = defaultCurrency;
         this.enable = enable;
@@ -46,7 +42,6 @@ public class User {
         this.goals = goals;
         this.assets = assets;
         this.liabilities = liabilities;
-        this.roles = roles;
         this.transactions = transactions;
     }
 
@@ -72,14 +67,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public LocalDateTime getRegistrationDate() {
@@ -130,14 +117,6 @@ public class User {
         this.liabilities = liabilities;
     }
 
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
     public List<Transaction> getTransactions() {
         return transactions;
     }
@@ -152,7 +131,7 @@ public class User {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
-    } 
+    }
 
     @Override
     public int hashCode() {
@@ -187,8 +166,8 @@ public class User {
 
     @Override
     public String toString() {
-        return "User {id=" + id + ", name=" + name + ", email=" + email + ", password=" + password
-                + ", registrationDate=" + registrationDate + ", enable=" + enable + "}";
+        return "User {id=" + id + ", name=" + name + ", email=" + email + ", registrationDate=" + registrationDate
+                + ", enable=" + enable + "}";
     }
 
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.finco.finco.entity.account.exception.AccountNotFoundException;
 import com.finco.finco.entity.exception.EbusinessException;
 import com.finco.finco.entity.goal.exception.GoalNotFoundException;
-import com.finco.finco.entity.role.exception.RoleNotFoundException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 
@@ -33,8 +32,7 @@ public class ExceptionHandlerController {
         return buildResponse(ex, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ UserNotFoundException.class, AccountNotFoundException.class, GoalNotFoundException.class,
-            RoleNotFoundException.class })
+    @ExceptionHandler({ UserNotFoundException.class, AccountNotFoundException.class, GoalNotFoundException.class})
     private ResponseEntity<ErrorResponse> notFoundException(EbusinessException ex) {
         logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.NOT_FOUND);

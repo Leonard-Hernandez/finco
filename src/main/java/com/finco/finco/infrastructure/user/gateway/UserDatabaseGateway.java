@@ -31,14 +31,6 @@ public class UserDatabaseGateway implements UserGateway {
 
     @Override
     @LogExecution(logReturnValue = false, logArguments = false)
-    public User create(User user) {
-
-        return userMapper.toUser(userRepository.save(userMapper.toLightUserSchema(user)));
-
-    }
-
-    @Override
-    @LogExecution(logReturnValue = false, logArguments = false)
     public User update(User user) {
         return userMapper.toUser(userRepository.save(userMapper.toLightUserSchema(user)));
     }

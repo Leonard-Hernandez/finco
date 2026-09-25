@@ -46,7 +46,6 @@ public class UpdateUserUseCaseTest {
         existingUser.setId(userId);
         existingUser.setName("Original Name");
         existingUser.setEmail("original@example.com");
-        existingUser.setPassword("password");
         existingUser.setEnable(true);
     }
 

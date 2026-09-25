@@ -41,7 +41,6 @@ public class GetUserUseCaseTest {
         testUser.setId(userId);
         testUser.setName("Test User");
         testUser.setEmail("test@example.com");
-        testUser.setPassword("password");
         testUser.setEnable(true);
     }
 
