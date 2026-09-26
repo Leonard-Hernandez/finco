@@ -25,8 +25,8 @@ public class GetUserController {
 
     private final GetUserUseCase getUserUserCase;
 
-    public GetUserController(GetUserUseCase getUserController) {
-        this.getUserUserCase = getUserController;
+    public GetUserController(GetUserUseCase getUserUserCase) {
+        this.getUserUserCase = getUserUserCase;
     }
 
     @GetMapping("/users/{id}")

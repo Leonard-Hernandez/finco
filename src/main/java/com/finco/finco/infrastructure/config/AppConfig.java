@@ -35,6 +35,7 @@ import com.finco.finco.usecase.transaction.GetAllTransactionsByUserUseCase;
 import com.finco.finco.usecase.transaction.GetCategoriesByUserUseCase;
 import com.finco.finco.usecase.user.DeleteUserUseCase;
 import com.finco.finco.usecase.user.GetAllUserUseCase;
+import com.finco.finco.usecase.user.GetCurrentUserUseCase;
 import com.finco.finco.usecase.user.GetTotalBalanceByUserUseCase;
 import com.finco.finco.usecase.user.GetUserUseCase;
 import com.finco.finco.usecase.user.UpdateUserUseCase;
@@ -52,6 +53,11 @@ public class AppConfig {
     @Bean
     GetUserUseCase getUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
         return new GetUserUseCase(userGateway, authGateway);
+    }
+
+    @Bean
+    GetCurrentUserUseCase getCurrentUserUseCase(UserGateway userGateway, AuthGateway authGateway) {
+        return new GetCurrentUserUseCase(userGateway, authGateway);
     }
 
     @Bean
@@ -97,7 +103,8 @@ public class AppConfig {
     }
 
     @Bean
-    GetDefaultAccountByUserUseCase getDefaultAccountByUserUseCase(AccountGateway accountGateway, AuthGateway authGateway) {
+    GetDefaultAccountByUserUseCase getDefaultAccountByUserUseCase(AccountGateway accountGateway,
+            AuthGateway authGateway) {
         return new GetDefaultAccountByUserUseCase(accountGateway, authGateway);
     }
 
