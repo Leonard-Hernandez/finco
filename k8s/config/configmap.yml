@@ -5,6 +5,7 @@ metadata:
 data:
   db_url: mysql:3306
   frontend_url: http://localhost:3000
+  authco_issuer: http://authco:8087/authco
 ---
 apiVersion: v1
 kind: ConfigMap

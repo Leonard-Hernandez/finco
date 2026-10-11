@@ -44,4 +44,7 @@ spec:
         - name: openai-key
           value: "x"
         - name: AUTHCO_ISSUER
-          value: "http://localhost:8087/authco"
+          valueFrom:
+            configMapKeyRef:
+              name: finco
+              key: authco_issuer
