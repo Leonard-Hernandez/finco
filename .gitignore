@@ -55,3 +55,4 @@ mise.toml
 
 .agents/*
 skills-lock.json
+.atl/
