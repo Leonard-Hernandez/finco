@@ -19,6 +19,8 @@ import com.finco.finco.entity.account.exception.AccountNotFoundException;
 import com.finco.finco.entity.exception.EbusinessException;
 import com.finco.finco.entity.goal.exception.GoalNotFoundException;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
+import com.finco.finco.entity.security.exception.IdentityProviderUnavailableException;
+import com.finco.finco.entity.security.exception.InvalidTokenException;
 import com.finco.finco.entity.user.exception.UserNotFoundException;
 
 @RestControllerAdvice
@@ -42,6 +44,18 @@ public class ExceptionHandlerController {
     private ResponseEntity<ErrorResponse> accessDeniedBusinessException(AccessDeniedBusinessException ex) {
         logger.error("Business Exception: {}", ex.getMessage());
         return buildResponse(ex, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    private ResponseEntity<ErrorResponse> invalidTokenException(InvalidTokenException ex) {
+        logger.error("Business Exception: {}", ex.getMessage());
+        return buildResponse(ex, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IdentityProviderUnavailableException.class)
+    private ResponseEntity<ErrorResponse> identityProviderUnavailableException(IdentityProviderUnavailableException ex) {
+        logger.error("Business Exception: {}", ex.getMessage());
+        return buildResponse(ex, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
