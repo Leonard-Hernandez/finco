@@ -43,8 +43,5 @@ spec:
               key: frontend_url
         - name: openai-key
           value: "x"
-        - name: JWT_SECRET
-          valueFrom: 
-            secretKeyRef:
-              name: finco-secret
-              key: jwt_secret
+        - name: AUTHCO_ISSUER
+          value: "http://localhost:8087/authco"
