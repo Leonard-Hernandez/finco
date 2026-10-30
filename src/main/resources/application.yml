@@ -2,7 +2,6 @@ server:
   port: 8086
   servlet:
     contextPath: /finco-api/v1
-  forward-headers-strategy: native
 
 finco:
   frontend:
@@ -12,7 +11,6 @@ finco:
     issuer: ${AUTHCO_ISSUER}
     internal-url: ${AUTHCO_INTERNAL_URL:${AUTHCO_ISSUER}}
     resource-id: ${FINCO_RESOURCE_ID}
-    scopes-supported: openid,profile,email,finco:premium
 
 spring:
   application:

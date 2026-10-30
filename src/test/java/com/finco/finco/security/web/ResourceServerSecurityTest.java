@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.security.model.FincoScopes;
+import com.finco.finco.infrastructure.config.security.SecurityAuthorities;
 import com.finco.finco.infrastructure.config.security.SpringSecurityConfig;
 import com.finco.finco.infrastructure.config.security.metadata.ProtectedResourceMetadataController;
 import com.finco.finco.infrastructure.user.controller.GetAllUserController;
@@ -33,8 +34,7 @@ import com.finco.finco.usecase.user.GetAllUserUseCase;
         "finco.frontend.url=http://localhost:4200",
         "finco.security.issuer=http://finco.localhost/authco",
         "finco.security.internal-url=http://authco:8087/authco",
-        "finco.security.resource-id=http://finco.localhost/finco-api/v1",
-        "finco.security.scopes-supported=openid,profile,email,finco:premium"
+        "finco.security.resource-id=http://finco.localhost/finco-api/v1"
 })
 @DisplayName("Resource server security test")
 public class ResourceServerSecurityTest {
@@ -55,7 +55,7 @@ public class ResourceServerSecurityTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resource").value("http://finco.localhost/finco-api/v1"))
                 .andExpect(jsonPath("$.authorization_servers[0]").value("http://finco.localhost/authco"))
-                .andExpect(jsonPath("$.scopes_supported", hasItem("finco:premium")))
+                .andExpect(jsonPath("$.scopes_supported", contains("openid", "profile", "email", "finco:premium")))
                 .andExpect(jsonPath("$.bearer_methods_supported[0]").value("header"));
     }
 
@@ -122,7 +122,7 @@ public class ResourceServerSecurityTest {
     public void adminWithFincoAdminShouldBeAllowed() throws Exception {
         when(getAllUserUseCase.execute(any(), any())).thenAnswer(invocation -> PagedResult.empty(invocation.getArgument(0)));
 
-        mockMvc.perform(get("/admin/users").with(jwt().authorities(new SimpleGrantedAuthority(FincoScopes.SCOPE_ADMIN))))
+        mockMvc.perform(get("/admin/users").with(jwt().authorities(new SimpleGrantedAuthority(SecurityAuthorities.scope(FincoScopes.ADMIN)))))
                 .andExpect(status().isOk());
     }
 

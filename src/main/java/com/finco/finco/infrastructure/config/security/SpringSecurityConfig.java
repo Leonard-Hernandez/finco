@@ -61,8 +61,8 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, ProtectedResourceMetadataController.PATH,
                         ProtectedResourceMetadataController.PATH + "/**").permitAll()
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**" ,"/ws/**").permitAll()
-                .requestMatchers(adminPaths).hasAuthority(FincoScopes.SCOPE_ADMIN)
-                .requestMatchers(mcpPaths).hasAuthority(FincoScopes.SCOPE_PREMIUM)
+                .requestMatchers(adminPaths).hasAuthority(SecurityAuthorities.scope(FincoScopes.ADMIN))
+                .requestMatchers(mcpPaths).hasAuthority(SecurityAuthorities.scope(FincoScopes.PREMIUM))
                 .anyRequest().authenticated())
                 .oauth2ResourceServer(rs -> rs
                         .jwt(Customizer.withDefaults())
@@ -98,7 +98,8 @@ public class SpringSecurityConfig {
     AuthorizationManager<Message<?>> authorizationManager(
             MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         messages.simpTypeMatchers(SimpMessageType.DISCONNECT, SimpMessageType.HEARTBEAT,
-                SimpMessageType.UNSUBSCRIBE).permitAll().anyMessage().hasAuthority(FincoScopes.SCOPE_PREMIUM);
+                SimpMessageType.UNSUBSCRIBE).permitAll().anyMessage()
+                .hasAuthority(SecurityAuthorities.scope(FincoScopes.PREMIUM));
         return messages.build();
     }
 

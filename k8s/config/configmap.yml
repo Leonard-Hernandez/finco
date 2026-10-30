@@ -10,6 +10,8 @@ data:
   # In-cluster address used to fetch JWKS/metadata without leaving the cluster.
   authco_internal_url: http://authco:8087/authco
   finco_resource_id: http://localhost/finco-api/v1
+  # finco runs behind the nginx ingress: trust its X-Forwarded-* headers.
+  forward_headers_strategy: native
 ---
 apiVersion: v1
 kind: ConfigMap

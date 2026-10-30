@@ -66,6 +66,11 @@ spec:
             configMapKeyRef:
               name: finco
               key: finco_resource_id
+        - name: SERVER_FORWARD_HEADERS_STRATEGY
+          valueFrom:
+            configMapKeyRef:
+              name: finco
+              key: forward_headers_strategy
         resources:
           requests:
             cpu: 250m
