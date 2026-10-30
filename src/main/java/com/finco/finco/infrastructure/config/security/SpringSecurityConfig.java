@@ -1,6 +1,7 @@
 package com.finco.finco.infrastructure.config.security;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +19,15 @@ import org.springframework.security.config.annotation.web.socket.EnableWebSocket
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.finco.finco.entity.security.model.FincoScopes;
+import com.finco.finco.infrastructure.config.security.entrypoint.ResourceMetadataAccessDeniedHandler;
 import com.finco.finco.infrastructure.config.security.entrypoint.ResourceMetadataAuthenticationEntryPoint;
 import com.finco.finco.infrastructure.config.security.jwt.JwtDecoderConfig;
 import com.finco.finco.infrastructure.config.security.metadata.ProtectedResourceMetadataController;
@@ -44,20 +49,27 @@ public class SpringSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // Scope-protected paths, shared by the authorization rules and the 403 step-up challenge
+        PathPatternRequestMatcher.Builder paths = PathPatternRequestMatcher.withDefaults();
+        RequestMatcher adminPaths = paths.matcher("/admin/**");
+        RequestMatcher mcpPaths = new OrRequestMatcher(paths.matcher("/sse/**"), paths.matcher("/mcp/message/**"));
+        String resourceMetadataUrl = resourceId + ProtectedResourceMetadataController.PATH;
+
         return http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers(HttpMethod.GET, "/accounts/currencies").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .requestMatchers(HttpMethod.GET, ProtectedResourceMetadataController.PATH,
                         ProtectedResourceMetadataController.PATH + "/**").permitAll()
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**" ,"/ws/**").permitAll()
-                .requestMatchers("/admin/**").hasAuthority(FincoScopes.SCOPE_ADMIN)
-                .requestMatchers("/sse/**", "/mcp/message/**").hasAuthority(FincoScopes.SCOPE_PREMIUM)
+                .requestMatchers(adminPaths).hasAuthority(FincoScopes.SCOPE_ADMIN)
+                .requestMatchers(mcpPaths).hasAuthority(FincoScopes.SCOPE_PREMIUM)
                 .anyRequest().authenticated())
                 .oauth2ResourceServer(rs -> rs
                         .jwt(Customizer.withDefaults())
                         // Also registered as the default entry point, so it covers missing and invalid tokens
-                        .authenticationEntryPoint(new ResourceMetadataAuthenticationEntryPoint(
-                                resourceId + ProtectedResourceMetadataController.PATH)))
+                        .authenticationEntryPoint(new ResourceMetadataAuthenticationEntryPoint(resourceMetadataUrl))
+                        .accessDeniedHandler(new ResourceMetadataAccessDeniedHandler(resourceMetadataUrl,
+                                Map.of(adminPaths, FincoScopes.ADMIN, mcpPaths, FincoScopes.PREMIUM))))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

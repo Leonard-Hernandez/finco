@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finco-well-known
+  annotations:
+    # RFC 9728 puts the well-known segment before the resource path
+    # (/.well-known/oauth-protected-resource/finco-api/v1), outside finco's
+    # context path. Rewrite it to the copy finco serves under /finco-api/v1.
+    # Kept in its own Ingress because rewrite-target applies to every path of an Ingress.
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /finco-api/v1/.well-known/oauth-protected-resource$1
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /\.well-known/oauth-protected-resource(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: finco
+            port:
+              number: 8086
