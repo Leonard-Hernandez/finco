@@ -73,3 +73,9 @@ management:
     health:
       show-details: never
       show-components: never
+      probes:
+        # /actuator/health/liveness and /actuator/health/readiness
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db
