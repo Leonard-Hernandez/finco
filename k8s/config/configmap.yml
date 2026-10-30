@@ -4,7 +4,12 @@ metadata:
   name: finco
 data:
   db_url: mysql:3306
-  frontend_url: http://localhost:3000
+  frontend_url: http://localhost
+  # Public issuer: must match the exact "iss" claim emitted by authco.
+  authco_issuer: http://localhost/authco
+  # In-cluster address used to fetch JWKS/metadata without leaving the cluster.
+  authco_internal_url: http://authco:8087/authco
+  finco_resource_id: http://localhost/finco-api/v1
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -12,3 +17,27 @@ metadata:
   name: mysql
 data:
   database: finco
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authco
+data:
+  db_url: jdbc:postgresql://postgres:5432/authco
+  authco_issuer: http://localhost/authco
+  cors_allowed_origins: http://localhost
+  # First entry is the default audience of issued tokens.
+  authco_resources: http://localhost/finco-api/v1
+  # authco login session lifetime = how long silent re-authentication works.
+  session_timeout: 8h
+  # First-party SPA (finco-site), seeded as a public PKCE client on startup.
+  spa_client_id: finco-site
+  spa_client_redirect_uris: http://localhost/auth/callback
+  spa_client_post_logout_redirect_uris: http://localhost/
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres
+data:
+  database: authco

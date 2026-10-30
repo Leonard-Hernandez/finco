@@ -23,6 +23,7 @@ import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.security.model.FincoScopes;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.goal.dto.GoalFilterData;
 import com.finco.finco.usecase.goal.GetAllGoalsUseCase;
@@ -80,7 +81,7 @@ public class GetAllGoalsUseCaseTest {
     void getAllGoalsSuccess() {
         // Arrange
         IGoalFilterData filterData = new GoalFilterData(null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
+        when(authGateway.hasScope(FincoScopes.ADMIN)).thenReturn(true);
         when(goalGateway.findAllByFilterData(filterData, pageRequest)).thenReturn(pagedResult);
 
         // Act
@@ -92,7 +93,7 @@ public class GetAllGoalsUseCaseTest {
         assertEquals(1, result.getContent().size());
         assertEquals("Test Goal", result.getContent().get(0).getName());
         
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope(FincoScopes.ADMIN);
         verify(goalGateway, times(1)).findAllByFilterData(filterData, pageRequest);
     }
 
@@ -101,7 +102,7 @@ public class GetAllGoalsUseCaseTest {
     void throwExceptionWhenUserIsNotAdmin() {
         // Arrange
         IGoalFilterData filterData = new GoalFilterData(null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
+        when(authGateway.hasScope(FincoScopes.ADMIN)).thenReturn(false);
 
         // Act & Assert
         AccessDeniedBusinessException exception = assertThrows(
@@ -110,7 +111,7 @@ public class GetAllGoalsUseCaseTest {
         );
         
         assertNotNull(exception);
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope(FincoScopes.ADMIN);
         verify(goalGateway, never()).findAll(any(PageRequest.class));
     }
       

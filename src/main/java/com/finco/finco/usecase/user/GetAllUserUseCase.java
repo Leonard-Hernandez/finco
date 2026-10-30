@@ -7,6 +7,7 @@ import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.pagination.filter.IUserFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.security.model.FincoScopes;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
 
@@ -24,7 +25,7 @@ public class GetAllUserUseCase {
     @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<User> execute(PageRequest page, IUserFilterData filterData) {
 
-        if (!authGateway.isAuthenticatedUserInRole("ADMIN")) {
+        if (!authGateway.hasScope(FincoScopes.ADMIN)) {
             throw new AccessDeniedBusinessException();
         }
 

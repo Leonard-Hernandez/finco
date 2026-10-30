@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.pagination.filter.IUserFilterData;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.security.model.FincoScopes;
 import com.finco.finco.entity.user.gateway.UserGateway;
 import com.finco.finco.entity.user.model.User;
 import com.finco.finco.infrastructure.user.dto.UserFilterData;
@@ -62,7 +63,7 @@ public class GetAllUserUseCaseTest {
     public void getAllUsersSuccess() {
         // Arrange
         IUserFilterData filterData = new UserFilterData(null, null, null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(true);
+        when(authGateway.hasScope(FincoScopes.ADMIN)).thenReturn(true);
         when(userGateway.findAllByFilterData(any(com.finco.finco.entity.pagination.PageRequest.class), any(IUserFilterData.class)))
             .thenReturn(pagedResult);
 
@@ -72,7 +73,7 @@ public class GetAllUserUseCaseTest {
         // Assert
         assertNotNull(result);
         assertEquals(2, result.getContent().size());
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope(FincoScopes.ADMIN);
         verify(userGateway, times(1))
             .findAllByFilterData(any(com.finco.finco.entity.pagination.PageRequest.class), any(IUserFilterData.class));
     }
@@ -82,7 +83,7 @@ public class GetAllUserUseCaseTest {
     public void getAllUsersWithoutAdminRoleShouldThrowException() {
         // Arrange
         IUserFilterData filterData = new UserFilterData(null, null, null, null);
-        when(authGateway.isAuthenticatedUserInRole("ADMIN")).thenReturn(false);
+        when(authGateway.hasScope(FincoScopes.ADMIN)).thenReturn(false);
 
         // Act & Assert
         EbusinessException exception = assertThrows(EbusinessException.class, () -> {
@@ -90,7 +91,7 @@ public class GetAllUserUseCaseTest {
         });
 
         assertEquals("Access Denied for this resource", exception.getMessage());
-        verify(authGateway, times(1)).isAuthenticatedUserInRole("ADMIN");
+        verify(authGateway, times(1)).hasScope(FincoScopes.ADMIN);
         verify(userGateway, never())
             .findAllByFilterData(any(com.finco.finco.entity.pagination.PageRequest.class), any(IUserFilterData.class));
     }

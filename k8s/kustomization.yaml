@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: finco
+
+resources:
+  - config/namespace.yml
+  - config/configmap.yml
+  - config/secret.yml
+  - volumes/mysql-pv.yml
+  - volumes/mysql-pvc.yml
+  - volumes/postgres-pv.yml
+  - volumes/postgres-pvc.yml
+  - deploys/deployment-mysql.yaml
+  - deploys/deployment-postgres.yaml
+  - deploys/deployment-finco.yaml
+  - deploys/deployment-authco.yaml
+  - deploys/deployment-finco-site.yaml
+  - services/service-mysql.yaml
+  - services/service-postgres.yaml
+  - services/service-finco.yaml
+  - services/service-authco.yaml
+  - services/service-finco-site.yaml
+  - ingress/ingress.yaml

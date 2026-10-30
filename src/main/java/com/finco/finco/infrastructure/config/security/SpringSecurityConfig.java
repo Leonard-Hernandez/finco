@@ -2,81 +2,66 @@ package com.finco.finco.infrastructure.config.security;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.simp.SimpMessageType;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.socket.EnableWebSocketSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.finco.finco.infrastructure.config.security.filter.JwtValidationFilter;
-import com.finco.finco.infrastructure.config.security.handler.OAuth2LoginSuccessHandler;
-import com.finco.finco.infrastructure.config.security.services.JwtService;
-import com.finco.finco.infrastructure.config.security.services.OAuth2UserService;
+import com.finco.finco.entity.security.model.FincoScopes;
+import com.finco.finco.infrastructure.config.security.entrypoint.ResourceMetadataAuthenticationEntryPoint;
+import com.finco.finco.infrastructure.config.security.jwt.JwtDecoderConfig;
+import com.finco.finco.infrastructure.config.security.metadata.ProtectedResourceMetadataController;
 
 @Configuration
 @EnableWebSecurity
+@EnableWebSocketSecurity
+@Import(JwtDecoderConfig.class)
 public class SpringSecurityConfig {
+
+    private static final String MCP_SESSION_ID_HEADER = "Mcp-Session-Id";
+    private static final String MCP_PROTOCOL_VERSION_HEADER = "mcp-protocol-version";
 
     @Value("${finco.frontend.url}")
     private String frontendUrl;
 
-    @Autowired
-    private AuthenticationConfiguration authenticationConfiguration;
-
-    @Autowired
-    private OAuth2UserService OAuth2UserService;
-
-    @Autowired
-    private OAuth2LoginSuccessHandler auth2LoginSuccessHandler;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Bean
-    AuthenticationManager authenticationManager() throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+    @Value("${finco.security.resource-id}")
+    private String resourceId;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests((authz) -> authz
-                .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .requestMatchers(HttpMethod.GET, "/accounts/currencies").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/oauth2/**").permitAll()
-                .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/admin/*").hasRole("ADMIN")
-                .requestMatchers("/sse/**", "/mcp/message/**" ,"/ws/**").hasRole("PREMIUM")
-                .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                .requestMatchers(HttpMethod.GET, ProtectedResourceMetadataController.PATH,
+                        ProtectedResourceMetadataController.PATH + "/**").permitAll()
+                .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**" ,"/ws/**").permitAll()
+                .requestMatchers("/admin/**").hasAuthority(FincoScopes.SCOPE_ADMIN)
+                .requestMatchers("/sse/**", "/mcp/message/**").hasAuthority(FincoScopes.SCOPE_PREMIUM)
                 .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> oauth2
-                    .userInfoEndpoint(userInfo -> userInfo.userService(OAuth2UserService))
-                    .successHandler(auth2LoginSuccessHandler)
-                    )
-                .addFilterAfter(new JwtValidationFilter(authenticationManager(), jwtService),
-                UsernamePasswordAuthenticationFilter.class)
+                .oauth2ResourceServer(rs -> rs
+                        .jwt(Customizer.withDefaults())
+                        // Also registered as the default entry point, so it covers missing and invalid tokens
+                        .authenticationEntryPoint(new ResourceMetadataAuthenticationEntryPoint(
+                                resourceId + ProtectedResourceMetadataController.PATH)))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -85,7 +70,9 @@ public class SpringSecurityConfig {
         corsConfiguration.setAllowedOrigins(Arrays.asList(frontendUrl));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type",
+                MCP_PROTOCOL_VERSION_HEADER, MCP_SESSION_ID_HEADER));
+        corsConfiguration.setExposedHeaders(Arrays.asList(HttpHeaders.WWW_AUTHENTICATE, MCP_SESSION_ID_HEADER));
         corsConfiguration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -93,6 +80,14 @@ public class SpringSecurityConfig {
 
         return source;
 
+    }
+
+    @Bean
+    AuthorizationManager<Message<?>> authorizationManager(
+            MessageMatcherDelegatingAuthorizationManager.Builder messages) {
+        messages.simpTypeMatchers(SimpMessageType.DISCONNECT, SimpMessageType.HEARTBEAT,
+                SimpMessageType.UNSUBSCRIBE).permitAll().anyMessage().hasAuthority(FincoScopes.SCOPE_PREMIUM);
+        return messages.build();
     }
 
 }

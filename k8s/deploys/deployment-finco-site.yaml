@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: finco-site
+  name: finco-site
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finco-site
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: finco-site
+    spec:
+      containers:
+      - image: leonard20/finco-site:latest
+        imagePullPolicy: IfNotPresent
+        name: finco-site
+        ports:
+        - containerPort: 80
+        # Optional runtime config (FINCO_API_URL, AUTHCO_URL, OAUTH_CLIENT_ID, FINCO_RESOURCE).
+        # Unset here: the defaults are same-origin (/finco-api/v1, /authco, finco-site,
+        # <origin>/finco-api/v1). Example for a split-origin setup:
+        # env:
+        # - name: FINCO_API_URL
+        #   value: https://api.example.com/finco-api/v1
+        # - name: AUTHCO_URL
+        #   value: https://auth.example.com/authco
+        # - name: FINCO_RESOURCE
+        #   value: https://api.example.com/finco-api/v1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          periodSeconds: 2
+          failureThreshold: 15
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          periodSeconds: 20

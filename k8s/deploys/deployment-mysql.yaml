@@ -1,12 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: mysql
   name: mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: mysql
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -28,10 +32,31 @@ spec:
             configMapKeyRef:
               name: mysql
               key: database
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            memory: 1Gi
+        startupProbe:
+          exec:
+            command: ["sh", "-c", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$MYSQL_ROOT_PASSWORD\" --silent"]
+          periodSeconds: 5
+          failureThreshold: 60
+        readinessProbe:
+          exec:
+            command: ["sh", "-c", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$MYSQL_ROOT_PASSWORD\" --silent"]
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+          periodSeconds: 20
+          timeoutSeconds: 5
         volumeMounts:
           - name: data-mysql
             mountPath: /var/lib/mysql
       volumes:
         - name: data-mysql
-          persistentVolumeClaim: 
-            claimName: mysql-pvc        
+          persistentVolumeClaim:
+            claimName: mysql-pvc

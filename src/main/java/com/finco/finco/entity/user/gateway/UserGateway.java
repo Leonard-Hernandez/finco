@@ -9,8 +9,6 @@ import com.finco.finco.entity.user.model.User;
 
 public interface UserGateway {
 
-    User create(User user);
-
     User update(User user);
 
     User delete(User user);
