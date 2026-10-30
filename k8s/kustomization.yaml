@@ -6,7 +6,6 @@ namespace: finco
 resources:
   - config/namespace.yml
   - config/configmap.yml
-  - config/secret.yml
   - volumes/mysql-pv.yml
   - volumes/mysql-pvc.yml
   - volumes/postgres-pv.yml
@@ -22,3 +21,24 @@ resources:
   - services/service-authco.yaml
   - services/service-finco-site.yaml
   - ingress/ingress.yaml
+
+# Secrets are generated from git-ignored env files: copy each
+# config/secrets/<name>.env.example to <name>.env and fill it in (see README).
+# A missing file fails the build, so placeholders are never deployed.
+secretGenerator:
+  - name: finco-secret
+    envs:
+      - config/secrets/finco.env
+  - name: mysql-secret
+    envs:
+      - config/secrets/mysql.env
+  - name: postgres-secret
+    envs:
+      - config/secrets/postgres.env
+  - name: authco-secret
+    envs:
+      - config/secrets/authco.env
+
+# Deployments reference the secrets by fixed name.
+generatorOptions:
+  disableNameSuffixHash: true

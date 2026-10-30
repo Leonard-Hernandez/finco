@@ -56,3 +56,6 @@ mise.toml
 .agents/*
 skills-lock.json
 .atl/
+
+# k8s secrets (only the *.env.example templates are tracked)
+k8s/config/secrets/*.env

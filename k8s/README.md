@@ -44,18 +44,26 @@ needs for WebCrypto (PKCE). For curl: `curl --resolve localhost:80:127.0.0.1 ...
 
 ## 4. Set the secrets
 
-`config/secret.yml` ships base64 **placeholders**. Replace them before the first deploy
-(`echo -n 'value' | base64 -w0`):
+No secret values are tracked. Kustomize generates the Secrets from git-ignored env files
+in `config/secrets/`; until all four exist, `kubectl kustomize`/`apply -k` fails with
+`no such file or directory`. Create them from the templates (plain values, no base64):
 
-| Secret | Key | Value |
-|---|---|---|
-| `finco-secret` | `openai-key` | OpenAI API key |
-| `finco-secret`, `mysql-secret` | `password` | MySQL root password (keep both equal) |
-| `postgres-secret` | `username`, `password` | Postgres credentials used by authco |
-| `authco-secret` | `google_client_id`, `google_client_secret` | Google OAuth client |
-| `authco-secret` | `master_key` | `openssl rand -base64 32` (base64 of 32 bytes) |
+```sh
+cd finco/k8s/config/secrets
+for f in *.env.example; do cp -n "$f" "${f%.example}"; done
+openssl rand -base64 32   # paste the output as master_key in authco.env
+```
 
-Changing a secret after deploy: `kubectl -n finco rollout restart deploy/<name>`.
+| File | Secret | Key | Value |
+|---|---|---|---|
+| `finco.env` | `finco-secret` | `openai-key` | OpenAI API key |
+| `finco.env`, `mysql.env` | `finco-secret`, `mysql-secret` | `password` | MySQL root password (keep both equal) |
+| `postgres.env` | `postgres-secret` | `username`, `password` | Postgres credentials used by authco |
+| `authco.env` | `authco-secret` | `google_client_id`, `google_client_secret` | Google OAuth client |
+| `authco.env` | `authco-secret` | `master_key` | `openssl rand -base64 32` (base64 of 32 bytes, AES-256) |
+
+Changing a secret after deploy: `kubectl apply -k finco/k8s`, then
+`kubectl -n finco rollout restart deploy/<name>`.
 Database passwords only apply on the first init of the volume.
 
 Google OAuth: the client's authorized redirect URIs must include
