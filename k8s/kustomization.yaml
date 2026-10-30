@@ -21,6 +21,7 @@ resources:
   - services/service-authco.yaml
   - services/service-finco-site.yaml
   - ingress/ingress.yaml
+  - ingress/ingress-well-known.yaml
 
 # Secrets are generated from git-ignored env files: copy each
 # config/secrets/<name>.env.example to <name>.env and fill it in (see README).

@@ -40,6 +40,7 @@ import com.finco.finco.usecase.user.GetAllUserUseCase;
 public class ResourceServerSecurityTest {
 
     private static final String RESOURCE_METADATA = "resource_metadata=\"http://finco.localhost/finco-api/v1/.well-known/oauth-protected-resource\"";
+    private static final String INSUFFICIENT_SCOPE = "Bearer error=\"insufficient_scope\"";
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,6 +57,16 @@ public class ResourceServerSecurityTest {
                 .andExpect(jsonPath("$.authorization_servers[0]").value("http://finco.localhost/authco"))
                 .andExpect(jsonPath("$.scopes_supported", hasItem("finco:premium")))
                 .andExpect(jsonPath("$.bearer_methods_supported[0]").value("header"));
+    }
+
+    @Test
+    @DisplayName("Protected resource metadata should be served at the RFC 9728 path-suffixed location")
+    public void metadataShouldBeServedAtPathSuffixedLocation() throws Exception {
+        // The ingress rewrites /.well-known/oauth-protected-resource/finco-api/v1 to this path
+        mockMvc.perform(get("/.well-known/oauth-protected-resource/finco-api/v1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resource").value("http://finco.localhost/finco-api/v1"))
+                .andExpect(jsonPath("$.authorization_servers[0]").value("http://finco.localhost/authco"));
     }
 
     @Test
@@ -87,18 +98,23 @@ public class ResourceServerSecurityTest {
     }
 
     @Test
-    @DisplayName("MCP endpoint without premium scope should return 403 insufficient_scope")
+    @DisplayName("MCP endpoint without premium scope should return 403 insufficient_scope with step-up scope")
     public void mcpWithoutPremiumShouldBeForbidden() throws Exception {
-        mockMvc.perform(get("/sse").with(jwt()))
-                .andExpect(status().isForbidden())
-                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, containsString("insufficient_scope")));
+        for (String path : List.of("/sse", "/mcp/message")) {
+            mockMvc.perform(get(path).with(jwt()))
+                    .andExpect(status().isForbidden())
+                    .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, allOf(startsWith(INSUFFICIENT_SCOPE),
+                            containsString("scope=\"finco:premium\""), containsString(RESOURCE_METADATA))));
+        }
     }
 
     @Test
-    @DisplayName("Admin endpoint without finco:admin scope should return 403")
+    @DisplayName("Admin endpoint without finco:admin scope should return 403 with step-up scope")
     public void adminWithoutFincoAdminShouldBeForbidden() throws Exception {
         mockMvc.perform(get("/admin/users").with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_admin"))))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(header().string(HttpHeaders.WWW_AUTHENTICATE, allOf(startsWith(INSUFFICIENT_SCOPE),
+                        containsString("scope=\"finco:admin\""), containsString(RESOURCE_METADATA))));
     }
 
     @Test
