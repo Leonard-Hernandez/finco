@@ -12,6 +12,7 @@ import com.finco.finco.entity.security.model.FincoScopes;
 import com.finco.finco.infrastructure.config.authco.service.UserProvisionService;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
+import com.finco.finco.infrastructure.config.security.SecurityAuthorities;
 
 import lombok.AllArgsConstructor;
 
@@ -38,7 +39,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
     public boolean hasScope(String scope) {
         Authentication authentication = getAuthentication();
 
-        String fullScopeName = "SCOPE_" + scope;
+        String fullScopeName = SecurityAuthorities.scope(scope);
         return authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(fullScopeName));
     }
