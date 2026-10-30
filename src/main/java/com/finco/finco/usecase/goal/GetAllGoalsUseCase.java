@@ -9,6 +9,7 @@ import com.finco.finco.entity.pagination.PagedResult;
 import com.finco.finco.entity.pagination.filter.IGoalFilterData;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.security.model.FincoScopes;
 
 public class GetAllGoalsUseCase {
 
@@ -24,7 +25,7 @@ public class GetAllGoalsUseCase {
     @LogExecution(logReturnValue = false, logArguments = false)
     public PagedResult<Goal> execute(PageRequest pageRequest, IGoalFilterData goalFilterData) {
 
-        if (!authGateway.hasScope("admin")) {
+        if (!authGateway.hasScope(FincoScopes.ADMIN)) {
             throw new AccessDeniedBusinessException();
         }
 

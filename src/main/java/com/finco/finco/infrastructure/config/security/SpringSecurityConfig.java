@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -20,24 +22,42 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.finco.finco.entity.security.model.FincoScopes;
+import com.finco.finco.infrastructure.config.security.entrypoint.ResourceMetadataAuthenticationEntryPoint;
+import com.finco.finco.infrastructure.config.security.jwt.JwtDecoderConfig;
+import com.finco.finco.infrastructure.config.security.metadata.ProtectedResourceMetadataController;
+
 @Configuration
 @EnableWebSecurity
 @EnableWebSocketSecurity
+@Import(JwtDecoderConfig.class)
 public class SpringSecurityConfig {
+
+    private static final String MCP_SESSION_ID_HEADER = "Mcp-Session-Id";
+    private static final String MCP_PROTOCOL_VERSION_HEADER = "mcp-protocol-version";
 
     @Value("${finco.frontend.url}")
     private String frontendUrl;
+
+    @Value("${finco.security.resource-id}")
+    private String resourceId;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers(HttpMethod.GET, "/accounts/currencies").permitAll()
                 .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
+                .requestMatchers(HttpMethod.GET, ProtectedResourceMetadataController.PATH,
+                        ProtectedResourceMetadataController.PATH + "/**").permitAll()
                 .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**" ,"/ws/**").permitAll()
-                .requestMatchers("/admin/**").hasAuthority("SCOPE_admin")
-                .requestMatchers("/sse/**", "/mcp/message/**").hasAuthority("SCOPE_finco:premium")
+                .requestMatchers("/admin/**").hasAuthority(FincoScopes.SCOPE_ADMIN)
+                .requestMatchers("/sse/**", "/mcp/message/**").hasAuthority(FincoScopes.SCOPE_PREMIUM)
                 .anyRequest().authenticated())
-                .oauth2ResourceServer(rs -> rs.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer(rs -> rs
+                        .jwt(Customizer.withDefaults())
+                        // Also registered as the default entry point, so it covers missing and invalid tokens
+                        .authenticationEntryPoint(new ResourceMetadataAuthenticationEntryPoint(
+                                resourceId + ProtectedResourceMetadataController.PATH)))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -50,7 +70,9 @@ public class SpringSecurityConfig {
         corsConfiguration.setAllowedOrigins(Arrays.asList(frontendUrl));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type",
+                MCP_PROTOCOL_VERSION_HEADER, MCP_SESSION_ID_HEADER));
+        corsConfiguration.setExposedHeaders(Arrays.asList(HttpHeaders.WWW_AUTHENTICATE, MCP_SESSION_ID_HEADER));
         corsConfiguration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -64,7 +86,7 @@ public class SpringSecurityConfig {
     AuthorizationManager<Message<?>> authorizationManager(
             MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         messages.simpTypeMatchers(SimpMessageType.DISCONNECT, SimpMessageType.HEARTBEAT,
-                SimpMessageType.UNSUBSCRIBE).permitAll().anyMessage().hasAuthority("SCOPE_finco:premium");
+                SimpMessageType.UNSUBSCRIBE).permitAll().anyMessage().hasAuthority(FincoScopes.SCOPE_PREMIUM);
         return messages.build();
     }
 

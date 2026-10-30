@@ -2,10 +2,17 @@ server:
   port: 8086
   servlet:
     contextPath: /finco-api/v1
+  forward-headers-strategy: native
 
 finco:
   frontend:
     url: ${FRONTEND_URL}
+  # authco: public issuer (iss claim), internal URL (JWKS, userinfo) and finco audience
+  security:
+    issuer: ${AUTHCO_ISSUER}
+    internal-url: ${AUTHCO_INTERNAL_URL:${AUTHCO_ISSUER}}
+    resource-id: ${FINCO_RESOURCE_ID}
+    scopes-supported: openid,profile,email,finco:premium
 
 spring:
   application:
@@ -17,11 +24,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${AUTHCO_ISSUER}
   ai:
     openai:
       api-key: ${openai-key}

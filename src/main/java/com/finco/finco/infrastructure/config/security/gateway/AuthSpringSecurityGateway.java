@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.finco.finco.entity.annotation.LogExecution;
 import com.finco.finco.entity.security.exception.AccessDeniedBusinessException;
 import com.finco.finco.entity.security.gateway.AuthGateway;
+import com.finco.finco.entity.security.model.FincoScopes;
 import com.finco.finco.infrastructure.config.authco.service.UserProvisionService;
 import com.finco.finco.infrastructure.config.db.repository.UserRepository;
 import com.finco.finco.infrastructure.config.db.schema.UserSchema;
@@ -48,7 +49,7 @@ public class AuthSpringSecurityGateway implements AuthGateway {
         Long authenticatedUserId = getAuthenticatedUserId();
 
         if (!authenticatedUserId.equals(ownerId)) {
-            if (!hasScope("admin")) {
+            if (!hasScope(FincoScopes.ADMIN)) {
                 throw new AccessDeniedBusinessException();
             }
         }

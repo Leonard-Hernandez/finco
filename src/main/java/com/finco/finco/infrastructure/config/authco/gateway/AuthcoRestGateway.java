@@ -17,8 +17,8 @@ public class AuthcoRestGateway {
     private final RestClient restClient;
 
     public AuthcoRestGateway(RestClient.Builder builder,
-            @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUrl) {
-        this.restClient = builder.baseUrl(issuerUrl).build();
+            @Value("${finco.security.internal-url}") String authcoInternalUrl) {
+        this.restClient = builder.baseUrl(authcoInternalUrl).build();
     }
 
     public UserInfoDto getUserInfo(String Token) {
