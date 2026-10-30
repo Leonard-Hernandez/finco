@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: authco
+  name: authco
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authco
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: authco
+    spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: busybox:1.36
+        command: ["sh", "-c", "until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done"]
+      containers:
+      - image: leonard20/authco:latest
+        imagePullPolicy: IfNotPresent
+        name: authco
+        ports:
+        - containerPort: 8087
+        # The admin API password is generated on first startup and printed once
+        # in the logs: kubectl -n finco logs deploy/authco | rg -A3 'admin API credentials'
+        env:
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: db_url
+        - name: USER_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: PASSWORD_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: authco-secret
+              key: google_client_id
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: authco-secret
+              key: google_client_secret
+        - name: MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: authco-secret
+              key: master_key
+        - name: AUTHCO_ISSUER
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: authco_issuer
+        - name: CORS_ALLOWED_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: cors_allowed_origins
+        - name: AUTHCO_RESOURCES
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: authco_resources
+        - name: SERVER_SERVLET_SESSION_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: session_timeout
+        - name: AUTHCO_SPA_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: spa_client_id
+        - name: AUTHCO_SPA_CLIENT_REDIRECT_URIS
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: spa_client_redirect_uris
+        - name: AUTHCO_SPA_CLIENT_POST_LOGOUT_REDIRECT_URIS
+          valueFrom:
+            configMapKeyRef:
+              name: authco
+              key: spa_client_post_logout_redirect_uris
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            memory: 1Gi
+        startupProbe:
+          httpGet:
+            path: /authco/actuator/health/liveness
+            port: 8087
+          periodSeconds: 10
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /authco/actuator/health/readiness
+            port: 8087
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /authco/actuator/health/liveness
+            port: 8087
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3

@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: finco
+  annotations:
+    # Long-lived SockJS/STOMP connections (/finco-api/v1/ws) and AI streaming.
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # Receipt/image attachments sent to the AI endpoints.
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /finco-api
+        pathType: Prefix
+        backend:
+          service:
+            name: finco
+            port:
+              number: 8086
+      - path: /authco
+        pathType: Prefix
+        backend:
+          service:
+            name: authco
+            port:
+              number: 8087
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: finco-site
+            port:
+              number: 80

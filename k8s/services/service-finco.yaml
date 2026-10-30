@@ -9,4 +9,4 @@ spec:
     targetPort: 8086
   selector:
     app: finco
-  type: LoadBalancer
+  type: ClusterIP
