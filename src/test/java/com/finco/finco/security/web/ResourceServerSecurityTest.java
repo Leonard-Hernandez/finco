@@ -7,6 +7,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,16 @@ public class ResourceServerSecurityTest {
                 .andExpect(jsonPath("$.authorization_servers[0]").value("http://finco.localhost/authco"))
                 .andExpect(jsonPath("$.scopes_supported", hasItem("finco:premium")))
                 .andExpect(jsonPath("$.bearer_methods_supported[0]").value("header"));
+    }
+
+    @Test
+    @DisplayName("Health probe groups should not require a token")
+    public void healthProbesShouldBePublic() throws Exception {
+        for (String path : List.of("/actuator/health/liveness", "/actuator/health/readiness")) {
+            mockMvc.perform(get(path))
+                    .andExpect(status().is(not(anyOf(is(401), is(403)))))
+                    .andExpect(header().doesNotExist(HttpHeaders.WWW_AUTHENTICATE));
+        }
     }
 
     @Test

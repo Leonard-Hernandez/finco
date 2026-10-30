@@ -72,21 +72,23 @@ spec:
             memory: 512Mi
           limits:
             memory: 1Gi
+        # Liveness only checks the app itself; the DB is part of readiness, so a
+        # MySQL outage takes finco out of the Service instead of restarting it.
         startupProbe:
           httpGet:
-            path: /finco-api/v1/actuator/health
+            path: /finco-api/v1/actuator/health/liveness
             port: 8086
           periodSeconds: 10
           failureThreshold: 30
         readinessProbe:
           httpGet:
-            path: /finco-api/v1/actuator/health
+            path: /finco-api/v1/actuator/health/readiness
             port: 8086
           periodSeconds: 10
           timeoutSeconds: 5
         livenessProbe:
           httpGet:
-            path: /finco-api/v1/actuator/health
+            path: /finco-api/v1/actuator/health/liveness
             port: 8086
           periodSeconds: 20
           timeoutSeconds: 5
