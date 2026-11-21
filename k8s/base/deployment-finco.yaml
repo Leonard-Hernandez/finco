@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: finco
+  name: finco
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: finco
+  template:
+    metadata:
+      labels:
+        app: finco
+    spec:
+      containers:
+      - image: leonard20/finco
+        name: finco
+        ports:
+        - containerPort: 8086
+        envFrom:
+         - configMapRef:
+              name: finco-config
+         - secretRef:
+              name: finco-secrets
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            memory: 1Gi
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 100
+          runAsGroup: 101
+          allowPrivilegeEscalation: false
+        startupProbe:
+          httpGet:
+            path: /finco-api/v1/actuator/health/liveness
+            port: 8086
+          periodSeconds: 10
+          failureThreshold: 30
+        readinessProbe:
+          httpGet:
+            path: /finco-api/v1/actuator/health/readiness
+            port: 8086
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /finco-api/v1/actuator/health/liveness
+            port: 8086
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3
