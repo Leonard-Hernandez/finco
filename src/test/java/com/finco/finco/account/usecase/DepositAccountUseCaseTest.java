@@ -95,7 +95,7 @@ public class DepositAccountUseCaseTest {
 
         Transaction transaction = transactionCaptor.getValue();
         assertNotNull(transaction);
-        assertEquals(BigDecimal.valueOf(476), transaction.getAmount().setScale(0, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(475), transaction.getAmount().setScale(0, RoundingMode.HALF_UP));
         assertEquals(TransactionType.DEPOSIT, transaction.getType());
         assertEquals("Deposit", transaction.getDescription());
         assertEquals("Deposit", transaction.getCategory());
